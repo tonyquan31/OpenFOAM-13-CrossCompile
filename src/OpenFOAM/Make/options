@@ -3,5 +3,5 @@ EXE_INC = \
 
 LIB_LIBS = \
     $(FOAM_LIBBIN)/libOSspecific.o \
-    -L$(FOAM_LIBBIN)/dummy -lPstream \
+    $(FOAM_LIBBIN)/dummy/libPstream.o \
     -lz

@@ -16,6 +16,17 @@ EXE_INC = \
 LIB_LIBS = \
     -lfluidSolver \
     -lisothermalFluid \
+    -lphysicalProperties \
+    -lspecie \
     -lfluidThermophysicalModels \
+    -lmomentumTransportModels \
     -lcompressibleMomentumTransportModels \
-    -lcoupledThermophysicalTransportModels
+    -lthermophysicalTransportModel \
+    -lfluidThermophysicalTransportModel \
+    -lfluidThermoThermophysicalTransportModels \
+    -lcoupledThermophysicalTransportModels \
+    -lfiniteVolume \
+    -lmeshTools \
+    -lsampling \
+    -lfvModels \
+    -lfvConstraints

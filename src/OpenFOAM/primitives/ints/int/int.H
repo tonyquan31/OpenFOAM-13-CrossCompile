@@ -64,6 +64,23 @@ MAXMIN(int64_t, int64_t, int32_t)
 MAXMIN(int64_t, int32_t, int64_t)
 MAXMIN(int64_t, int64_t, int64_t)
 
+// IOstream operators for short / int16
+inline Istream& operator>>(Istream& is, short& s)
+{
+    int32_t val;
+    is >> val;
+    s = static_cast<short>(val);
+    return is;
+}
+
+inline Ostream& operator<<(Ostream& os, const short s)
+{
+    return os << static_cast<int32_t>(s);
+}
+
+// * * * * * * * * * * * * * * * IOstream Operators  * * * * * * * * * * * * //
+
+int readInt(Istream&);
 
 // * * * * * * * * * * * * * * * IOstream Operators  * * * * * * * * * * * * //
 

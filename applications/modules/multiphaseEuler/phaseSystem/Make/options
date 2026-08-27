@@ -24,10 +24,25 @@ LIB_LIBS = \
     -lsampling \
     -lmulticomponentThermophysicalModels \
     -lsaturationModels \
+    -ltwoPhaseMixture \
     -lcompressibleTwoPhases \
     -lmultiphaseProperties \
+    -lmomentumTransportModels \
+    -lcompressibleMomentumTransportModels \
     -lphaseCompressibleMomentumTransportModels \
+    -lthermophysicalTransportModel \
+    -lfluidThermophysicalTransportModel \
+    -lfluidThermoThermophysicalTransportModels \
     -lphaseFluidThermophysicalTransportModels \
     -lphaseFluidMulticomponentThermophysicalTransportModels \
+    -lsolidThermophysicalTransportModels \
     -lphaseSolidThermophysicalTransportModels \
-    -lcombustionModels
+    -lcombustionModels \
+    -lphysicalProperties \
+    -lspecie \
+    -lfluidThermophysicalModels \
+    -lsolidThermo \
+    -lfiniteVolume \
+    -lmeshTools \
+    -lfvModels \
+    -lfvConstraints

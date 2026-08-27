@@ -1,0 +1,5781 @@
+diff --git a/applications/legacy/combustion/PDRFoam/Make/options b/applications/legacy/combustion/PDRFoam/Make/options
+index 6b729c7404..fa776d31b5 100644
+--- a/applications/legacy/combustion/PDRFoam/Make/options
++++ b/applications/legacy/combustion/PDRFoam/Make/options
+@@ -30,17 +30,22 @@ EXE_INC = \
+     -I$(LIB_SRC)/ThermophysicalTransportModels/fluidThermo/lnInclude \
+     -I$(LIB_SRC)/finiteVolume/lnInclude \
+     -I$(LIB_SRC)/meshTools/lnInclude \
+-    -I$(LIB_SRC)/triSurface/lnInclude \
++    -I$(LIB_SRC)/triSurface/lnInclude
+ 
+ EXE_LIBS = \
+     -lmeshTools \
+     -lfluidThermophysicalModels \
+     -lmulticomponentThermophysicalModels \
+     -lspecie \
++    -lphysicalProperties \
+     -lmomentumTransportModels \
+     -lcompressibleMomentumTransportModels \
++    -lthermophysicalTransportModel \
++    -lfluidThermophysicalTransportModel \
++    -lfluidThermoThermophysicalTransportModels \
+     -lcoupledThermophysicalTransportModels \
+     -llaminarFlameSpeedModels \
+     -lfiniteVolume \
++    -lsampling \
+     -lfvModels \
+     -lfvConstraints
+diff --git a/applications/legacy/compressible/rhoPorousSimpleFoam/Make/options b/applications/legacy/compressible/rhoPorousSimpleFoam/Make/options
+index bf973fdcd7..d61a5fc3c3 100644
+--- a/applications/legacy/compressible/rhoPorousSimpleFoam/Make/options
++++ b/applications/legacy/compressible/rhoPorousSimpleFoam/Make/options
+@@ -11,13 +11,17 @@ EXE_INC = \
+     -I$(LIB_SRC)/finiteVolume/cfdTools \
+     -I$(LIB_SRC)/finiteVolume/lnInclude \
+     -I$(LIB_SRC)/sampling/lnInclude \
+-    -I$(LIB_SRC)/meshTools/lnInclude \
++    -I$(LIB_SRC)/meshTools/lnInclude
+ 
+ EXE_LIBS = \
+-    -lfluidThermophysicalModels \
++    -lphysicalProperties \
+     -lspecie \
++    -lfluidThermophysicalModels \
+     -lmomentumTransportModels \
+     -lcompressibleMomentumTransportModels \
++    -lthermophysicalTransportModel \
++    -lfluidThermophysicalTransportModel \
++    -lfluidThermoThermophysicalTransportModels \
+     -lcoupledThermophysicalTransportModels \
+     -lfiniteVolume \
+     -lsampling \
+diff --git a/applications/legacy/lagrangian/dsmcFoam/Make/options b/applications/legacy/lagrangian/dsmcFoam/Make/options
+index 47c4bad341..5b835aa0a0 100644
+--- a/applications/legacy/lagrangian/dsmcFoam/Make/options
++++ b/applications/legacy/lagrangian/dsmcFoam/Make/options
+@@ -6,7 +6,8 @@ EXE_INC = \
+     -I$(LIB_SRC)/meshTools/lnInclude
+ 
+ EXE_LIBS = \
+-    -lmeshTools \
+-    -lfiniteVolume \
++    -ltracking \
+     -llagrangian \
+-    -lDSMC
++    -lDSMC \
++    -lmeshTools \
++    -lfiniteVolume
+diff --git a/applications/legacy/lagrangian/mdEquilibrationFoam/Make/options b/applications/legacy/lagrangian/mdEquilibrationFoam/Make/options
+index 6ff1a12792..73bd5aed57 100644
+--- a/applications/legacy/lagrangian/mdEquilibrationFoam/Make/options
++++ b/applications/legacy/lagrangian/mdEquilibrationFoam/Make/options
+@@ -6,7 +6,8 @@ EXE_INC = \
+     -I$(LIB_SRC)/lagrangian/molecularDynamics/lnInclude
+ 
+ EXE_LIBS = \
+-    -lmeshTools \
+-    -lfiniteVolume \
++    -ltracking \
+     -llagrangian \
+-    -lmolecularDynamics
++    -lmolecularDynamics \
++    -lmeshTools \
++    -lfiniteVolume
+diff --git a/applications/legacy/lagrangian/mdFoam/Make/options b/applications/legacy/lagrangian/mdFoam/Make/options
+index 6ff1a12792..73bd5aed57 100644
+--- a/applications/legacy/lagrangian/mdFoam/Make/options
++++ b/applications/legacy/lagrangian/mdFoam/Make/options
+@@ -6,7 +6,8 @@ EXE_INC = \
+     -I$(LIB_SRC)/lagrangian/molecularDynamics/lnInclude
+ 
+ EXE_LIBS = \
+-    -lmeshTools \
+-    -lfiniteVolume \
++    -ltracking \
+     -llagrangian \
+-    -lmolecularDynamics
++    -lmolecularDynamics \
++    -lmeshTools \
++    -lfiniteVolume
+diff --git a/applications/modules/XiFluid/Make/options b/applications/modules/XiFluid/Make/options
+index 520677cc52..1f4dea1b93 100644
+--- a/applications/modules/XiFluid/Make/options
++++ b/applications/modules/XiFluid/Make/options
+@@ -19,15 +19,19 @@ EXE_INC = \
+ LIB_LIBS = \
+     -lfluidSolver \
+     -lisothermalFluid \
++    -lphysicalProperties \
++    -lspecie \
++    -lfluidThermophysicalModels \
++    -lmulticomponentThermophysicalModels \
+     -lmomentumTransportModels \
+     -lcompressibleMomentumTransportModels \
++    -lthermophysicalTransportModel \
++    -lfluidThermophysicalTransportModel \
+     -lfluidThermoThermophysicalTransportModels \
+     -lcoupledThermophysicalTransportModels \
+-    -lmulticomponentThermophysicalModels \
+-    -lspecie \
+     -llaminarFlameSpeedModels \
+     -lfiniteVolume \
+     -lfvModels \
+     -lfvConstraints \
+-    -lsampling \
+-    -lmeshTools
++    -lmeshTools \
++    -lsampling
+diff --git a/applications/modules/compressibleMultiphaseVoF/Make/options b/applications/modules/compressibleMultiphaseVoF/Make/options
+index 5d105e98d2..15e6b22d2f 100644
+--- a/applications/modules/compressibleMultiphaseVoF/Make/options
++++ b/applications/modules/compressibleMultiphaseVoF/Make/options
+@@ -13,6 +13,8 @@ EXE_INC = \
+     -I$(LIB_SRC)/sampling/lnInclude
+ 
+ LIB_LIBS = \
++    -lfluidSolver \
++    -lVoFSolver \
+     -lmultiphaseVoFSolver \
+     -lphysicalProperties \
+     -lmultiphaseProperties \
+diff --git a/applications/modules/compressibleVoF/Make/options b/applications/modules/compressibleVoF/Make/options
+index 07b7958907..cafcd44b1a 100644
+--- a/applications/modules/compressibleVoF/Make/options
++++ b/applications/modules/compressibleVoF/Make/options
+@@ -18,8 +18,13 @@ EXE_INC = \
+     -I$(LIB_SRC)/meshTools/lnInclude
+ 
+ LIB_LIBS = \
++    -lfluidSolver \
++    -lVoFSolver \
++    -ltwoPhaseSolver \
+     -ltwoPhaseVoFSolver \
++    -ltwoPhaseMixture \
+     -lphysicalProperties \
++    -lspecie \
+     -lfluidThermophysicalModels \
+     -linterfaceCompression \
+     -lcompressibleInterfaceProperties \
+@@ -28,6 +33,8 @@ LIB_LIBS = \
+     -lcompressibleMomentumTransportModels \
+     -lphaseCompressibleMomentumTransportModels \
+     -lthermophysicalTransportModel \
++    -lfluidThermophysicalTransportModel \
++    -lfluidThermoThermophysicalTransportModels \
+     -lcoupledThermophysicalTransportModels \
+     -lfiniteVolume \
+     -lmeshTools \
+diff --git a/applications/modules/compressibleVoF/fvModels/VoFCavitation/Make/options b/applications/modules/compressibleVoF/fvModels/VoFCavitation/Make/options
+index 36069368a4..6a8efcf5e4 100644
+--- a/applications/modules/compressibleVoF/fvModels/VoFCavitation/Make/options
++++ b/applications/modules/compressibleVoF/fvModels/VoFCavitation/Make/options
+@@ -14,4 +14,18 @@ EXE_INC = \
+     -I$(LIB_SRC)/meshTools/lnInclude
+ 
+ LIB_LIBS = \
+-    -lcompressibleCavitationModels
++    -lcompressibleVoF \
++    -lcompressibleCavitationModels \
++    -lsaturationModels \
++    -ltwoPhaseVoFSolver \
++    -ltwoPhaseSolver \
++    -lVoFSolver \
++    -lfluidSolver \
++    -ltwoPhaseMixture \
++    -lcompressibleTwoPhases \
++    -lfluidThermophysicalModels \
++    -lphysicalProperties \
++    -lfiniteVolume \
++    -lmeshTools \
++    -lfvModels \
++    -lfvConstraints
+diff --git a/applications/modules/compressibleVoF/fvModels/VoFClouds/Make/options b/applications/modules/compressibleVoF/fvModels/VoFClouds/Make/options
+index 6eed1d8c9f..025e5f542f 100644
+--- a/applications/modules/compressibleVoF/fvModels/VoFClouds/Make/options
++++ b/applications/modules/compressibleVoF/fvModels/VoFClouds/Make/options
+@@ -13,5 +13,17 @@ EXE_INC = \
+     -I$(LIB_SRC)/finiteVolume/lnInclude
+ 
+ LIB_LIBS = \
++    -lcompressibleVoF \
+     -llagrangian \
+-    -llagrangianParcel
++    -llagrangianParcel \
++    -ltracking \
++    -ltwoPhaseVoFSolver \
++    -ltwoPhaseSolver \
++    -lVoFSolver \
++    -ltwoPhaseMixture \
++    -lcompressibleTwoPhases \
++    -lfluidThermophysicalModels \
++    -lphysicalProperties \
++    -lfiniteVolume \
++    -lfvModels \
++    -lfvConstraints
+diff --git a/applications/modules/compressibleVoF/fvModels/VoFSolidificationMelting/Make/options b/applications/modules/compressibleVoF/fvModels/VoFSolidificationMelting/Make/options
+index 02c9822bda..0c50ac14b3 100644
+--- a/applications/modules/compressibleVoF/fvModels/VoFSolidificationMelting/Make/options
++++ b/applications/modules/compressibleVoF/fvModels/VoFSolidificationMelting/Make/options
+@@ -11,4 +11,15 @@ EXE_INC = \
+     -I$(LIB_SRC)/meshTools/lnInclude
+ 
+ LIB_LIBS = \
+-    -lcompressibleVoF
++    -lcompressibleVoF \
++    -ltwoPhaseVoFSolver \
++    -ltwoPhaseSolver \
++    -lVoFSolver \
++    -ltwoPhaseMixture \
++    -lcompressibleTwoPhases \
++    -lfluidThermophysicalModels \
++    -lphysicalProperties \
++    -lfiniteVolume \
++    -lmeshTools \
++    -lfvModels \
++    -lfvConstraints
+diff --git a/applications/modules/compressibleVoF/fvModels/VoFTurbulenceDamping/Make/options b/applications/modules/compressibleVoF/fvModels/VoFTurbulenceDamping/Make/options
+index 70961a2f4f..b2db094b4f 100644
+--- a/applications/modules/compressibleVoF/fvModels/VoFTurbulenceDamping/Make/options
++++ b/applications/modules/compressibleVoF/fvModels/VoFTurbulenceDamping/Make/options
+@@ -12,4 +12,18 @@ EXE_INC = \
+     -I$(LIB_SRC)/MomentumTransportModels/phaseCompressible/lnInclude \
+     -I$(LIB_SRC)/finiteVolume/lnInclude
+ 
+-LIB_LIBS =
++LIB_LIBS = \
++    -lcompressibleVoF \
++    -ltwoPhaseVoFSolver \
++    -ltwoPhaseSolver \
++    -lVoFSolver \
++    -ltwoPhaseMixture \
++    -lcompressibleTwoPhases \
++    -lmomentumTransportModels \
++    -lcompressibleMomentumTransportModels \
++    -lphaseCompressibleMomentumTransportModels \
++    -lfluidThermophysicalModels \
++    -lphysicalProperties \
++    -lfiniteVolume \
++    -lfvModels \
++    -lfvConstraints
+diff --git a/applications/modules/film/Make/options b/applications/modules/film/Make/options
+index 7f2bd42556..aab6f6f1e8 100644
+--- a/applications/modules/film/Make/options
++++ b/applications/modules/film/Make/options
+@@ -13,10 +13,17 @@ EXE_INC = \
+ 
+ LIB_LIBS = \
+     -lisothermalFilm \
++    -lfilmCompressibleMomentumTransportModels \
+     -lfilmThermophysicalTransportModels \
+     -lcoupledThermophysicalTransportModels \
++    -lthermophysicalTransportModel \
++    -lfluidThermophysicalTransportModel \
++    -lfluidThermoThermophysicalTransportModels \
+     -lmomentumTransportModels \
+     -lcompressibleMomentumTransportModels \
++    -lfluidThermophysicalModels \
++    -lphysicalProperties \
++    -lspecie \
+     -lfiniteVolume \
+     -lmeshTools \
+     -lsampling \
+diff --git a/applications/modules/film/filmThermophysicalTransportModels/Make/options b/applications/modules/film/filmThermophysicalTransportModels/Make/options
+index c6283502e6..f6dba3ae55 100644
+--- a/applications/modules/film/filmThermophysicalTransportModels/Make/options
++++ b/applications/modules/film/filmThermophysicalTransportModels/Make/options
+@@ -9,13 +9,17 @@ EXE_INC = \
+     -I$(LIB_SRC)/thermophysicalModels/specie/lnInclude \
+     -I$(LIB_SRC)/thermophysicalModels/basic/lnInclude \
+     -I$(LIB_SRC)/finiteVolume/lnInclude \
+-    -I$(LIB_SRC)/meshTools/lnInclude \
++    -I$(LIB_SRC)/meshTools/lnInclude
+ 
+ LIB_LIBS = \
++    -lthermophysicalTransportModel \
++    -lfluidThermophysicalTransportModel \
+     -lfluidThermoThermophysicalTransportModels \
+     -lfluidThermophysicalModels \
+     -lmomentumTransportModels \
++    -lcompressibleMomentumTransportModels \
+     -lfilmCompressibleMomentumTransportModels \
++    -lphysicalProperties \
+     -lspecie \
+     -lfiniteVolume \
+     -lmeshTools
+diff --git a/applications/modules/fluid/Make/options b/applications/modules/fluid/Make/options
+index 905fd5e485..29a56f6226 100644
+--- a/applications/modules/fluid/Make/options
++++ b/applications/modules/fluid/Make/options
+@@ -16,6 +16,17 @@ EXE_INC = \
+ LIB_LIBS = \
+     -lfluidSolver \
+     -lisothermalFluid \
++    -lphysicalProperties \
++    -lspecie \
+     -lfluidThermophysicalModels \
++    -lmomentumTransportModels \
+     -lcompressibleMomentumTransportModels \
+-    -lcoupledThermophysicalTransportModels
++    -lthermophysicalTransportModel \
++    -lfluidThermophysicalTransportModel \
++    -lfluidThermoThermophysicalTransportModels \
++    -lcoupledThermophysicalTransportModels \
++    -lfiniteVolume \
++    -lmeshTools \
++    -lsampling \
++    -lfvModels \
++    -lfvConstraints
+diff --git a/applications/modules/incompressibleDenseParticleFluid/Make/options b/applications/modules/incompressibleDenseParticleFluid/Make/options
+index 2c50c9167f..622bcc788f 100644
+--- a/applications/modules/incompressibleDenseParticleFluid/Make/options
++++ b/applications/modules/incompressibleDenseParticleFluid/Make/options
+@@ -16,6 +16,7 @@ LIB_LIBS = \
+     -lincompressibleMomentumTransportModels \
+     -lphaseIncompressibleMomentumTransportModels \
+     -lphysicalProperties \
++    -ltracking \
+     -llagrangian \
+     -llagrangianParcel \
+     -lfiniteVolume \
+diff --git a/applications/modules/incompressibleDriftFlux/Make/options b/applications/modules/incompressibleDriftFlux/Make/options
+index 41b1f9932e..60a9a9b940 100644
+--- a/applications/modules/incompressibleDriftFlux/Make/options
++++ b/applications/modules/incompressibleDriftFlux/Make/options
+@@ -18,10 +18,13 @@ EXE_INC = \
+     -I$(LIB_SRC)/sampling/lnInclude
+ 
+ LIB_LIBS = \
++    -lfluidSolver \
++    -lVoFSolver \
++    -ltwoPhaseSolver \
++    -ltwoPhaseMixture \
+     -lincompressibleDriftFluxViscosityModel \
+     -lincompressibleDriftFluxRelativeVelocityModels \
+     -lincompressibleDriftFluxPackingDispersionModels \
+-    -ltwoPhaseSolver \
+     -lphysicalProperties \
+     -linterfaceCompression \
+     -lincompressibleTwoPhases \
+diff --git a/applications/modules/incompressibleFluid/Make/options b/applications/modules/incompressibleFluid/Make/options
+index a238f17167..4880366f28 100644
+--- a/applications/modules/incompressibleFluid/Make/options
++++ b/applications/modules/incompressibleFluid/Make/options
+@@ -7,4 +7,12 @@ EXE_INC = \
+     -I$(LIB_SRC)/meshTools/lnInclude
+ 
+ LIB_LIBS = \
+-    -lfluidSolver
++    -lfluidSolver \
++    -lphysicalProperties \
++    -lmomentumTransportModels \
++    -lincompressibleMomentumTransportModels \
++    -lfiniteVolume \
++    -lmeshTools \
++    -lfvModels \
++    -lfvConstraints \
++    -lsampling
+diff --git a/applications/modules/incompressibleMultiphaseVoF/Make/options b/applications/modules/incompressibleMultiphaseVoF/Make/options
+index c109e71bb5..79190d3e75 100644
+--- a/applications/modules/incompressibleMultiphaseVoF/Make/options
++++ b/applications/modules/incompressibleMultiphaseVoF/Make/options
+@@ -12,6 +12,8 @@ EXE_INC = \
+     -I$(LIB_SRC)/sampling/lnInclude
+ 
+ LIB_LIBS = \
++    -lfluidSolver \
++    -lVoFSolver \
+     -lmultiphaseVoFSolver \
+     -lphysicalProperties \
+     -lmultiphaseProperties \
+diff --git a/applications/modules/incompressibleVoF/Make/options b/applications/modules/incompressibleVoF/Make/options
+index a44e729752..20f08133bb 100644
+--- a/applications/modules/incompressibleVoF/Make/options
++++ b/applications/modules/incompressibleVoF/Make/options
+@@ -17,9 +17,13 @@ EXE_INC = \
+     -I$(LIB_SRC)/sampling/lnInclude
+ 
+ LIB_LIBS = \
++    -lfluidSolver \
++    -lVoFSolver \
++    -ltwoPhaseSolver \
+     -ltwoPhaseVoFSolver \
+     -lphysicalProperties \
+     -linterfaceCompression \
++    -ltwoPhaseMixture \
+     -lincompressibleTwoPhases \
+     -ltwoPhaseProperties \
+     -linterfaceProperties \
+diff --git a/applications/modules/incompressibleVoF/fvModels/VoFCavitation/Make/options b/applications/modules/incompressibleVoF/fvModels/VoFCavitation/Make/options
+index 08ac426033..e4633512de 100644
+--- a/applications/modules/incompressibleVoF/fvModels/VoFCavitation/Make/options
++++ b/applications/modules/incompressibleVoF/fvModels/VoFCavitation/Make/options
+@@ -12,4 +12,16 @@ EXE_INC = \
+     -I$(LIB_SRC)/meshTools/lnInclude
+ 
+ LIB_LIBS = \
+-    -lincompressibleCavitationModels
++    -lincompressibleVoF \
++    -lincompressibleCavitationModels \
++    -ltwoPhaseVoFSolver \
++    -ltwoPhaseSolver \
++    -lVoFSolver \
++    -lfluidSolver \
++    -ltwoPhaseMixture \
++    -lincompressibleTwoPhases \
++    -lphysicalProperties \
++    -lfiniteVolume \
++    -lmeshTools \
++    -lfvModels \
++    -lfvConstraints
+diff --git a/applications/modules/incompressibleVoF/fvModels/VoFTurbulenceDamping/Make/options b/applications/modules/incompressibleVoF/fvModels/VoFTurbulenceDamping/Make/options
+index 0db53faf7c..83fdb0d799 100644
+--- a/applications/modules/incompressibleVoF/fvModels/VoFTurbulenceDamping/Make/options
++++ b/applications/modules/incompressibleVoF/fvModels/VoFTurbulenceDamping/Make/options
+@@ -10,4 +10,16 @@ EXE_INC = \
+     -I$(LIB_SRC)/MomentumTransportModels/incompressible/lnInclude \
+     -I$(LIB_SRC)/finiteVolume/lnInclude
+ 
+-LIB_LIBS =
++LIB_LIBS = \
++    -lincompressibleVoF \
++    -ltwoPhaseVoFSolver \
++    -ltwoPhaseSolver \
++    -lVoFSolver \
++    -ltwoPhaseMixture \
++    -lincompressibleTwoPhases \
++    -lmomentumTransportModels \
++    -lincompressibleMomentumTransportModels \
++    -lphysicalProperties \
++    -lfiniteVolume \
++    -lfvModels \
++    -lfvConstraints
+diff --git a/applications/modules/isothermalFilm/Make/options b/applications/modules/isothermalFilm/Make/options
+index 0ba500e5a0..f9de435bf4 100644
+--- a/applications/modules/isothermalFilm/Make/options
++++ b/applications/modules/isothermalFilm/Make/options
+@@ -9,9 +9,14 @@ EXE_INC = \
+     -I$(LIB_SRC)/meshTools/lnInclude
+ 
+ LIB_LIBS = \
+-    -lfluidThermophysicalModels \
+-    -lmomentumTransportModels \
+     -lfilmCompressibleMomentumTransportModels \
++    -lmomentumTransportModels \
++    -lcompressibleMomentumTransportModels \
++    -lphysicalProperties \
++    -lspecie \
++    -lfluidThermophysicalModels \
++    -ltwoPhaseProperties \
++    -ltwoPhaseMixture \
+     -linterfaceProperties \
+     -lfiniteVolume \
+     -lmeshTools \
+diff --git a/applications/modules/isothermalFilm/filmCompressibleMomentumTransportModels/Make/options b/applications/modules/isothermalFilm/filmCompressibleMomentumTransportModels/Make/options
+index 081efb6fd8..4e1a230566 100644
+--- a/applications/modules/isothermalFilm/filmCompressibleMomentumTransportModels/Make/options
++++ b/applications/modules/isothermalFilm/filmCompressibleMomentumTransportModels/Make/options
+@@ -3,9 +3,11 @@ EXE_INC = \
+     -I$(LIB_SRC)/MomentumTransportModels/compressible/lnInclude \
+     -I$(LIB_SRC)/physicalProperties/lnInclude \
+     -I$(LIB_SRC)/finiteVolume/lnInclude \
+-    -I$(LIB_SRC)/meshTools/lnInclude \
++    -I$(LIB_SRC)/meshTools/lnInclude
+ 
+ LIB_LIBS = \
++    -lmomentumTransportModels \
++    -lcompressibleMomentumTransportModels \
+     -lphysicalProperties \
+     -lfiniteVolume \
+     -lmeshTools
+diff --git a/applications/modules/isothermalFilm/fvModels/filmCloudTransfer/Make/options b/applications/modules/isothermalFilm/fvModels/filmCloudTransfer/Make/options
+index 865f246729..5d4ff4540c 100644
+--- a/applications/modules/isothermalFilm/fvModels/filmCloudTransfer/Make/options
++++ b/applications/modules/isothermalFilm/fvModels/filmCloudTransfer/Make/options
+@@ -15,9 +15,20 @@ EXE_INC = \
+     -I$(LIB_SRC)/thermophysicalModels/multicomponentThermo/lnInclude \
+     \
+     -I$(LIB_SRC)/finiteVolume/lnInclude \
+-    -I$(LIB_SRC)/meshTools/lnInclude \
++    -I$(LIB_SRC)/meshTools/lnInclude
+ 
+ LIB_LIBS = \
+     -lisothermalFilm \
++    -lfilmCompressibleMomentumTransportModels \
++    -ltracking \
+     -llagrangian \
+-    -llagrangianParcel
++    -llagrangianParcel \
++    -lphysicalProperties \
++    -lspecie \
++    -lfluidThermophysicalModels \
++    -lmomentumTransportModels \
++    -lcompressibleMomentumTransportModels \
++    -lfiniteVolume \
++    -lmeshTools \
++    -lfvModels \
++    -lfvConstraints
+diff --git a/applications/modules/isothermalFilm/fvModels/filmVoFTransfer/Make/options b/applications/modules/isothermalFilm/fvModels/filmVoFTransfer/Make/options
+index 4ea1e4fbe5..dfbabc33b3 100644
+--- a/applications/modules/isothermalFilm/fvModels/filmVoFTransfer/Make/options
++++ b/applications/modules/isothermalFilm/fvModels/filmVoFTransfer/Make/options
+@@ -20,8 +20,26 @@ EXE_INC = \
+     -I$(LIB_SRC)/ThermophysicalTransportModels/thermophysicalTransportModel/lnInclude \
+     \
+     -I$(LIB_SRC)/finiteVolume/lnInclude \
+-    -I$(LIB_SRC)/meshTools/lnInclude \
++    -I$(LIB_SRC)/meshTools/lnInclude
+ 
+ LIB_LIBS = \
+     -lisothermalFilm \
+-    -lcompressibleVoF
++    -lfilmCompressibleMomentumTransportModels \
++    -lcompressibleVoF \
++    -ltwoPhaseVoFSolver \
++    -ltwoPhaseSolver \
++    -lVoFSolver \
++    -lfluidSolver \
++    -linterfaceCompression \
++    -linterfaceProperties \
++    -ltwoPhaseMixture \
++    -lcompressibleTwoPhases \
++    -lphysicalProperties \
++    -lfluidThermophysicalModels \
++    -lmomentumTransportModels \
++    -lcompressibleMomentumTransportModels \
++    -lphaseCompressibleMomentumTransportModels \
++    -lfiniteVolume \
++    -lmeshTools \
++    -lfvModels \
++    -lfvConstraints
+diff --git a/applications/modules/isothermalFluid/Make/options b/applications/modules/isothermalFluid/Make/options
+index 0c6624a2ee..d2f333acc5 100644
+--- a/applications/modules/isothermalFluid/Make/options
++++ b/applications/modules/isothermalFluid/Make/options
+@@ -10,6 +10,7 @@ EXE_INC = \
+ 
+ LIB_LIBS = \
+     -lfluidSolver \
++    -lphysicalProperties \
+     -lfluidThermophysicalModels \
+     -lmomentumTransportModels \
+     -lcompressibleMomentumTransportModels \
+diff --git a/applications/modules/multicomponentFluid/Make/options b/applications/modules/multicomponentFluid/Make/options
+index c25713d4fb..9d1103796f 100644
+--- a/applications/modules/multicomponentFluid/Make/options
++++ b/applications/modules/multicomponentFluid/Make/options
+@@ -21,16 +21,20 @@ EXE_INC = \
+ LIB_LIBS = \
+     -lfluidSolver \
+     -lisothermalFluid \
+-    -lfluidThermophysicalModels \
++    -lphysicalProperties \
+     -lspecie \
++    -lfluidThermophysicalModels \
++    -lmulticomponentThermophysicalModels \
+     -lchemistryModel \
+     -lODE \
+     -lcombustionModels \
+-    -lmulticomponentThermophysicalModels \
+     -lmomentumTransportModels \
+     -lcompressibleMomentumTransportModels \
+-    -lcoupledThermophysicalTransportModels \
++    -lthermophysicalTransportModel \
++    -lfluidThermophysicalTransportModel \
++    -lfluidThermoThermophysicalTransportModels \
+     -lfluidMulticomponentThermophysicalTransportModels \
++    -lcoupledThermophysicalTransportModels \
+     -lfiniteVolume \
+     -lfvModels \
+     -lfvConstraints \
+diff --git a/applications/modules/multiphaseEuler/Make/options b/applications/modules/multiphaseEuler/Make/options
+index c97ce3f862..8375bf0aa6 100644
+--- a/applications/modules/multiphaseEuler/Make/options
++++ b/applications/modules/multiphaseEuler/Make/options
+@@ -15,9 +15,22 @@ EXE_INC = \
+ 
+ LIB_LIBS = \
+     -lfluidSolver \
++    -lphaseSystem \
+     -lpopulationBalance \
+     -lmultiphaseEulerMomentumTransportModels \
+     -lmultiphaseEulerThermophysicalTransportModels \
+     -lmultiphaseEulerReactions \
++    -lphysicalProperties \
++    -lspecie \
++    -lfluidThermophysicalModels \
++    -lmulticomponentThermophysicalModels \
++    -ltwoPhaseMixture \
++    -lcompressibleTwoPhases \
++    -lmomentumTransportModels \
++    -lcompressibleMomentumTransportModels \
++    -lphaseCompressibleMomentumTransportModels \
++    -lfiniteVolume \
++    -lmeshTools \
++    -lsampling \
+     -lfvModels \
+     -lfvConstraints
+diff --git a/applications/modules/multiphaseEuler/functionObjects/Make/options b/applications/modules/multiphaseEuler/functionObjects/Make/options
+index 446b4b7e62..064e311111 100644
+--- a/applications/modules/multiphaseEuler/functionObjects/Make/options
++++ b/applications/modules/multiphaseEuler/functionObjects/Make/options
+@@ -21,5 +21,19 @@ LIB_LIBS = \
+     -lphaseSystem \
+     -lpopulationBalance \
+     -lmultiphaseEulerFvModels \
++    -lmultiphaseEuler \
+     -lfileFormats \
+-    -lfieldFunctionObjects
++    -lfieldFunctionObjects \
++    -lphysicalProperties \
++    -lspecie \
++    -lfluidThermophysicalModels \
++    -ltwoPhaseMixture \
++    -lcompressibleTwoPhases \
++    -lmomentumTransportModels \
++    -lcompressibleMomentumTransportModels \
++    -lphaseCompressibleMomentumTransportModels \
++    -lfiniteVolume \
++    -lmeshTools \
++    -lsampling \
++    -lfvModels \
++    -lfvConstraints
+diff --git a/applications/modules/multiphaseEuler/fvModels/Make/options b/applications/modules/multiphaseEuler/fvModels/Make/options
+index 918deb077f..0a6ed6e580 100644
+--- a/applications/modules/multiphaseEuler/fvModels/Make/options
++++ b/applications/modules/multiphaseEuler/fvModels/Make/options
+@@ -23,11 +23,29 @@ EXE_INC = \
+     -I$(FOAM_MODULES)/fluidSolver/lnInclude
+ 
+ LIB_LIBS = \
++    -lfluidSolver \
+     -lfvModels \
++    -lfvConstraints \
+     -lphaseSystem \
+     -lpopulationBalance \
+     -lmultiphaseEuler \
++    -lsaturationModels \
+     -lcompressibleCavitationModels \
++    -lthermophysicalTransportModel \
++    -lfluidThermophysicalTransportModel \
++    -lfluidThermoThermophysicalTransportModels \
+     -lphaseFluidThermophysicalTransportModels \
+     -lphaseFluidMulticomponentThermophysicalTransportModels \
+-    -lcoupledThermophysicalTransportModels
++    -lcoupledThermophysicalTransportModels \
++    -lphysicalProperties \
++    -lspecie \
++    -lfluidThermophysicalModels \
++    -lmulticomponentThermophysicalModels \
++    -ltwoPhaseMixture \
++    -lcompressibleTwoPhases \
++    -lmomentumTransportModels \
++    -lcompressibleMomentumTransportModels \
++    -lphaseCompressibleMomentumTransportModels \
++    -lfiniteVolume \
++    -lmeshTools \
++    -lsampling
+diff --git a/applications/modules/multiphaseEuler/momentumTransportModels/Make/options b/applications/modules/multiphaseEuler/momentumTransportModels/Make/options
+index ea19c5e45b..c56af022ed 100644
+--- a/applications/modules/multiphaseEuler/momentumTransportModels/Make/options
++++ b/applications/modules/multiphaseEuler/momentumTransportModels/Make/options
+@@ -14,4 +14,16 @@ EXE_INC = \
+     -I$(LIB_SRC)/MomentumTransportModels/phaseCompressible/lnInclude
+ 
+ LIB_LIBS = \
+-    -lphaseSystem
++    -lphaseSystem \
++    -lphysicalProperties \
++    -lspecie \
++    -lfluidThermophysicalModels \
++    -lmulticomponentThermophysicalModels \
++    -ltwoPhaseMixture \
++    -lcompressibleTwoPhases \
++    -lmomentumTransportModels \
++    -lcompressibleMomentumTransportModels \
++    -lphaseCompressibleMomentumTransportModels \
++    -lfiniteVolume \
++    -lmeshTools \
++    -lsampling
+diff --git a/applications/modules/multiphaseEuler/phaseSystem/Make/options b/applications/modules/multiphaseEuler/phaseSystem/Make/options
+index c9e16b0942..fc95ec1348 100644
+--- a/applications/modules/multiphaseEuler/phaseSystem/Make/options
++++ b/applications/modules/multiphaseEuler/phaseSystem/Make/options
+@@ -24,10 +24,25 @@ LIB_LIBS = \
+     -lsampling \
+     -lmulticomponentThermophysicalModels \
+     -lsaturationModels \
++    -ltwoPhaseMixture \
+     -lcompressibleTwoPhases \
+     -lmultiphaseProperties \
++    -lmomentumTransportModels \
++    -lcompressibleMomentumTransportModels \
+     -lphaseCompressibleMomentumTransportModels \
++    -lthermophysicalTransportModel \
++    -lfluidThermophysicalTransportModel \
++    -lfluidThermoThermophysicalTransportModels \
+     -lphaseFluidThermophysicalTransportModels \
+     -lphaseFluidMulticomponentThermophysicalTransportModels \
++    -lsolidThermophysicalTransportModels \
+     -lphaseSolidThermophysicalTransportModels \
+-    -lcombustionModels
++    -lcombustionModels \
++    -lphysicalProperties \
++    -lspecie \
++    -lfluidThermophysicalModels \
++    -lsolidThermo \
++    -lfiniteVolume \
++    -lmeshTools \
++    -lfvModels \
++    -lfvConstraints
+diff --git a/applications/modules/multiphaseEuler/populationBalance/Make/options b/applications/modules/multiphaseEuler/populationBalance/Make/options
+index c352a6cbc8..16d4192bf9 100644
+--- a/applications/modules/multiphaseEuler/populationBalance/Make/options
++++ b/applications/modules/multiphaseEuler/populationBalance/Make/options
+@@ -16,4 +16,20 @@ EXE_INC = \
+     -I$(LIB_SRC)/ThermophysicalTransportModels/fluid/lnInclude
+ 
+ LIB_LIBS = \
+-    -lphaseSystem
++    -lphaseSystem \
++    -lphysicalProperties \
++    -lspecie \
++    -lfluidThermophysicalModels \
++    -lmulticomponentThermophysicalModels \
++    -ltwoPhaseMixture \
++    -lcompressibleTwoPhases \
++    -lmomentumTransportModels \
++    -lcompressibleMomentumTransportModels \
++    -lphaseCompressibleMomentumTransportModels \
++    -lthermophysicalTransportModel \
++    -lfluidThermophysicalTransportModel \
++    -lfiniteVolume \
++    -lmeshTools \
++    -lsampling \
++    -lfvModels \
++    -lfvConstraints
+diff --git a/applications/modules/multiphaseEuler/reactions/Make/options b/applications/modules/multiphaseEuler/reactions/Make/options
+index 05e1969b41..de66292a8f 100644
+--- a/applications/modules/multiphaseEuler/reactions/Make/options
++++ b/applications/modules/multiphaseEuler/reactions/Make/options
+@@ -13,4 +13,13 @@ EXE_INC = \
+ 
+ LIB_LIBS =  \
+     -lphaseSystem \
+-    -lchemistryModel
++    -lchemistryModel \
++    -lphysicalProperties \
++    -lspecie \
++    -lfluidThermophysicalModels \
++    -lmulticomponentThermophysicalModels \
++    -ltwoPhaseMixture \
++    -lcompressibleTwoPhases \
++    -lfiniteVolume \
++    -lmeshTools \
++    -lsampling
+diff --git a/applications/modules/multiphaseEuler/thermophysicalTransportModels/Make/options b/applications/modules/multiphaseEuler/thermophysicalTransportModels/Make/options
+index b8db9f5d20..3026ea7dcb 100644
+--- a/applications/modules/multiphaseEuler/thermophysicalTransportModels/Make/options
++++ b/applications/modules/multiphaseEuler/thermophysicalTransportModels/Make/options
+@@ -18,4 +18,18 @@ EXE_INC = \
+ 
+ LIB_LIBS = \
+     -lphaseSystem \
+-    -lcoupledThermophysicalTransportModels
++    -lcoupledThermophysicalTransportModels \
++    -lphysicalProperties \
++    -lspecie \
++    -lfluidThermophysicalModels \
++    -lmulticomponentThermophysicalModels \
++    -ltwoPhaseMixture \
++    -lcompressibleTwoPhases \
++    -lmomentumTransportModels \
++    -lcompressibleMomentumTransportModels \
++    -lphaseCompressibleMomentumTransportModels \
++    -lthermophysicalTransportModel \
++    -lfluidThermophysicalTransportModel \
++    -lfiniteVolume \
++    -lmeshTools \
++    -lsampling
+diff --git a/applications/modules/shockFluid/Make/options b/applications/modules/shockFluid/Make/options
+index f43dc70a5e..162f94e72d 100644
+--- a/applications/modules/shockFluid/Make/options
++++ b/applications/modules/shockFluid/Make/options
+@@ -13,11 +13,17 @@ EXE_INC = \
+ 
+ LIB_LIBS = \
+     -lfluidSolver \
++    -lphysicalProperties \
++    -lspecie \
+     -lfluidThermophysicalModels \
+     -lmomentumTransportModels \
+     -lcompressibleMomentumTransportModels \
++    -lthermophysicalTransportModel \
++    -lfluidThermophysicalTransportModel \
++    -lfluidThermoThermophysicalTransportModels \
+     -lcoupledThermophysicalTransportModels \
+     -lfiniteVolume \
+     -lmeshTools \
+     -lfvModels \
+-    -lfvConstraints
++    -lfvConstraints \
++    -lsampling
+diff --git a/applications/modules/solid/Make/options b/applications/modules/solid/Make/options
+index cc845ca8a7..1ce03fb53b 100644
+--- a/applications/modules/solid/Make/options
++++ b/applications/modules/solid/Make/options
+@@ -9,7 +9,10 @@ EXE_INC = \
+     -I$(LIB_SRC)/sampling/lnInclude
+ 
+ LIB_LIBS = \
++    -lphysicalProperties \
+     -lsolidThermo \
++    -lfluidThermophysicalModels \
++    -lthermophysicalTransportModel \
+     -lsolidThermophysicalTransportModels \
+     -lcoupledThermophysicalTransportModels \
+     -lspecie \
+diff --git a/applications/modules/solidDisplacement/Make/options b/applications/modules/solidDisplacement/Make/options
+index b541411fe8..a1a750d62f 100644
+--- a/applications/modules/solidDisplacement/Make/options
++++ b/applications/modules/solidDisplacement/Make/options
+@@ -16,6 +16,9 @@ LIB_LIBS = \
+     -lsolidDisplacementThermo \
+     -lsolidThermophysicalTransportModels \
+     -lcoupledThermophysicalTransportModels \
++    -lphysicalProperties \
++    -lthermophysicalTransportModel \
++    -lfluidThermophysicalModels \
+     -lspecie \
+     -lfiniteVolume \
+     -lmeshTools \
+diff --git a/applications/modules/solidDisplacement/solidDisplacementThermo/Make/options b/applications/modules/solidDisplacement/solidDisplacementThermo/Make/options
+index 39c0e03f4b..d88e7bfae2 100644
+--- a/applications/modules/solidDisplacement/solidDisplacementThermo/Make/options
++++ b/applications/modules/solidDisplacement/solidDisplacementThermo/Make/options
+@@ -6,5 +6,9 @@ EXE_INC = \
+     -I$(LIB_SRC)/meshTools/lnInclude
+ 
+ LIB_LIBS = \
++    -lphysicalProperties \
++    -lspecie \
++    -lfluidThermophysicalModels \
++    -lsolidThermo \
+     -lfiniteVolume \
+-    -lsolidThermo
++    -lmeshTools
+diff --git a/applications/modules/twoPhaseSolver/Make/options b/applications/modules/twoPhaseSolver/Make/options
+index aa2567c285..b848abbeab 100644
+--- a/applications/modules/twoPhaseSolver/Make/options
++++ b/applications/modules/twoPhaseSolver/Make/options
+@@ -11,6 +11,7 @@ EXE_INC = \
+     -I$(LIB_SRC)/sampling/lnInclude
+ 
+ LIB_LIBS = \
++    -lfluidSolver \
+     -lVoFSolver \
+     -lphysicalProperties \
+     -linterfaceCompression \
+diff --git a/applications/modules/twoPhaseVoFSolver/Make/options b/applications/modules/twoPhaseVoFSolver/Make/options
+index 8ddba0f6aa..b15c6f7943 100644
+--- a/applications/modules/twoPhaseVoFSolver/Make/options
++++ b/applications/modules/twoPhaseVoFSolver/Make/options
+@@ -12,6 +12,8 @@ EXE_INC = \
+     -I$(LIB_SRC)/sampling/lnInclude
+ 
+ LIB_LIBS = \
++    -lfluidSolver \
++    -lVoFSolver \
+     -ltwoPhaseSolver \
+     -lphysicalProperties \
+     -linterfaceCompression \
+diff --git a/applications/solvers/chemFoam/Make/options b/applications/solvers/chemFoam/Make/options
+index 0d449d26a7..3549601e3c 100644
+--- a/applications/solvers/chemFoam/Make/options
++++ b/applications/solvers/chemFoam/Make/options
+@@ -9,6 +9,11 @@ EXE_INC = \
+     -I$(LIB_SRC)/meshTools/lnInclude
+ 
+ EXE_LIBS = \
++    -lphysicalProperties \
++    -lspecie \
++    -lfluidThermophysicalModels \
++    -lmulticomponentThermophysicalModels \
++    -lODE \
+     -lchemistryModel \
+     -lfiniteVolume \
+     -lmeshTools
+diff --git a/applications/utilities/mesh/advanced/selectCells/Make/options b/applications/utilities/mesh/advanced/selectCells/Make/options
+index 4ad070debf..71300dd6fe 100644
+--- a/applications/utilities/mesh/advanced/selectCells/Make/options
++++ b/applications/utilities/mesh/advanced/selectCells/Make/options
+@@ -10,4 +10,5 @@ EXE_LIBS = \
+     -lmeshTools \
+     -lgenericPatches \
+     -ltriSurface \
+-    -llagrangian
++    -llagrangian \
++    -ltracking
+diff --git a/applications/utilities/mesh/conversion/foamToStarMesh/Make/options b/applications/utilities/mesh/conversion/foamToStarMesh/Make/options
+index e3af2fe661..ddeff83a4b 100644
+--- a/applications/utilities/mesh/conversion/foamToStarMesh/Make/options
++++ b/applications/utilities/mesh/conversion/foamToStarMesh/Make/options
+@@ -4,4 +4,6 @@ EXE_INC = \
+     -I$(LIB_SRC)/fileFormats/lnInclude
+ 
+ EXE_LIBS = \
+-    -lconversion
++    -lconversion \
++    -lmeshTools \
++    -lfileFormats
+diff --git a/applications/utilities/mesh/conversion/star4ToFoam/Make/options b/applications/utilities/mesh/conversion/star4ToFoam/Make/options
+index e3af2fe661..ddeff83a4b 100644
+--- a/applications/utilities/mesh/conversion/star4ToFoam/Make/options
++++ b/applications/utilities/mesh/conversion/star4ToFoam/Make/options
+@@ -4,4 +4,6 @@ EXE_INC = \
+     -I$(LIB_SRC)/fileFormats/lnInclude
+ 
+ EXE_LIBS = \
+-    -lconversion
++    -lconversion \
++    -lmeshTools \
++    -lfileFormats
+diff --git a/applications/utilities/mesh/generation/extrude2DMesh/Make/options b/applications/utilities/mesh/generation/extrude2DMesh/Make/options
+index ec6ef2ad60..087a5b915e 100644
+--- a/applications/utilities/mesh/generation/extrude2DMesh/Make/options
++++ b/applications/utilities/mesh/generation/extrude2DMesh/Make/options
+@@ -10,4 +10,5 @@ EXE_LIBS = \
+     -lpolyTopoChange \
+     -lextrude2DMesh \
+     -lgenericPatches \
+-    -lextrudeModel
++    -lextrudeModel \
++    -lfiniteVolume
+diff --git a/applications/utilities/mesh/generation/extrude2DMesh/extrude2DMesh/Make/options b/applications/utilities/mesh/generation/extrude2DMesh/extrude2DMesh/Make/options
+index 82eb9e1926..e85f45bc97 100644
+--- a/applications/utilities/mesh/generation/extrude2DMesh/extrude2DMesh/Make/options
++++ b/applications/utilities/mesh/generation/extrude2DMesh/extrude2DMesh/Make/options
+@@ -9,4 +9,5 @@ LIB_LIBS = \
+     -lmeshTools \
+     -lpolyTopoChange \
+     -lsurfMesh \
+-    -lfiniteVolume
++    -lfiniteVolume \
++    -lextrudeModel
+diff --git a/applications/utilities/mesh/generation/snappyHexMesh/Make/options b/applications/utilities/mesh/generation/snappyHexMesh/Make/options
+index 902ee2ad7e..d77e2d2770 100644
+--- a/applications/utilities/mesh/generation/snappyHexMesh/Make/options
++++ b/applications/utilities/mesh/generation/snappyHexMesh/Make/options
+@@ -13,6 +13,11 @@ EXE_LIBS = \
+     -lfiniteVolume \
+     -lgenericFvFields \
+     -ldecompositionMethods \
++    -ldistributed \
++    -ltracking \
++    -llagrangian \
++    -ltriSurface \
++    -lmotionSolvers \
+     -L$(FOAM_LIBBIN)/dummy -lscotchDecomp -lptscotchDecomp \
+     -lmeshTools \
+     -lmeshCheck \
+diff --git a/applications/utilities/mesh/manipulation/subsetMesh/Make/options b/applications/utilities/mesh/manipulation/subsetMesh/Make/options
+index c41a6c5f3c..f161090baf 100644
+--- a/applications/utilities/mesh/manipulation/subsetMesh/Make/options
++++ b/applications/utilities/mesh/manipulation/subsetMesh/Make/options
+@@ -5,4 +5,6 @@ EXE_INC = \
+ 
+ EXE_LIBS = \
+     -lpolyTopoChange \
+-    -lgenericFvFields
++    -lgenericFvFields \
++    -lfiniteVolume \
++    -lmeshTools
+diff --git a/applications/utilities/miscellaneous/foamFormatConvert/Make/options b/applications/utilities/miscellaneous/foamFormatConvert/Make/options
+index 96b98dcc77..1ab108aa7f 100644
+--- a/applications/utilities/miscellaneous/foamFormatConvert/Make/options
++++ b/applications/utilities/miscellaneous/foamFormatConvert/Make/options
+@@ -5,7 +5,8 @@ EXE_INC = \
+     -I$(LIB_SRC)/lagrangian/basic/lnInclude
+ 
+ EXE_LIBS = \
++    -ltracking \
++    -llagrangian \
+     -lmeshTools \
+     -lfiniteVolume \
+-    -lgenericFvFields \
+-    -llagrangian
++    -lgenericFvFields
+diff --git a/applications/utilities/parallelProcessing/decomposePar/Make/options b/applications/utilities/parallelProcessing/decomposePar/Make/options
+index cf703d3fab..a5552633f5 100644
+--- a/applications/utilities/parallelProcessing/decomposePar/Make/options
++++ b/applications/utilities/parallelProcessing/decomposePar/Make/options
+@@ -8,11 +8,12 @@ EXE_INC = \
+     -I$(LIB_SRC)/Lagrangian/Lagrangian/lnInclude
+ 
+ EXE_LIBS = \
++    -ltracking \
++    -llagrangian \
++    -lLagrangian \
+     -lfiniteVolume \
+     -lmeshTools \
+     -lparallel \
+     -ldecompositionMethods \
+-    -llagrangian \
+-    -lLagrangian \
+     -lgenericFvFields \
+     -lgenericLagrangianFields
+diff --git a/applications/utilities/parallelProcessing/reconstructPar/Make/options b/applications/utilities/parallelProcessing/reconstructPar/Make/options
+index de124fe8de..bc4d193bea 100644
+--- a/applications/utilities/parallelProcessing/reconstructPar/Make/options
++++ b/applications/utilities/parallelProcessing/reconstructPar/Make/options
+@@ -7,10 +7,11 @@ EXE_INC = \
+     -I$(LIB_SRC)/Lagrangian/Lagrangian/lnInclude
+ 
+ EXE_LIBS = \
++    -ltracking \
++    -llagrangian \
++    -lLagrangian \
+     -lfiniteVolume \
+     -lmeshTools \
+     -lparallel \
+-    -llagrangian \
+-    -lLagrangian \
+     -lgenericFvFields \
+     -lgenericLagrangianFields
+diff --git a/applications/utilities/postProcessing/dataConversion/foamToEnsight/Make/options b/applications/utilities/postProcessing/dataConversion/foamToEnsight/Make/options
+index ba639400c4..84da490f64 100644
+--- a/applications/utilities/postProcessing/dataConversion/foamToEnsight/Make/options
++++ b/applications/utilities/postProcessing/dataConversion/foamToEnsight/Make/options
+@@ -7,7 +7,10 @@ EXE_INC = \
+     -I$(LIB_SRC)/lagrangian/basic/lnInclude
+ 
+ EXE_LIBS = \
++    -ltracking \
++    -llagrangian \
++    -lmeshTools \
++    -lfiniteVolume \
+     -lpolyTopoChange \
+     -lsampling \
+-    -lgenericFvFields \
+-    -llagrangian
++    -lgenericFvFields
+diff --git a/applications/utilities/postProcessing/dataConversion/foamToEnsightParts/Make/options b/applications/utilities/postProcessing/dataConversion/foamToEnsightParts/Make/options
+index 79c8d1d851..324564c80a 100644
+--- a/applications/utilities/postProcessing/dataConversion/foamToEnsightParts/Make/options
++++ b/applications/utilities/postProcessing/dataConversion/foamToEnsightParts/Make/options
+@@ -7,8 +7,9 @@ EXE_INC = \
+     -I$(LIB_SRC)/conversion/lnInclude
+ 
+ EXE_LIBS = \
+-    -lfiniteVolume \
++    -ltracking \
+     -llagrangian \
++    -lfiniteVolume \
+     -lmeshTools \
+     -lsampling \
+     -lgenericFvFields \
+diff --git a/applications/utilities/postProcessing/dataConversion/foamToGMV/Make/options b/applications/utilities/postProcessing/dataConversion/foamToGMV/Make/options
+index e0d671151a..7be7662bbe 100644
+--- a/applications/utilities/postProcessing/dataConversion/foamToGMV/Make/options
++++ b/applications/utilities/postProcessing/dataConversion/foamToGMV/Make/options
+@@ -7,7 +7,10 @@ EXE_INC = \
+     -I$(LIB_SRC)/lagrangian/basic/lnInclude
+ 
+ EXE_LIBS = \
++    -ltracking \
++    -llagrangian \
++    -lphysicalProperties \
++    -lspecie \
+     -lfiniteVolume \
+     -lmeshTools \
+-    -lgenericFvFields \
+-    -llagrangian
++    -lgenericFvFields
+diff --git a/applications/utilities/postProcessing/dataConversion/foamToVTK/Make/options b/applications/utilities/postProcessing/dataConversion/foamToVTK/Make/options
+index 59a7b532ed..0d31743819 100644
+--- a/applications/utilities/postProcessing/dataConversion/foamToVTK/Make/options
++++ b/applications/utilities/postProcessing/dataConversion/foamToVTK/Make/options
+@@ -9,7 +9,10 @@ EXE_INC = \
+ 
+ EXE_LIBS = \
+     -lfoamToVTK \
+-    -lpolyTopoChange \
++    -ltracking \
+     -llagrangian \
++    -lmeshTools \
++    -lfiniteVolume \
++    -lpolyTopoChange \
+     -lgenericFvFields \
+     -lfileFormats
+diff --git a/applications/utilities/postProcessing/dataConversion/foamToVTK/foamToVTK/Make/options b/applications/utilities/postProcessing/dataConversion/foamToVTK/foamToVTK/Make/options
+index f419f4306d..35ca3d55bd 100644
+--- a/applications/utilities/postProcessing/dataConversion/foamToVTK/foamToVTK/Make/options
++++ b/applications/utilities/postProcessing/dataConversion/foamToVTK/foamToVTK/Make/options
+@@ -7,7 +7,10 @@ EXE_INC = \
+     -I$(LIB_SRC)/fileFormats/lnInclude
+ 
+ LIB_LIBS = \
+-    -lpolyTopoChange \
++    -ltracking \
+     -llagrangian \
++    -lmeshTools \
++    -lfiniteVolume \
++    -lpolyTopoChange \
+     -lgenericFvFields \
+     -lfileFormats
+diff --git a/applications/utilities/postProcessing/lagrangian/particleTracks/Make/options b/applications/utilities/postProcessing/lagrangian/particleTracks/Make/options
+index 6d7d546bc9..31b270eff4 100644
+--- a/applications/utilities/postProcessing/lagrangian/particleTracks/Make/options
++++ b/applications/utilities/postProcessing/lagrangian/particleTracks/Make/options
+@@ -7,9 +7,10 @@ EXE_INC = \
+     -I$(LIB_SRC)/lagrangian/basic/lnInclude
+ 
+ EXE_LIBS = \
++    -ltracking \
++    -llagrangian \
+     -lfiniteVolume \
+     -lmeshTools \
+     -lfileFormats \
+     -lsampling \
+-    -lgenericFvFields \
+-    -llagrangian
++    -lgenericFvFields
+diff --git a/applications/utilities/postProcessing/lagrangian/steadyParticleTracks/Make/options b/applications/utilities/postProcessing/lagrangian/steadyParticleTracks/Make/options
+index 1dd6a90d78..8fe1fa2102 100644
+--- a/applications/utilities/postProcessing/lagrangian/steadyParticleTracks/Make/options
++++ b/applications/utilities/postProcessing/lagrangian/steadyParticleTracks/Make/options
+@@ -5,6 +5,7 @@ EXE_INC = \
+     -I$(LIB_SRC)/finiteVolume/lnInclude
+ 
+ EXE_LIBS = \
++    -ltracking \
+     -llagrangian \
+     -lmeshTools \
+     -lfiniteVolume
+diff --git a/applications/utilities/preProcessing/dsmcInitialise/Make/options b/applications/utilities/preProcessing/dsmcInitialise/Make/options
+index 47c4bad341..5b835aa0a0 100644
+--- a/applications/utilities/preProcessing/dsmcInitialise/Make/options
++++ b/applications/utilities/preProcessing/dsmcInitialise/Make/options
+@@ -6,7 +6,8 @@ EXE_INC = \
+     -I$(LIB_SRC)/meshTools/lnInclude
+ 
+ EXE_LIBS = \
+-    -lmeshTools \
+-    -lfiniteVolume \
++    -ltracking \
+     -llagrangian \
+-    -lDSMC
++    -lDSMC \
++    -lmeshTools \
++    -lfiniteVolume
+diff --git a/applications/utilities/preProcessing/mdInitialise/Make/options b/applications/utilities/preProcessing/mdInitialise/Make/options
+index 0cf478bae0..5e6a961bae 100644
+--- a/applications/utilities/preProcessing/mdInitialise/Make/options
++++ b/applications/utilities/preProcessing/mdInitialise/Make/options
+@@ -7,8 +7,9 @@ EXE_INC = \
+     -I$(LIB_SRC)/lagrangian/molecularDynamics/lnInclude
+ 
+ EXE_LIBS = \
+-    -lmeshTools \
+-    -lpolyTopoChange \
+-    -lfiniteVolume \
++    -ltracking \
+     -llagrangian \
+-    -lmolecularDynamics
++    -lmolecularDynamics \
++    -lpolyTopoChange \
++    -lmeshTools \
++    -lfiniteVolume
+diff --git a/applications/utilities/preProcessing/viewFactorsGen/Make/options b/applications/utilities/preProcessing/viewFactorsGen/Make/options
+index 77036ae03b..38401005af 100644
+--- a/applications/utilities/preProcessing/viewFactorsGen/Make/options
++++ b/applications/utilities/preProcessing/viewFactorsGen/Make/options
+@@ -3,12 +3,18 @@ EXE_INC = \
+     -I$(LIB_SRC)/triSurface/lnInclude \
+     -I$(LIB_SRC)/parallel/distributed/lnInclude \
+     -I$(LIB_SRC)/meshTools/lnInclude \
+-    -I$(LIB_SRC)/finiteVolume/lnInclude
++    -I$(LIB_SRC)/finiteVolume/lnInclude \
++    -I$(LIB_SRC)/physicalProperties/lnInclude \
++    -I$(LIB_SRC)/thermophysicalModels/specie/lnInclude \
++    -I$(LIB_SRC)/thermophysicalModels/basic/lnInclude
+ 
+ EXE_LIBS = \
+     -lfileFormats \
+     -ltriSurface \
+     -ldistributed \
++    -lradiationModels \
++    -lfluidThermophysicalModels \
++    -lspecie \
++    -lphysicalProperties \
+     -lfiniteVolume \
+-    -lmeshTools \
+-    -lradiationModels
++    -lmeshTools
+diff --git a/applications/utilities/thermophysical/chemkinToFoam/Make/options b/applications/utilities/thermophysical/chemkinToFoam/Make/options
+index 8178fac902..628dbbd4fc 100644
+--- a/applications/utilities/thermophysical/chemkinToFoam/Make/options
++++ b/applications/utilities/thermophysical/chemkinToFoam/Make/options
+@@ -1,7 +1,16 @@
+ EXE_INC = \
+     -IchemkinReader \
++    -I$(LIB_SRC)/physicalProperties/lnInclude \
+     -I$(LIB_SRC)/thermophysicalModels/specie/lnInclude \
+-    -I$(LIB_SRC)/thermophysicalModels/multicomponentThermo/lnInclude
++    -I$(LIB_SRC)/thermophysicalModels/multicomponentThermo/lnInclude \
++    -I$(LIB_SRC)/thermophysicalModels/chemistryModel/lnInclude \
++    -I$(LIB_SRC)/finiteVolume/lnInclude \
++    -I$(LIB_SRC)/meshTools/lnInclude
+ 
+ EXE_LIBS = \
+-    -lchemistryModel
++    -lchemistryModel \
++    -lmulticomponentThermophysicalModels \
++    -lspecie \
++    -lphysicalProperties \
++    -lfiniteVolume \
++    -lmeshTools
+diff --git a/etc/config.sh/metis b/etc/config.sh/metis
+index a40707ac55..ded64bc7a5 100644
+--- a/etc/config.sh/metis
++++ b/etc/config.sh/metis
+@@ -1,70 +1 @@
+-#----------------------------------*-sh-*--------------------------------------
+-# =========                 |
+-# \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+-#  \\    /   O peration     | Website:  https://openfoam.org
+-#   \\  /    A nd           | Copyright (C) 2013-2024 OpenFOAM Foundation
+-#    \\/     M anipulation  |
+-#------------------------------------------------------------------------------
+-# License
+-#     This file is part of OpenFOAM.
+-#
+-#     OpenFOAM is free software: you can redistribute it and/or modify it
+-#     under the terms of the GNU General Public License as published by
+-#     the Free Software Foundation, either version 3 of the License, or
+-#     (at your option) any later version.
+-#
+-#     OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
+-#     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+-#     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+-#     for more details.
+-#
+-#     You should have received a copy of the GNU General Public License
+-#     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
+-#
+-# File
+-#     etc/config.sh/metis
+-#
+-# Description
+-#     Setup file for metis include/libraries.
+-#     Sourced during wmake process only.
+-#
+-# Note
+-#     A csh version is not needed, since the values here are only sourced
+-#     during the wmake process
+-#
+-#------------------------------------------------------------------------------
+-
+-# Load functions
+-. $WM_PROJECT_DIR/etc/config.sh/functions
+-
+-# Find the path to the metis installation
+-case "$METIS_TYPE" in
+-none)
+-    ;;
+-system)
+-    export METIS_VERSION=system
+-    export METIS_ARCH_PATH=/usr
+-    ;;
+-OpenFOAM | ThirdParty)
+-    # Look for the source directory
+-    if [ -z "$METIS_VERSION" ]
+-    then
+-        metisSrcDir=$(_foamMostRecentDir "$WM_THIRD_PARTY_DIR"/metis-*)
+-    else
+-        metisSrcDir=$WM_THIRD_PARTY_DIR/metis-$METIS_VERSION
+-    fi
+-    # Set the version and the installation path
+-    if [ -d "$metisSrcDir" ]
+-    then
+-        export METIS_VERSION=${metisSrcDir##*metis-}
+-        export METIS_ARCH_PATH=$WM_THIRD_PARTY_DIR/platforms/$WM_ARCH$WM_COMPILER$WM_PRECISION_OPTION$WM_LABEL_OPTION/metis-$METIS_VERSION
+-    fi
+-    # Clean up
+-    unset metisSrcDir
+-    ;;
+-esac
+-
+-# Unload functions
+-. $WM_PROJECT_DIR/etc/config.sh/functions
+-
+-#------------------------------------------------------------------------------
++export METIS_TYPE=none
+diff --git a/etc/config.sh/mpi b/etc/config.sh/mpi
+index f71d7cfd2d..47d5d61a44 100644
+--- a/etc/config.sh/mpi
++++ b/etc/config.sh/mpi
+@@ -228,6 +228,13 @@ MPI)
+     export MPI_ARCH_PATH=/opt/mpi
+     ;;
+ 
++MSMPI)
++    export MPI_ARCH_PATH=$WM_THIRD_PARTY_DIR/opt/msmpi
++    _foamAddPath    $MPI_ARCH_PATH/bin
++    _foamAddLib     $MPI_ARCH_PATH/lib/x64
++    export FOAM_MPI_LIBBIN=$FOAM_LIBBIN/msmpi
++    ;;
++
+ FJMPI)
+     export FOAM_MPI=fjmpi
+     export MPI_ARCH_PATH=/opt/FJSVmpi2
+diff --git a/etc/config.sh/parMetis b/etc/config.sh/parMetis
+index a32dcf2b5c..a8b48c0fa9 100644
+--- a/etc/config.sh/parMetis
++++ b/etc/config.sh/parMetis
+@@ -1,71 +1 @@
+-#----------------------------------*-sh-*--------------------------------------
+-# =========                 |
+-# \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+-#  \\    /   O peration     | Website:  https://openfoam.org
+-#   \\  /    A nd           | Copyright (C) 2024 OpenFOAM Foundation
+-#    \\/     M anipulation  |
+-#------------------------------------------------------------------------------
+-# License
+-#     This file is part of OpenFOAM.
+-#
+-#     OpenFOAM is free software: you can redistribute it and/or modify it
+-#     under the terms of the GNU General Public License as published by
+-#     the Free Software Foundation, either version 3 of the License, or
+-#     (at your option) any later version.
+-#
+-#     OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
+-#     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+-#     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+-#     for more details.
+-#
+-#     You should have received a copy of the GNU General Public License
+-#     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
+-#
+-# File
+-#     etc/config.sh/parMetis
+-#
+-# Description
+-#     Setup file for parMetis include/libraries.
+-#     Sourced during wmake process only.
+-#
+-# Note
+-#     A csh version is not needed, since the values here are only sourced
+-#     during the wmake process
+-#
+-#------------------------------------------------------------------------------
+-
+-# Load functions
+-. $WM_PROJECT_DIR/etc/config.sh/functions
+-
+-# Find the path to the parMetis installation
+-case "$PARMETIS_TYPE" in
+-none)
+-    ;;
+-system)
+-    export PARMETIS_VERSION=system
+-    export PARMETIS_ARCH_PATH=/usr
+-    ;;
+-OpenFOAM | ThirdParty)
+-    # Look for the source directory
+-    if [ -z "$PARMETIS_VERSION" ]
+-    then
+-        parMetisSrcDir=$(_foamMostRecentDir "$WM_THIRD_PARTY_DIR"/parmetis-*)
+-    else
+-        parMetisSrcDir=$WM_THIRD_PARTY_DIR/parmetis-$PARMETIS_VERSION
+-    fi
+-    # Set the version and the installation path
+-    if [ -d "$parMetisSrcDir" ]
+-    then
+-        export PARMETIS_VERSION=${parMetisSrcDir##*parmetis-}
+-        export PARMETIS_ARCH_PATH=$WM_THIRD_PARTY_DIR/platforms/$WM_ARCH$WM_COMPILER$WM_PRECISION_OPTION$WM_LABEL_OPTION/parmetis-$PARMETIS_VERSION
+-    fi
+-    # Clean up
+-    unset parMetisSrcDir
+-    ;;
+-esac
+-
+-# Unload functions
+-. $WM_PROJECT_DIR/etc/config.sh/functions
+-
+-
+-#------------------------------------------------------------------------------
++export PARMETIS_TYPE=none
+diff --git a/etc/config.sh/scotch b/etc/config.sh/scotch
+index 7693417ed4..368169ef66 100644
+--- a/etc/config.sh/scotch
++++ b/etc/config.sh/scotch
+@@ -1,70 +1 @@
+-#----------------------------------*-sh-*--------------------------------------
+-# =========                 |
+-# \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+-#  \\    /   O peration     | Website:  https://openfoam.org
+-#   \\  /    A nd           | Copyright (C) 2011-2024 OpenFOAM Foundation
+-#    \\/     M anipulation  |
+-#------------------------------------------------------------------------------
+-# License
+-#     This file is part of OpenFOAM.
+-#
+-#     OpenFOAM is free software: you can redistribute it and/or modify it
+-#     under the terms of the GNU General Public License as published by
+-#     the Free Software Foundation, either version 3 of the License, or
+-#     (at your option) any later version.
+-#
+-#     OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
+-#     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+-#     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+-#     for more details.
+-#
+-#     You should have received a copy of the GNU General Public License
+-#     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
+-#
+-# File
+-#     etc/config.sh/scotch
+-#
+-# Description
+-#     Setup file for scotch include/libraries.
+-#     Sourced during wmake process only.
+-#
+-# Note
+-#     A csh version is not needed, since the values here are only sourced
+-#     during the wmake process
+-#
+-#------------------------------------------------------------------------------
+-
+-# Load functions
+-. $WM_PROJECT_DIR/etc/config.sh/functions
+-
+-# Find the path to the scotch installation
+-case "$SCOTCH_TYPE" in
+-none)
+-    ;;
+-system)
+-    export SCOTCH_VERSION=system
+-    export SCOTCH_ARCH_PATH=/usr
+-    ;;
+-OpenFOAM | ThirdParty)
+-    # Look for the source directory
+-    if [ -z "$SCOTCH_VERSION" ]
+-    then
+-        scotchSrcDir=$(_foamMostRecentDir "$WM_THIRD_PARTY_DIR"/scotch_*)
+-    else
+-        scotchSrcDir=$WM_THIRD_PARTY_DIR/scotch_$SCOTCH_VERSION
+-    fi
+-    # Set the version and the installation path
+-    if [ -d "$scotchSrcDir" ]
+-    then
+-        export SCOTCH_VERSION=${scotchSrcDir##*scotch_}
+-        export SCOTCH_ARCH_PATH=$WM_THIRD_PARTY_DIR/platforms/$WM_ARCH$WM_COMPILER$WM_PRECISION_OPTION$WM_LABEL_OPTION/scotch_$SCOTCH_VERSION
+-    fi
+-    # Clean up
+-    unset scotchSrcDir
+-    ;;
+-esac
+-
+-# Unload functions
+-. $WM_PROJECT_DIR/etc/config.sh/functions
+-
+-#------------------------------------------------------------------------------
++export SCOTCH_TYPE=none
+diff --git a/etc/config.sh/settings b/etc/config.sh/settings
+index 0a69a70190..7c28856d13 100644
+--- a/etc/config.sh/settings
++++ b/etc/config.sh/settings
+@@ -63,11 +63,19 @@ Linux)
+         64)
+             WM_ARCH=linux64
+             export WM_COMPILER_LIB_ARCH=64
+-            export WM_CC='gcc'
+-            export WM_CXX='g++'
+-            export WM_CFLAGS='-m64 -fPIC'
+-            export WM_CXXFLAGS='-m64 -fPIC -std=c++0x'
+-            export WM_LDFLAGS='-m64'
++            if [ "$WM_COMPILER" = "Mingw" ]; then
++                export WM_CC='x86_64-w64-mingw32-gcc'
++                export WM_CXX='x86_64-w64-mingw32-g++'
++                export WM_CFLAGS='-m64'
++                export WM_CXXFLAGS='-m64 -std=c++14'
++                export WM_LDFLAGS='-m64'
++            else
++                export WM_CC='gcc'
++                export WM_CXX='g++'
++                export WM_CFLAGS='-m64 -fPIC'
++                export WM_CXXFLAGS='-m64 -fPIC -std=c++0x'
++                export WM_LDFLAGS='-m64'
++            fi
+             ;;
+ 
+         *)
+diff --git a/etc/config.sh/zoltan b/etc/config.sh/zoltan
+index 6103cb5762..75501a584a 100644
+--- a/etc/config.sh/zoltan
++++ b/etc/config.sh/zoltan
+@@ -1,71 +1 @@
+-#----------------------------------*-sh-*--------------------------------------
+-# =========                 |
+-# \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+-#  \\    /   O peration     | Website:  https://openfoam.org
+-#   \\  /    A nd           | Copyright (C) 2021-2024 OpenFOAM Foundation
+-#    \\/     M anipulation  |
+-#------------------------------------------------------------------------------
+-# License
+-#     This file is part of OpenFOAM.
+-#
+-#     OpenFOAM is free software: you can redistribute it and/or modify it
+-#     under the terms of the GNU General Public License as published by
+-#     the Free Software Foundation, either version 3 of the License, or
+-#     (at your option) any later version.
+-#
+-#     OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
+-#     ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+-#     FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+-#     for more details.
+-#
+-#     You should have received a copy of the GNU General Public License
+-#     along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
+-#
+-# File
+-#     etc/config.sh/zoltan
+-#
+-# Description
+-#     Setup file for zoltan include/libraries.
+-#     Sourced during wmake process only.
+-#
+-# Note
+-#     A csh version is not needed, since the values here are only sourced
+-#     during the wmake process
+-#
+-#------------------------------------------------------------------------------
+-
+-# Load functions
+-. $WM_PROJECT_DIR/etc/config.sh/functions
+-
+-# Find the path to the zoltan installation
+-case "$ZOLTAN_TYPE" in
+-none)
+-    ;;
+-system)
+-    export ZOLTAN_VERSION=system
+-    export ZOLTAN_ARCH_PATH=/usr
+-    ;;
+-OpenFOAM | ThirdParty)
+-    # Look for the source directory
+-    if [ -z "$ZOLTAN_VERSION" ]
+-    then
+-        zoltanSrcDir=$(_foamMostRecentDir "$WM_THIRD_PARTY_DIR"/Zoltan-*)
+-    else
+-        zoltanSrcDir=$WM_THIRD_PARTY_DIR/Zoltan-$ZOLTAN_VERSION
+-    fi
+-    # Set the version and the installation path
+-    if [ -d "$zoltanSrcDir" ]
+-    then
+-        export ZOLTAN_VERSION=${zoltanSrcDir##*Zoltan-}
+-        export ZOLTAN_ARCH_PATH=$WM_THIRD_PARTY_DIR/platforms/$WM_ARCH$WM_COMPILER$WM_PRECISION_OPTION$WM_LABEL_OPTION/Zoltan-$ZOLTAN_VERSION
+-    fi
+-    # Clean up
+-    unset zoltanSrcDir
+-    ;;
+-esac
+-
+-# Unload functions
+-. $WM_PROJECT_DIR/etc/config.sh/functions
+-
+-
+-#------------------------------------------------------------------------------
++export ZOLTAN_TYPE=none
+diff --git a/src/Allwmake b/src/Allwmake
+index 8b260afc42..8a021a99ec 100755
+--- a/src/Allwmake
++++ b/src/Allwmake
+@@ -31,10 +31,6 @@ wmake $targetType surfMesh
+ wmake $targetType triSurface
+ wmake $targetType meshTools
+ 
+-# Decomposition methods needed by dummyThirdParty
+-# (dummy metis, scotch etc) needed by e.g. meshTools
+-dummyThirdParty/Allwmake $targetType $*
+-
+ wmake $targetType finiteVolume
+ 
+ wmake $targetType ODE
+@@ -60,6 +56,7 @@ wmake $targetType polyTopoChange
+ wmake $targetType conversion
+ 
+ parallel/Allwmake $targetType $*
++dummyThirdParty/Allwmake $targetType $*
+ 
+ wmake $targetType fvMeshStitchers
+ fvMeshMovers/Allwmake $targetType $*
+@@ -94,6 +91,3 @@ wmake $targetType fvModels/rigidBodyPropellerDisk
+ wmake $targetType specieTransfer
+ wmake $targetType atmosphericModels
+ wmake $targetType waves
+-
+-
+-#------------------------------------------------------------------------------
+diff --git a/src/FlexLexer.h b/src/FlexLexer.h
+new file mode 120000
+index 0000000000..a20772a745
+--- /dev/null
++++ b/src/FlexLexer.h
+@@ -0,0 +1 @@
++/home/kodama/OpenFOAM-v13/OpenFOAM-13/src/OSspecific/MSwindows/FlexLexer.h
+\ No newline at end of file
+diff --git a/src/MomentumTransportModels/compressible/Make/options b/src/MomentumTransportModels/compressible/Make/options
+index 3ce78468e5..7bf31e6939 100644
+--- a/src/MomentumTransportModels/compressible/Make/options
++++ b/src/MomentumTransportModels/compressible/Make/options
+@@ -2,9 +2,10 @@ EXE_INC = \
+     -I../momentumTransportModels/lnInclude \
+     -I$(LIB_SRC)/physicalProperties/lnInclude \
+     -I$(LIB_SRC)/finiteVolume/lnInclude \
+-    -I$(LIB_SRC)/meshTools/lnInclude \
++    -I$(LIB_SRC)/meshTools/lnInclude
+ 
+ LIB_LIBS = \
++    -lmomentumTransportModels \
+     -lphysicalProperties \
+     -lfiniteVolume \
+     -lmeshTools
+diff --git a/src/MomentumTransportModels/momentumTransportModels/Make/options b/src/MomentumTransportModels/momentumTransportModels/Make/options
+index 6fd53217f9..9f37881529 100644
+--- a/src/MomentumTransportModels/momentumTransportModels/Make/options
++++ b/src/MomentumTransportModels/momentumTransportModels/Make/options
+@@ -4,5 +4,6 @@ EXE_INC = \
+     -I$(LIB_SRC)/meshTools/lnInclude
+ 
+ LIB_LIBS = \
++    -lphysicalProperties \
+     -lfiniteVolume \
+     -lmeshTools
+diff --git a/src/MomentumTransportModels/phaseCompressible/Make/options b/src/MomentumTransportModels/phaseCompressible/Make/options
+index 9fe61398cd..0002632ef5 100644
+--- a/src/MomentumTransportModels/phaseCompressible/Make/options
++++ b/src/MomentumTransportModels/phaseCompressible/Make/options
+@@ -3,9 +3,11 @@ EXE_INC = \
+     -I../compressible/lnInclude \
+     -I$(LIB_SRC)/physicalProperties/lnInclude \
+     -I$(LIB_SRC)/finiteVolume/lnInclude \
+-    -I$(LIB_SRC)/meshTools/lnInclude \
++    -I$(LIB_SRC)/meshTools/lnInclude
+ 
+ LIB_LIBS = \
++    -lmomentumTransportModels \
++    -lcompressibleMomentumTransportModels \
+     -lphysicalProperties \
+     -lfiniteVolume \
+     -lmeshTools
+diff --git a/src/MomentumTransportModels/phaseIncompressible/Make/options b/src/MomentumTransportModels/phaseIncompressible/Make/options
+index 3ac10fbcb3..72dfe703b4 100644
+--- a/src/MomentumTransportModels/phaseIncompressible/Make/options
++++ b/src/MomentumTransportModels/phaseIncompressible/Make/options
+@@ -3,9 +3,11 @@ EXE_INC = \
+     -I../incompressible/lnInclude \
+     -I$(LIB_SRC)/physicalProperties/lnInclude \
+     -I$(LIB_SRC)/finiteVolume/lnInclude \
+-    -I$(LIB_SRC)/meshTools/lnInclude \
++    -I$(LIB_SRC)/meshTools/lnInclude
+ 
+ LIB_LIBS = \
++    -lmomentumTransportModels \
++    -lincompressibleMomentumTransportModels \
+     -lphysicalProperties \
+     -lfiniteVolume \
+     -lmeshTools
+diff --git a/src/OSspecific/MSwindows/Allwmake b/src/OSspecific/MSwindows/Allwmake
+new file mode 100755
+index 0000000000..2ac9fbd2ae
+--- /dev/null
++++ b/src/OSspecific/MSwindows/Allwmake
+@@ -0,0 +1,9 @@
++#!/bin/sh
++cd ${0%/*} || exit 1
++
++targetType=libo
++. $WM_PROJECT_DIR/wmake/scripts/AllwmakeParseArguments $*
++
++export COMP_FLAGS="-DFOAM_USE_STAT"
++
++wmake $targetType
+diff --git a/src/OSspecific/MSwindows/FlexLexer.h b/src/OSspecific/MSwindows/FlexLexer.h
+new file mode 100644
+index 0000000000..c4dad2b142
+--- /dev/null
++++ b/src/OSspecific/MSwindows/FlexLexer.h
+@@ -0,0 +1,220 @@
++// -*-C++-*-
++// FlexLexer.h -- define interfaces for lexical analyzer classes generated
++// by flex
++
++// Copyright (c) 1993 The Regents of the University of California.
++// All rights reserved.
++//
++// This code is derived from software contributed to Berkeley by
++// Kent Williams and Tom Epperly.
++//
++//  Redistribution and use in source and binary forms, with or without
++//  modification, are permitted provided that the following conditions
++//  are met:
++
++//  1. Redistributions of source code must retain the above copyright
++//  notice, this list of conditions and the following disclaimer.
++//  2. Redistributions in binary form must reproduce the above copyright
++//  notice, this list of conditions and the following disclaimer in the
++//  documentation and/or other materials provided with the distribution.
++
++//  Neither the name of the University nor the names of its contributors
++//  may be used to endorse or promote products derived from this software
++//  without specific prior written permission.
++
++//  THIS SOFTWARE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
++//  IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
++//  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
++//  PURPOSE.
++
++// This file defines FlexLexer, an abstract class which specifies the
++// external interface provided to flex C++ lexer objects, and yyFlexLexer,
++// which defines a particular lexer class.
++//
++// If you want to create multiple lexer classes, you use the -P flag
++// to rename each yyFlexLexer to some other xxFlexLexer.  You then
++// include <FlexLexer.h> in your other sources once per lexer class:
++//
++//      #undef yyFlexLexer
++//      #define yyFlexLexer xxFlexLexer
++//      #include <FlexLexer.h>
++//
++//      #undef yyFlexLexer
++//      #define yyFlexLexer zzFlexLexer
++//      #include <FlexLexer.h>
++//      ...
++
++#ifndef __FLEX_LEXER_H
++// Never included before - need to define base class.
++#define __FLEX_LEXER_H
++
++#include <iostream>
++
++extern "C++" {
++
++struct yy_buffer_state;
++typedef int yy_state_type;
++
++class FlexLexer
++{
++public:
++  virtual ~FlexLexer()        { }
++
++  const char* YYText() const  { return yytext; }
++  int YYLeng()        const   { return yyleng; }
++
++  virtual void
++  yy_switch_to_buffer( yy_buffer_state* new_buffer ) = 0;
++  virtual yy_buffer_state* yy_create_buffer( std::istream* s, int size ) = 0;
++  virtual yy_buffer_state* yy_create_buffer( std::istream& s, int size ) = 0;
++  virtual void yy_delete_buffer( yy_buffer_state* b ) = 0;
++  virtual void yyrestart( std::istream* s ) = 0;
++  virtual void yyrestart( std::istream& s ) = 0;
++
++  virtual int yylex() = 0;
++
++  // Call yylex with new input/output sources.
++  int yylex( std::istream& new_in, std::ostream& new_out )
++  {
++    switch_streams( new_in, new_out );
++    return yylex();
++  }
++
++  int yylex( std::istream* new_in, std::ostream* new_out = 0)
++  {
++    switch_streams( new_in, new_out );
++    return yylex();
++  }
++
++  // Switch to new input/output streams.  A nil stream pointer
++  // indicates "keep the current one".
++  virtual void switch_streams( std::istream* new_in,
++                               std::ostream* new_out ) = 0;
++  virtual void switch_streams( std::istream& new_in,
++                               std::ostream& new_out ) = 0;
++
++  int lineno() const          { return yylineno; }
++
++  int debug() const           { return yy_flex_debug; }
++  void set_debug( int flag )  { yy_flex_debug = flag; }
++
++protected:
++  char* yytext;
++  int yyleng;
++  int yylineno;       // only maintained if you use %option yylineno
++  int yy_flex_debug;  // only has effect with -d or "%option debug"
++};
++
++}
++#endif // FLEXLEXER_H
++
++#if defined(yyFlexLexer) || ! defined(yyFlexLexerOnce)
++// Either this is the first time through (yyFlexLexerOnce not defined),
++// or this is a repeated include to define a different flavor of
++// yyFlexLexer, as discussed in the flex manual.
++# define yyFlexLexerOnce
++
++extern "C++" {
++
++class yyFlexLexer : public FlexLexer {
++public:
++  // arg_yyin and arg_yyout default to the cin and cout, but we
++  // only make that assignment when initializing in yylex().
++  yyFlexLexer( std::istream& arg_yyin, std::ostream& arg_yyout );
++  yyFlexLexer( std::istream* arg_yyin = 0, std::ostream* arg_yyout = 0 );
++private:
++  void ctor_common();
++
++public:
++
++  virtual ~yyFlexLexer();
++
++  void yy_switch_to_buffer( yy_buffer_state* new_buffer );
++  yy_buffer_state* yy_create_buffer( std::istream* s, int size );
++  yy_buffer_state* yy_create_buffer( std::istream& s, int size );
++  void yy_delete_buffer( yy_buffer_state* b );
++  void yyrestart( std::istream* s );
++  void yyrestart( std::istream& s );
++
++  void yypush_buffer_state( yy_buffer_state* new_buffer );
++  void yypop_buffer_state();
++
++  virtual int yylex();
++  virtual void switch_streams( std::istream& new_in, std::ostream& new_out );
++  virtual void switch_streams( std::istream* new_in = 0, std::ostream* new_out = 0 );
++  virtual int yywrap();
++
++protected:
++  virtual int LexerInput( char* buf, int max_size );
++  virtual void LexerOutput( const char* buf, int size );
++  virtual void LexerError( const char* msg );
++
++  void yyunput( int c, char* buf_ptr );
++  int yyinput();
++
++  void yy_load_buffer_state();
++  void yy_init_buffer( yy_buffer_state* b, std::istream& s );
++  void yy_flush_buffer( yy_buffer_state* b );
++
++  int yy_start_stack_ptr;
++  int yy_start_stack_depth;
++  int* yy_start_stack;
++
++  void yy_push_state( int new_state );
++  void yy_pop_state();
++  int yy_top_state();
++
++  yy_state_type yy_get_previous_state();
++  yy_state_type yy_try_NUL_trans( yy_state_type current_state );
++  int yy_get_next_buffer();
++
++  std::istream yyin;  // input source for default LexerInput
++  std::ostream yyout; // output sink for default LexerOutput
++
++  // yy_hold_char holds the character lost when yytext is formed.
++  char yy_hold_char;
++
++  // Number of characters read into yy_ch_buf.
++  int yy_n_chars;
++
++  // Points to current character in buffer.
++  char* yy_c_buf_p;
++
++  int yy_init;                // whether we need to initialize
++  int yy_start;               // start state number
++
++  // Flag which is used to allow yywrap()'s to do buffer switches
++  // instead of setting up a fresh yyin.  A bit of a hack ...
++  int yy_did_buffer_switch_on_eof;
++
++
++  size_t yy_buffer_stack_top; /**< index of top of stack. */
++  size_t yy_buffer_stack_max; /**< capacity of stack. */
++  yy_buffer_state ** yy_buffer_stack; /**< Stack as an array. */
++  void yyensure_buffer_stack(void);
++
++  // The following are not always needed, but may be depending
++  // on use of certain flex features (like REJECT or yymore()).
++
++  yy_state_type yy_last_accepting_state;
++  char* yy_last_accepting_cpos;
++
++  yy_state_type* yy_state_buf;
++  yy_state_type* yy_state_ptr;
++
++  char* yy_full_match;
++  int* yy_full_state;
++  int yy_full_lp;
++
++  int yy_lp;
++  int yy_looking_for_trail_begin;
++
++  int yy_more_flag;
++  int yy_more_len;
++  int yy_more_offset;
++  int yy_prev_more_offset;
++};
++
++}
++
++#endif // yyFlexLexer || ! yyFlexLexerOnce
+diff --git a/src/OSspecific/MSwindows/MSwindows.C b/src/OSspecific/MSwindows/MSwindows.C
+new file mode 100644
+index 0000000000..fdeed8dcd0
+--- /dev/null
++++ b/src/OSspecific/MSwindows/MSwindows.C
+@@ -0,0 +1,370 @@
++#undef DebugInfo
++
++#include "OSspecific.H"
++#include "MSwindows.H"
++#include "foamVersion.H"
++#include "fileName.H"
++#include "fileStat.H"
++#include "timer.H"
++#include "IFstream.H"
++#include "DynamicList.H"
++#include "HashSet.H"
++#include "IOstreams.H"
++#include "Pstream.H"
++#include "error.H"
++
++#undef DebugInfo
++
++#include <fstream>
++#include <cstdlib>
++#include <cctype>
++#include <cstdio>
++
++#define WIN32_LEAN_AND_MEAN
++#ifndef NOMINMAX
++#define NOMINMAX
++#endif
++#define NOGDI
++#define NOUSER
++#define NONLS
++#include <windows.h>
++#include <direct.h>
++#include <io.h>
++#include <process.h>
++#include <psapi.h>
++#include <winsock2.h>
++#include <sys/stat.h>
++
++#undef min
++#undef max
++#undef ERROR
++#undef CONST
++#undef small
++#undef Yield
++#undef DebugInfo
++#undef GetMessage
++#undef GetUserName
++#undef GetClassName
++#undef DrawText
++#undef DeleteFile
++#undef CreateDirectory
++#undef SetEnvironmentVariable
++#undef GetEnvironmentVariable
++#undef MoveFile
++#undef CopyFile
++
++namespace Foam
++{
++    defineTypeNameAndDebug(MSwindows, 0);
++}
++
++pid_t Foam::pid()
++{
++    return static_cast<pid_t>(::GetCurrentProcessId());
++}
++
++pid_t Foam::ppid()
++{
++    return 0;
++}
++
++pid_t Foam::pgid()
++{
++    return static_cast<pid_t>(::GetCurrentProcessId());
++}
++
++bool Foam::env(const word& envName)
++{
++    return ::getenv(envName.c_str()) != nullptr;
++}
++
++Foam::string Foam::getEnv(const word& envName)
++{
++    char* env = ::getenv(envName.c_str());
++    if (env)
++    {
++        return string(env);
++    }
++    return string();
++}
++
++bool Foam::setEnv(const word& name, const std::string& value, const bool overwrite)
++{
++    if (!overwrite && Foam::env(name))
++    {
++        return false;
++    }
++    return ::SetEnvironmentVariableA(name.c_str(), value.c_str()) != 0;
++}
++
++Foam::string Foam::hostName(const bool)
++{
++    char name[MAX_COMPUTERNAME_LENGTH + 1];
++    DWORD size = sizeof(name);
++    if (::GetComputerNameA(name, &size))
++    {
++        return string(name);
++    }
++    return string("localhost");
++}
++
++Foam::string Foam::domainName()
++{
++    return string();
++}
++
++Foam::string Foam::userName()
++{
++    char name[256];
++    DWORD size = sizeof(name);
++    if (::GetUserNameA(name, &size))
++    {
++        return string(name);
++    }
++    return getEnv("USERNAME");
++}
++
++bool Foam::isAdministrator()
++{
++    return false;
++}
++
++Foam::fileName Foam::home()
++{
++    string userProfile = getEnv("USERPROFILE");
++    if (!userProfile.empty())
++    {
++        fileName h(userProfile);
++        h.clean();
++        return h;
++    }
++    string homeDrive = getEnv("HOMEDRIVE");
++    string homePath = getEnv("HOMEPATH");
++    if (!homeDrive.empty() && !homePath.empty())
++    {
++        fileName h(homeDrive + homePath);
++        h.clean();
++        return h;
++    }
++    return fileName("C:/");
++}
++
++Foam::fileName Foam::home(const string&)
++{
++    return home();
++}
++
++Foam::fileName Foam::cwd()
++{
++    char buffer[MAX_PATH];
++    if (::_getcwd(buffer, sizeof(buffer)) != nullptr)
++    {
++        fileName dir(buffer);
++        dir.clean();
++        return dir;
++    }
++    return fileName();
++}
++
++bool Foam::chDir(const fileName& dir)
++{
++    return ::_chdir(dir.c_str()) == 0;
++}
++
++bool Foam::mkDir(const fileName& pathName, mode_t)
++{
++    if (pathName.empty()) return false;
++    if (Foam::isDir(pathName)) return true;
++
++    fileName parent = pathName.path();
++    if (!parent.empty() && parent != pathName && !Foam::isDir(parent))
++    {
++        Foam::mkDir(parent);
++    }
++    return ::_mkdir(pathName.c_str()) == 0 || Foam::isDir(pathName);
++}
++
++bool Foam::chMod(const fileName&, const mode_t)
++{
++    return true;
++}
++
++mode_t Foam::mode(const fileName& name, const bool, const bool)
++{
++    struct _stat64 buf;
++    if (::_stat64(name.c_str(), &buf) == 0)
++    {
++        return buf.st_mode;
++    }
++    return 0;
++}
++
++Foam::fileType Foam::type(const fileName& name, const bool, const bool)
++{
++    DWORD attr = ::GetFileAttributesA(name.c_str());
++    if (attr == INVALID_FILE_ATTRIBUTES)
++    {
++        return fileType::undefined;
++    }
++    if (attr & FILE_ATTRIBUTE_DIRECTORY)
++    {
++        return fileType::directory;
++    }
++    return fileType::file;
++}
++
++bool Foam::exists(const fileName& name, const bool, const bool)
++{
++    return ::GetFileAttributesA(name.c_str()) != INVALID_FILE_ATTRIBUTES;
++}
++
++bool Foam::isDir(const fileName& name, const bool)
++{
++    DWORD attr = ::GetFileAttributesA(name.c_str());
++    return (attr != INVALID_FILE_ATTRIBUTES) && (attr & FILE_ATTRIBUTE_DIRECTORY);
++}
++
++bool Foam::isFile(const fileName& name, const bool, const bool)
++{
++    DWORD attr = ::GetFileAttributesA(name.c_str());
++    return (attr != INVALID_FILE_ATTRIBUTES) && !(attr & FILE_ATTRIBUTE_DIRECTORY);
++}
++
++off_t Foam::fileSize(const fileName& name, const bool, const bool)
++{
++    struct _stat64 buf;
++    if (::_stat64(name.c_str(), &buf) == 0)
++    {
++        return buf.st_size;
++    }
++    return 0;
++}
++
++time_t Foam::lastModified(const fileName& name, const bool, const bool)
++{
++    struct _stat64 buf;
++    if (::_stat64(name.c_str(), &buf) == 0)
++    {
++        return buf.st_mtime;
++    }
++    return 0;
++}
++
++double Foam::highResLastModified(const fileName& name, const bool checkVariants, const bool followLink)
++{
++    return static_cast<double>(lastModified(name, checkVariants, followLink));
++}
++
++Foam::fileNameList Foam::readDir(const fileName& directory, const fileType type, const bool, const bool)
++{
++    fileNameList names;
++    string searchPattern = directory + "/*";
++    WIN32_FIND_DATAA findData;
++    HANDLE hFind = ::FindFirstFileA(searchPattern.c_str(), &findData);
++
++    if (hFind != INVALID_HANDLE_VALUE)
++    {
++        do
++        {
++            const char* fn = findData.cFileName;
++            if (strcmp(fn, ".") != 0 && strcmp(fn, "..") != 0)
++            {
++                bool isDirectory = (findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY);
++                if (type == fileType::undefined ||
++                   (type == fileType::directory && isDirectory) ||
++                   (type == fileType::file && !isDirectory))
++                {
++                    names.append(fileName(fn));
++                }
++            }
++        } while (::FindNextFileA(hFind, &findData));
++        ::FindClose(hFind);
++    }
++    return names;
++}
++
++bool Foam::cp(const fileName& src, const fileName& dst, const bool)
++{
++    return ::CopyFileA(src.c_str(), dst.c_str(), FALSE) != 0;
++}
++
++bool Foam::ln(const fileName& src, const fileName& dst)
++{
++    return Foam::cp(src, dst);
++}
++
++bool Foam::mv(const fileName& src, const fileName& dst, const bool)
++{
++    return ::MoveFileExA(src.c_str(), dst.c_str(), MOVEFILE_REPLACE_EXISTING) != 0;
++}
++
++bool Foam::mvBak(const fileName& src, const std::string& ext)
++{
++    if (Foam::exists(src))
++    {
++        const fileName dst = src + "." + ext;
++        return Foam::mv(src, dst);
++    }
++    return false;
++}
++
++bool Foam::rm(const fileName& file)
++{
++    return ::DeleteFileA(file.c_str()) != 0;
++}
++
++bool Foam::rmDir(const fileName& directory)
++{
++    return ::RemoveDirectoryA(directory.c_str()) != 0;
++}
++
++unsigned int Foam::sleep(const unsigned int s)
++{
++    ::Sleep(s * 1000);
++    return 0;
++}
++
++void Foam::fdClose(const int fd)
++{
++    ::_close(fd);
++}
++
++bool Foam::ping(const string&, const label, const label)
++{
++    return true;
++}
++
++bool Foam::ping(const string&, const label)
++{
++    return true;
++}
++
++int Foam::system(const std::string& command)
++{
++    return ::system(command.c_str());
++}
++
++void* Foam::dlOpen(const fileName& libName, const bool)
++{
++    return reinterpret_cast<void*>(::LoadLibraryExA(libName.c_str(), NULL, LOAD_WITH_ALTERED_SEARCH_PATH));
++}
++
++bool Foam::dlClose(void* handle)
++{
++    return ::FreeLibrary(reinterpret_cast<HMODULE>(handle)) != 0;
++}
++
++void* Foam::dlSym(void* handle, const std::string& symbol)
++{
++    return reinterpret_cast<void*>(::GetProcAddress(reinterpret_cast<HMODULE>(handle), symbol.c_str()));
++}
++
++bool Foam::dlSymFound(void* handle, const std::string& symbol)
++{
++    return dlSym(handle, symbol) != nullptr;
++}
++
++Foam::fileNameList Foam::dlLoaded()
++{
++    return fileNameList();
++}
+diff --git a/src/OSspecific/MSwindows/MSwindows.H b/src/OSspecific/MSwindows/MSwindows.H
+new file mode 100644
+index 0000000000..997897ea25
+--- /dev/null
++++ b/src/OSspecific/MSwindows/MSwindows.H
+@@ -0,0 +1,17 @@
++#ifndef MSwindows_H
++#define MSwindows_H
++
++#include "className.H"
++
++namespace Foam
++{
++namespace MSwindows
++{
++    NamespaceName("MSwindows");
++
++    const label pathLengthChunk = 256;
++    const label pathLengthMax = 4096;
++}
++}
++
++#endif
+diff --git a/src/OSspecific/MSwindows/Make/files b/src/OSspecific/MSwindows/Make/files
+new file mode 100644
+index 0000000000..401bd470ce
+--- /dev/null
++++ b/src/OSspecific/MSwindows/Make/files
+@@ -0,0 +1,17 @@
++signals/sigFpe.C
++signals/sigSegv.C
++signals/sigInt.C
++signals/sigQuit.C
++signals/sigStopAtWriteNow.C
++signals/sigWriteNow.C
++regExp.C
++timer.C
++fileStat.C
++MSwindows.C
++cpuTime/cpuTime.C
++clockTime/clockTime.C
++memInfo/memInfo.C
++fileMonitor.C
++printStack.C
++
++LIB = $(FOAM_LIBBIN)/libOSspecific
+diff --git a/src/OSspecific/MSwindows/Make/options b/src/OSspecific/MSwindows/Make/options
+new file mode 100644
+index 0000000000..e799ec744c
+--- /dev/null
++++ b/src/OSspecific/MSwindows/Make/options
+@@ -0,0 +1,7 @@
++EXE_INC = \
++    -DFOAM_USE_STAT \
++    -I$(OBJECTS_DIR)
++
++LIB_LIBS = \
++    -lws2_32 \
++    -lpsapi
+diff --git a/src/OSspecific/MSwindows/clockTime/clockTime.C b/src/OSspecific/MSwindows/clockTime/clockTime.C
+new file mode 100644
+index 0000000000..7ad9556afb
+--- /dev/null
++++ b/src/OSspecific/MSwindows/clockTime/clockTime.C
+@@ -0,0 +1,32 @@
++#include "clockTime.H"
++#include <sys/time.h>
++
++void Foam::clockTime::getTime(timeType& t)
++{
++    gettimeofday(&t, 0);
++}
++
++double Foam::clockTime::timeDifference(const timeType& beg, const timeType& end)
++{
++    return end.tv_sec - beg.tv_sec + 1e-6*(end.tv_usec - beg.tv_usec);
++}
++
++Foam::clockTime::clockTime()
++{
++    getTime(startTime_);
++    lastTime_ = startTime_;
++    newTime_ = startTime_;
++}
++
++double Foam::clockTime::elapsedTime() const
++{
++    getTime(newTime_);
++    return timeDifference(startTime_, newTime_);
++}
++
++double Foam::clockTime::timeIncrement() const
++{
++    lastTime_ = newTime_;
++    getTime(newTime_);
++    return timeDifference(lastTime_, newTime_);
++}
+diff --git a/src/OSspecific/MSwindows/clockTime/clockTime.H b/src/OSspecific/MSwindows/clockTime/clockTime.H
+new file mode 100644
+index 0000000000..f8ef4c9ac7
+--- /dev/null
++++ b/src/OSspecific/MSwindows/clockTime/clockTime.H
+@@ -0,0 +1,30 @@
++#ifndef clockTime_H
++#define clockTime_H
++
++#include <sys/types.h>
++#include <sys/time.h>
++
++namespace Foam
++{
++
++class clockTime
++{
++    typedef struct ::timeval timeType;
++
++    timeType startTime_;
++    mutable timeType lastTime_;
++    mutable timeType newTime_;
++
++    static void getTime(timeType&);
++    static double timeDifference(const timeType& beg, const timeType& end);
++
++public:
++    clockTime();
++
++    double elapsedTime() const;
++    double timeIncrement() const;
++};
++
++} // End namespace Foam
++
++#endif
+diff --git a/src/OSspecific/MSwindows/cpuTime/cpuTime.C b/src/OSspecific/MSwindows/cpuTime/cpuTime.C
+new file mode 100644
+index 0000000000..3a4ab8e689
+--- /dev/null
++++ b/src/OSspecific/MSwindows/cpuTime/cpuTime.C
+@@ -0,0 +1,68 @@
++/*---------------------------------------------------------------------------*\
++  =========                 |
++  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
++   \\    /   O peration     | Website:  https://openfoam.org
++    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
++     \\/     M anipulation  |
++-------------------------------------------------------------------------------
++License
++    This file is part of OpenFOAM.
++
++    OpenFOAM is free software: you can redistribute it and/or modify it
++    under the terms of the GNU General Public License as published by
++    the Free Software Foundation, either version 3 of the License, or
++    (at your option) any later version.
++
++    OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
++    ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++    FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++    for more details.
++
++    You should have received a copy of the GNU General Public License
++    along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
++
++\*---------------------------------------------------------------------------*/
++
++#include "cpuTime.H"
++
++// * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
++
++inline double Foam::cpuTime::timeDifference
++(
++    const clock_t prev,
++    const clock_t cur
++) const
++{
++    return double(cur - prev)/CLOCKS_PER_SEC;
++}
++
++
++// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
++
++Foam::cpuTime::cpuTime()
++:
++    startTime_(clock()),
++    prevTime_(startTime_),
++    curTime_(startTime_)
++
++{}
++
++
++// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
++
++double Foam::cpuTime::elapsedCpuTime() const
++{
++    curTime_ = clock();
++    return timeDifference(startTime_, curTime_);
++}
++
++
++double Foam::cpuTime::cpuTimeIncrement() const
++{
++    prevTime_ = curTime_;
++    curTime_ = clock();
++    return timeDifference(prevTime_, curTime_);
++}
++
++
++// ************************************************************************* //
+diff --git a/src/OSspecific/MSwindows/cpuTime/cpuTime.H b/src/OSspecific/MSwindows/cpuTime/cpuTime.H
+new file mode 100644
+index 0000000000..5003c8ebc3
+--- /dev/null
++++ b/src/OSspecific/MSwindows/cpuTime/cpuTime.H
+@@ -0,0 +1,106 @@
++/*---------------------------------------------------------------------------*\
++  =========                 |
++  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
++   \\    /   O peration     | Website:  https://openfoam.org
++    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
++     \\/     M anipulation  |
++-------------------------------------------------------------------------------
++License
++    This file is part of OpenFOAM.
++
++    OpenFOAM is free software: you can redistribute it and/or modify it
++    under the terms of the GNU General Public License as published by
++    the Free Software Foundation, either version 3 of the License, or
++    (at your option) any later version.
++
++    OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
++    ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++    FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++    for more details.
++
++    You should have received a copy of the GNU General Public License
++    along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
++
++Class
++    Foam::cpuTime
++
++Description
++    Starts timing CPU usage and return elapsed time from start.
++
++    Uses the POSIX clock() function which return the processor time consumed
++    in clock ticks @ CLOCKS_PER_SEC clock ticks per second.
++
++See also
++    clockTime
++
++SourceFiles
++    cpuTime.C
++
++\*---------------------------------------------------------------------------*/
++
++#ifndef cpuTime_H
++#define cpuTime_H
++
++#include <time.h>
++
++// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
++
++namespace Foam
++{
++
++/*---------------------------------------------------------------------------*\
++                           Class cpuTime Declaration
++\*---------------------------------------------------------------------------*/
++
++class cpuTime
++{
++    // Private Data
++
++        //- Start CPU clock tick count
++        clock_t startTime_;
++
++        //- Previous CPU clock tick count
++        mutable clock_t prevTime_;
++
++        //- Current CPU clock tick count
++        mutable clock_t curTime_;
++
++
++    // Private Member Functions
++
++        //- Return the difference between two times clock tick counts
++        //  as elapsed CPU time (in seconds)
++        inline double timeDifference
++        (
++            const clock_t prev,
++            const clock_t cur
++        ) const;
++
++
++public:
++
++    // Constructors
++
++        //- Construct with the current clock time
++        cpuTime();
++
++
++    // Member Functions
++
++        //- Return CPU time (in seconds) from the start
++        double elapsedCpuTime() const;
++
++        //- Return CPU time (in seconds) since last call to cpuTimeIncrement()
++        double cpuTimeIncrement() const;
++};
++
++
++// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
++
++} // End namespace Foam
++
++// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
++
++#endif
++
++// ************************************************************************* //
+diff --git a/src/OSspecific/MSwindows/fileMonitor.C b/src/OSspecific/MSwindows/fileMonitor.C
+new file mode 100644
+index 0000000000..bb47b6ab94
+--- /dev/null
++++ b/src/OSspecific/MSwindows/fileMonitor.C
+@@ -0,0 +1,616 @@
++/*---------------------------------------------------------------------------*\
++  =========                 |
++  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
++   \\    /   O peration     | Website:  https://openfoam.org
++    \\  /    A nd           | Copyright (C) 2011-2025 OpenFOAM Foundation
++     \\/     M anipulation  |
++-------------------------------------------------------------------------------
++License
++    This file is part of OpenFOAM.
++
++    OpenFOAM is free software: you can redistribute it and/or modify it
++    under the terms of the GNU General Public License as published by
++    the Free Software Foundation, either version 3 of the License, or
++    (at your option) any later version.
++
++    OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
++    ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++    FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++    for more details.
++
++    You should have received a copy of the GNU General Public License
++    along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
++
++\*---------------------------------------------------------------------------*/
++
++#include "fileMonitor.H"
++#include "IOstreams.H"
++#include "Pstream.H"
++#include "PackedList.H"
++#include "PstreamReduceOps.H"
++#include "OSspecific.H"
++#include "regIOobject.H"     // for fileModificationSkew symbol
++
++#ifdef FOAM_USE_INOTIFY
++    #include <unistd.h>
++    #include <sys/inotify.h>
++    #include <sys/ioctl.h>
++    #include <errno.h>
++    #define EVENT_SIZE  ( sizeof (struct inotify_event) )
++    #define EVENT_LEN   (EVENT_SIZE + 16)
++    #define EVENT_BUF_LEN     ( 1024 * EVENT_LEN )
++#else
++    #include "OSspecific.H"
++#endif
++
++// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
++
++const Foam::NamedEnum<Foam::fileMonitor::fileState, 3>
++Foam::fileMonitor::fileStateNames_
++{
++    "unmodified",
++    "modified",
++    "deleted"
++};
++
++namespace Foam
++{
++    defineTypeNameAndDebug(fileMonitor, 0);
++
++    //- Reduction operator for PackedList of fileState
++    class reduceFileStates
++    {
++        public:
++        unsigned int operator()(const unsigned int x, const unsigned int y)
++        const
++        {
++            // x,y are sets of 2bits representing fileState
++
++            unsigned int mask = 3u;
++            unsigned int shift = 0;
++            unsigned int result = 0;
++
++            while (mask)
++            {
++                // Combine state
++                unsigned int xState = (x & mask) >> shift;
++                unsigned int yState = (y & mask) >> shift;
++
++                // Combine and add to result. Combine is such that UNMODIFIED
++                // wins.
++                unsigned int state = min(xState, yState);
++                result |= (state << shift);
++
++                shift += 2;
++                mask <<= 2;
++            }
++            return result;
++        }
++    };
++
++    //- Combine operator for PackedList of fileState
++    class combineReduceFileStates
++    {
++        public:
++        void operator()(unsigned int& x, const unsigned int y) const
++        {
++            x = reduceFileStates()(x, y);
++        }
++    };
++
++
++
++    //-  Internal tracking via stat(3p) or inotify(7)
++    class fileMonitorWatcher
++    {
++    public:
++
++        const bool useInotify_;
++
++        // For inotify
++
++            //- File descriptor for the inotify instance
++            int inotifyFd_;
++
++            //- Current watchIDs and corresponding directory id
++            DynamicList<label> dirWatches_;
++            DynamicList<fileName> dirFiles_;
++
++        // For stat
++
++            //- From watch descriptor to modified time
++            DynamicList<double> lastMod_;
++
++
++
++        //- Initialise inotify
++        inline fileMonitorWatcher(const bool useInotify, const label sz = 20)
++        :
++            useInotify_(useInotify),
++            inotifyFd_(-1)
++        {
++            if (useInotify_)
++            {
++                #ifdef FOAM_USE_INOTIFY
++                inotifyFd_ = inotify_init();
++                dirWatches_.setCapacity(sz);
++                dirFiles_.setCapacity(sz);
++
++                if (inotifyFd_ < 0)
++                {
++                    static bool hasWarned = false;
++                    if (!hasWarned)
++                    {
++                        hasWarned = true;
++                        WarningInFunction
++                            << "Failed allocating an inotify descriptor : "
++                            << string(strerror(errno)) << endl
++                            << "    Please increase the number of allowable "
++                            << "inotify instances" << endl
++                            << "    (/proc/sys/fs/inotify/max_user_instances"
++                            << " on Linux)" << endl
++                            << "    , switch off runTimeModifiable." << endl
++                            << "    or compile this file without "
++                            << "FOAM_USE_INOTIFY"
++                            << " to use time stamps instead of inotify." << endl
++                            << "    Continuing without additional file"
++                            << " monitoring."
++                            << endl;
++                    }
++                }
++                #else
++                    FatalErrorInFunction
++                        << "You selected inotify but this file was compiled"
++                        << " without FOAM_USE_INOTIFY"
++                        << " Please select another fileModification test method"
++                        << exit(FatalError);
++                #endif
++            }
++            else
++            {
++                lastMod_.setCapacity(sz);
++            }
++        }
++
++        //- Remove all watches
++        inline ~fileMonitorWatcher()
++        {
++            #ifdef FOAM_USE_INOTIFY
++            if (useInotify_ && inotifyFd_ >= 0)
++            {
++                forAll(dirWatches_, i)
++                {
++                    if (dirWatches_[i] >= 0)
++                    {
++                        if (inotify_rm_watch(inotifyFd_, int(dirWatches_[i])))
++                        {
++                            WarningInFunction
++                                << "Failed deleting directory watch "
++                                << dirWatches_[i] << endl;
++                        }
++                    }
++                }
++            }
++            #endif
++        }
++
++        inline bool addWatch(const label watchFd, const fileName& fName)
++        {
++            if (useInotify_)
++            {
++                if (inotifyFd_ < 0)
++                {
++                    return false;
++                }
++
++                #ifdef FOAM_USE_INOTIFY
++                // Add/retrieve watch on directory containing file.
++                // Note that fName might be non-existing in special situations
++                // (master-only reading for IODictionaries)
++
++                const fileName dir = fName.path();
++
++                label dirWatchID = -1;
++                if (isDir(dir))
++                {
++                    dirWatchID = inotify_add_watch
++                    (
++                        inotifyFd_,
++                        dir.c_str(),
++                        IN_CLOSE_WRITE
++                    );
++
++                    if (dirWatchID < 0)
++                    {
++                        FatalErrorInFunction
++                            << "Failed adding watch " << watchFd
++                            << " to directory " << fName << " due to "
++                            << string(strerror(errno))
++                            << exit(FatalError);
++                    }
++                }
++
++                if (watchFd < dirWatches_.size() && dirWatches_[watchFd] != -1)
++                {
++                    // Reuse of watchFd : should have dir watchID set to -1.
++                    FatalErrorInFunction
++                        << "Problem adding watch " << watchFd
++                        << " to file " << fName
++                        << abort(FatalError);
++                }
++
++                dirWatches_(watchFd) = dirWatchID;
++                dirFiles_(watchFd) = fName.name();
++                #endif
++            }
++            else
++            {
++                if (watchFd < lastMod_.size() && lastMod_[watchFd] != 0)
++                {
++                    // Reuse of watchFd : should have lastMod set to 0.
++                    FatalErrorInFunction
++                        << "Problem adding watch " << watchFd
++                        << " to file " << fName
++                        << abort(FatalError);
++                }
++
++                lastMod_(watchFd) = highResLastModified(fName);
++            }
++
++            return true;
++        }
++
++        inline bool removeWatch(const label watchFd)
++        {
++            if (useInotify_)
++            {
++                if (inotifyFd_ < 0)
++                {
++                    return false;
++                }
++
++                dirWatches_[watchFd] = -1;
++            }
++            else
++            {
++                lastMod_[watchFd] = 0;
++            }
++            return true;
++        }
++
++    };
++}
++
++
++// * * * * * * * * * * * * * Private Member Functions  * * * * * * * * * * * //
++
++void Foam::fileMonitor::checkFiles() const
++{
++    if (useInotify_)
++    {
++        #ifdef FOAM_USE_INOTIFY
++        // Large buffer for lots of events
++        char buffer[EVENT_BUF_LEN];
++
++        while (true)
++        {
++            struct timeval zeroTimeout = {0, 0};
++
++            //- Pre-allocated structure containing file descriptors
++            fd_set fdSet;
++            // Add notify descriptor to select fd_set
++            FD_ZERO(&fdSet);
++            FD_SET(watcher_->inotifyFd_, &fdSet);
++
++            int ready = select
++            (
++                watcher_->inotifyFd_+1,     // num filedescriptors in fdSet
++                &fdSet,             // fdSet with only inotifyFd
++                nullptr,               // No writefds
++                nullptr,               // No errorfds
++                &zeroTimeout        // eNo timeout
++            );
++
++            if (ready < 0)
++            {
++                FatalErrorInFunction
++                    << "Problem in issuing select."
++                    << abort(FatalError);
++            }
++            else if (FD_ISSET(watcher_->inotifyFd_, &fdSet))
++            {
++                // Read events
++                ssize_t nBytes = ::read
++                (
++                    watcher_->inotifyFd_,
++                    buffer,
++                    EVENT_BUF_LEN
++                );
++
++                if (nBytes < 0)
++                {
++                    FatalErrorInFunction
++                        << "read of " << watcher_->inotifyFd_
++                        << " failed with " << label(nBytes)
++                        << abort(FatalError);
++                }
++
++                // Go through buffer, consuming events
++                int i = 0;
++                while (i < nBytes)
++                {
++                    const struct inotify_event* inotifyEvent =
++                        reinterpret_cast<const struct inotify_event*>
++                        (
++                            &buffer[i]
++                        );
++
++                    // Pout<< "watchFd:" << inotifyEvent->wd << nl
++                    //    << "mask:" << inotifyEvent->mask << nl
++                    //  << endl;
++                    // Pout<< "file:" << fileName(inotifyEvent->name) << endl;
++                    // Pout<< "len:" << inotifyEvent->len << endl;
++
++                    if
++                    (
++                        (inotifyEvent->mask & IN_CLOSE_WRITE)
++                     && inotifyEvent->len
++                    )
++                    {
++                        // Search for file
++                        forAll(watcher_->dirWatches_, i)
++                        {
++                            label id = watcher_->dirWatches_[i];
++                            if
++                            (
++                                id == inotifyEvent->wd
++                             && inotifyEvent->name == watcher_->dirFiles_[i]
++                            )
++                            {
++                                // Correct directory and name
++                                localState_[i] = MODIFIED;
++                            }
++                        }
++                    }
++
++                    i += EVENT_SIZE + inotifyEvent->len;
++                }
++            }
++            else
++            {
++                // No data
++                return;
++            }
++        }
++        #endif
++    }
++    else
++    {
++        forAll(watcher_->lastMod_, watchFd)
++        {
++            double oldTime = watcher_->lastMod_[watchFd];
++
++            if (oldTime != 0)
++            {
++                const fileName& fName = watchFile_[watchFd];
++                double newTime = highResLastModified(fName);
++
++                if (newTime == 0)
++                {
++                    localState_[watchFd] = DELETED;
++                }
++                else
++                {
++                    if (newTime > (oldTime + regIOobject::fileModificationSkew))
++                    {
++                        localState_[watchFd] = MODIFIED;
++                    }
++                    else
++                    {
++                        localState_[watchFd] = UNMODIFIED;
++                    }
++                }
++            }
++        }
++    }
++}
++
++
++// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
++
++
++Foam::fileMonitor::fileMonitor(const bool useInotify)
++:
++    useInotify_(useInotify),
++    localState_(20),
++    state_(20),
++    watchFile_(20),
++    freeWatchFds_(2),
++    watcher_(new fileMonitorWatcher(useInotify_, 20))
++{}
++
++
++// * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
++
++Foam::fileMonitor::~fileMonitor()
++{}
++
++
++// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
++
++// Note: fName might not exist (on slaves if in master-only mode for
++// regIOobject)
++Foam::label Foam::fileMonitor::addWatch(const fileName& fName)
++{
++    label watchFd;
++
++    label sz = freeWatchFds_.size();
++
++    if (sz)
++    {
++        watchFd = freeWatchFds_[sz-1];
++        freeWatchFds_.setSize(sz-1);
++    }
++    else
++    {
++        watchFd = state_.size();
++    }
++
++    watcher_->addWatch(watchFd, fName);
++
++    if (debug)
++    {
++        Pout<< "fileMonitor : added watch " << watchFd << " on file "
++            << fName << endl;
++    }
++
++    if (watchFd < 0)
++    {
++        WarningInFunction
++            << "could not add watch for file " << fName << endl;
++    }
++    else
++    {
++        localState_(watchFd) = UNMODIFIED;
++        state_(watchFd) = UNMODIFIED;
++        watchFile_(watchFd) = fName;
++    }
++    return watchFd;
++}
++
++
++bool Foam::fileMonitor::removeWatch(const label watchFd)
++{
++    if (debug)
++    {
++        Pout<< "fileMonitor : removing watch " << watchFd << " on file "
++            << watchFile_[watchFd] << endl;
++    }
++
++    freeWatchFds_.append(watchFd);
++    return watcher_->removeWatch(watchFd);
++}
++
++
++const Foam::fileName& Foam::fileMonitor::getFile(const label watchFd) const
++{
++    return watchFile_[watchFd];
++}
++
++
++Foam::fileMonitor::fileState Foam::fileMonitor::getState(const label watchFd)
++const
++{
++    return state_[watchFd];
++}
++
++
++void Foam::fileMonitor::updateStates
++(
++    const bool masterOnly,
++    const bool syncPar
++) const
++{
++    if (Pstream::master() || !masterOnly)
++    {
++        // Update the localState_
++        checkFiles();
++    }
++
++    if (syncPar)
++    {
++        // Pack local state (might be on master only)
++        PackedList<2> stats(state_.size(), MODIFIED);
++        if (Pstream::master() || !masterOnly)
++        {
++            forAll(state_, watchFd)
++            {
++                stats[watchFd] = static_cast<unsigned int>
++                (
++                    localState_[watchFd]
++                );
++            }
++        }
++
++
++        // Scatter or reduce to synchronise state
++        if (masterOnly)
++        {
++            // Scatter
++            if (stats.storage().size() == 1)
++            {
++                Pstream::scatter(stats.storage()[0]);
++            }
++            else
++            {
++                Pstream::listCombineScatter(stats.storage());
++            }
++        }
++        else
++        {
++            // Reduce
++            if (stats.storage().size() == 1)
++            {
++                // Optimisation valid for most cases.
++                reduce(stats.storage()[0], reduceFileStates());
++            }
++            else
++            {
++                Pstream::listCombineGather
++                (
++                    stats.storage(),
++                    combineReduceFileStates()
++                );
++            }
++        }
++
++
++        // Update synchronised state
++        forAll(state_, watchFd)
++        {
++            // Assign synchronised state
++            unsigned int stat = stats[watchFd];
++            state_[watchFd] = fileState(stat);
++
++            if (!masterOnly)
++            {
++                // Give warning for inconsistent state
++                if (state_[watchFd] != localState_[watchFd])
++                {
++                    if (debug)
++                    {
++                        Pout<< "fileMonitor : Delaying reading "
++                            << watchFile_[watchFd]
++                            << " due to inconsistent "
++                               "file time-stamps between processors"
++                            << endl;
++                    }
++
++                    WarningInFunction
++                        << "Delaying reading " << watchFile_[watchFd]
++                        << " due to inconsistent "
++                           "file time-stamps between processors" << endl;
++                }
++            }
++        }
++    }
++    else
++    {
++        state_ = localState_;
++    }
++}
++
++
++void Foam::fileMonitor::setUnmodified(const label watchFd)
++{
++    state_[watchFd] = UNMODIFIED;
++    localState_[watchFd] = UNMODIFIED;
++
++    if (!useInotify_)
++    {
++        watcher_->lastMod_[watchFd] = highResLastModified(watchFile_[watchFd]);
++    }
++}
++
++
++// ************************************************************************* //
+diff --git a/src/OSspecific/MSwindows/fileMonitor.H b/src/OSspecific/MSwindows/fileMonitor.H
+new file mode 100644
+index 0000000000..b9758a97be
+--- /dev/null
++++ b/src/OSspecific/MSwindows/fileMonitor.H
+@@ -0,0 +1,167 @@
++/*---------------------------------------------------------------------------*\
++  =========                 |
++  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
++   \\    /   O peration     | Website:  https://openfoam.org
++    \\  /    A nd           | Copyright (C) 2011-2022 OpenFOAM Foundation
++     \\/     M anipulation  |
++-------------------------------------------------------------------------------
++License
++    This file is part of OpenFOAM.
++
++    OpenFOAM is free software: you can redistribute it and/or modify it
++    under the terms of the GNU General Public License as published by
++    the Free Software Foundation, either version 3 of the License, or
++    (at your option) any later version.
++
++    OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
++    ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++    FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++    for more details.
++
++    You should have received a copy of the GNU General Public License
++    along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
++
++Class
++    Foam::fileMonitor
++
++Description
++    Checking for changes to files.
++
++    Note:
++        The default is to use stat to get the timestamp.
++
++        Compile with FOAM_USE_INOTIFY to use the inotify (Linux specific, since
++        2.6.13) framework. The problem is that inotify does not work on nfs3
++        mounted directories!!
++
++SourceFiles
++    fileMonitor.C
++
++\*---------------------------------------------------------------------------*/
++
++#ifndef fileMonitor_H
++#define fileMonitor_H
++
++#include <sys/types.h>
++#include "NamedEnum.H"
++#include "className.H"
++#include "DynamicList.H"
++
++// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
++
++namespace Foam
++{
++
++class fileMonitor;
++class fileMonitorWatcher;
++
++/*---------------------------------------------------------------------------*\
++                         Class fileMonitor Declaration
++\*---------------------------------------------------------------------------*/
++
++class fileMonitor
++{
++
++public:
++
++    // Public data types
++
++        //- Enumeration defining the file state.
++        enum fileState
++        {
++            UNMODIFIED = 0,
++            MODIFIED = 1,
++            DELETED = 2
++        };
++
++        static const NamedEnum<fileState, 3> fileStateNames_;
++
++
++private:
++
++    // Private Data
++
++        //- Whether to use inotify (requires -DFOAM_USE_INOTIFY, see above)
++        const bool useInotify_;
++
++        //- State for all watchFds based on local files
++        mutable DynamicList<fileState> localState_;
++
++        //- State for all watchFds - synchronised
++        mutable DynamicList<fileState> state_;
++
++        //- Filename for all watchFds
++        DynamicList<fileName> watchFile_;
++
++        //- Free watchFds
++        DynamicList<label> freeWatchFds_;
++
++        //- Watch mechanism (stat or inotify)
++        mutable autoPtr<fileMonitorWatcher> watcher_;
++
++
++    // Private Member Functions
++
++        //- Update localState_ from any events.
++        void checkFiles() const;
++
++
++public:
++
++    // Declare name of the class and its debug switch
++    ClassName("fileMonitor");
++
++    // Constructors
++
++        //- Construct null
++        fileMonitor(const bool useInotify);
++
++        //- Disallow default bitwise copy construction
++        fileMonitor(const fileMonitor&) = delete;
++
++
++    //- Destructor
++    ~fileMonitor();
++
++
++    // Member Functions
++
++        //- Add file to watch. Return watch descriptor
++        label addWatch(const fileName&);
++
++        //- Remove file to watch. Return true if successful
++        bool removeWatch(const label watchFd);
++
++        //- Get name of file being watched
++        const fileName& getFile(const label watchFd) const;
++
++        //- Check state using handle
++        fileState getState(const label watchFd) const;
++
++        //- Check state of all files. Updates state_.
++        void updateStates
++        (
++            const bool masterOnly,
++            const bool syncPar
++        ) const;
++
++        //- Reset state (e.g. after having read it) using handle
++        void setUnmodified(const label watchFd);
++
++
++    // Member Operators
++
++        //- Disallow default bitwise assignment
++        void operator=(const fileMonitor&) = delete;
++};
++
++
++// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
++
++} // End namespace Foam
++
++// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
++
++#endif
++
++// ************************************************************************* //
+diff --git a/src/OSspecific/MSwindows/fileStat.C b/src/OSspecific/MSwindows/fileStat.C
+new file mode 100644
+index 0000000000..68647e3ed5
+--- /dev/null
++++ b/src/OSspecific/MSwindows/fileStat.C
+@@ -0,0 +1,151 @@
++#include "fileStat.H"
++#include "IOstreams.H"
++#include "timer.H"
++
++#include <signal.h>
++#include <unistd.h>
++
++#ifndef major
++#define major(dev) ((dev) >> 8)
++#endif
++#ifndef minor
++#define minor(dev) ((dev) & 0xff)
++#endif
++#ifndef makedev
++#define makedev(maj, min) (((maj) << 8) | (min))
++#endif
++
++// * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
++
++const Foam::label Foam::fileStat::nVariants_ = 2;
++
++const char* Foam::fileStat::variantExts_[] = {"gz", "orig"};
++
++
++// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
++
++Foam::fileStat::fileStat()
++:
++    isValid_(false)
++{}
++
++
++Foam::fileStat::fileStat
++(
++    const fileName& fName,
++    const bool checkVariants,
++    const bool followLink,
++    const unsigned int maxTime
++)
++{
++    // Work on volatile
++    volatile bool locIsValid = false;
++
++    timer myTimer(maxTime);
++
++    if (!timedOut(myTimer))
++    {
++        if (::stat(fName.c_str(), &status_) == 0)
++        {
++            locIsValid = true;
++        }
++        else if (checkVariants)
++        {
++            for (label i = 0; !locIsValid && i < nVariants_; ++ i)
++            {
++                const fileName fNameVar = fName + "." + variantExts_[i];
++                if (::stat(fNameVar.c_str(), &status_) == 0)
++                {
++                    locIsValid = true;
++                }
++            }
++        }
++    }
++
++    // Copy into (non-volatile, possible register based) member var
++    isValid_ = locIsValid;
++}
++
++
++Foam::fileStat::fileStat(Istream& is)
++{
++    is >> *this;
++}
++
++
++// * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
++
++bool Foam::fileStat::sameDevice(const fileStat& stat2) const
++{
++    return
++        isValid_
++     && (
++            major(status_.st_dev) == major(stat2.status().st_dev)
++         && minor(status_.st_dev) == minor(stat2.status().st_dev)
++        );
++}
++
++
++bool Foam::fileStat::sameINode(const fileStat& stat2) const
++{
++    return isValid_ && (status_.st_ino == stat2.status().st_ino);
++}
++
++
++bool Foam::fileStat::sameINode(const label iNode) const
++{
++    return isValid_ && (status_.st_ino == ino_t(iNode));
++}
++
++
++// * * * * * * * * * * * * * * * Friend Operators  * * * * * * * * * * * * * //
++
++Foam::Istream& Foam::operator>>(Istream& is, fileStat& fStat)
++{
++    FixedList<label, 13> stat(is);
++
++    fStat.isValid_ = stat[0];
++
++    dev_t st_dev = makedev(stat[1], stat[2]);
++    fStat.status_.st_dev = st_dev;
++
++    fStat.status_.st_ino = stat[3];
++    fStat.status_.st_mode = stat[4];
++    fStat.status_.st_uid = stat[5];
++    fStat.status_.st_gid = stat[6];
++
++    dev_t st_rdev = makedev(stat[7], stat[8]);
++    fStat.status_.st_rdev = st_rdev;
++
++    fStat.status_.st_size = stat[9];
++    fStat.status_.st_atime = stat[10];
++    fStat.status_.st_mtime = stat[11];
++    fStat.status_.st_ctime = stat[12];
++
++    // Check state of Istream
++    is.check("Istream& operator>>(Istream&, fileStat&)");
++
++    return is;
++}
++
++
++Foam::Ostream& Foam::operator<<(Ostream& os, const fileStat& fStat)
++{
++    FixedList<label, 13> stat;
++
++    stat[0] = label(fStat.isValid_);
++    stat[1] = label(major(fStat.status_.st_dev));
++    stat[2] = label(minor(fStat.status_.st_dev));
++    stat[3] = label(fStat.status_.st_ino);
++    stat[4] = label(fStat.status_.st_mode);
++    stat[5] = label(fStat.status_.st_uid);
++    stat[6] = label(fStat.status_.st_gid);
++    stat[7] = label(major(fStat.status_.st_rdev));
++    stat[8] = label(minor(fStat.status_.st_rdev));
++    stat[9] = label(fStat.status_.st_size);
++    stat[10] = label(fStat.status_.st_atime);
++    stat[11] = label(fStat.status_.st_mtime);
++    stat[12] = label(fStat.status_.st_ctime);
++
++    return os << stat;
++}
+diff --git a/src/OSspecific/MSwindows/fileStat.H b/src/OSspecific/MSwindows/fileStat.H
+new file mode 100644
+index 0000000000..9b60f0b10d
+--- /dev/null
++++ b/src/OSspecific/MSwindows/fileStat.H
+@@ -0,0 +1,150 @@
++/*---------------------------------------------------------------------------*\
++  =========                 |
++  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
++   \\    /   O peration     | Website:  https://openfoam.org
++    \\  /    A nd           | Copyright (C) 2011-2020 OpenFOAM Foundation
++     \\/     M anipulation  |
++-------------------------------------------------------------------------------
++License
++    This file is part of OpenFOAM.
++
++    OpenFOAM is free software: you can redistribute it and/or modify it
++    under the terms of the GNU General Public License as published by
++    the Free Software Foundation, either version 3 of the License, or
++    (at your option) any later version.
++
++    OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
++    ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++    FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++    for more details.
++
++    You should have received a copy of the GNU General Public License
++    along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
++
++Class
++    Foam::fileStat
++
++Description
++    Wrapper for stat() system call.
++
++Warning
++    on Linux (an maybe on others) a stat() of an nfs mounted (remote)
++    file does never timeout and cannot be interrupted!
++    So e.g. Foam::ping first and hope nfs is running.
++
++SourceFiles
++    fileStat.C
++
++\*---------------------------------------------------------------------------*/
++
++#ifndef fileStat_H
++#define fileStat_H
++
++#include <sys/stat.h>
++#include <sys/types.h>
++
++#include "label.H"
++#include "fileName.H"
++
++// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
++
++namespace Foam
++{
++
++// Forward declaration of friend functions and operators
++
++class fileStat;
++
++Istream& operator>>(Istream&, fileStat&);
++Ostream& operator<<(Ostream&, const fileStat&);
++
++
++/*---------------------------------------------------------------------------*\
++                          Class fileStat Declaration
++\*---------------------------------------------------------------------------*/
++
++class fileStat
++{
++    // Private Data
++
++        struct stat status_;
++
++        bool isValid_;
++
++
++public:
++
++    // Public static data
++
++        //- Number of file variants
++        static const label nVariants_;
++
++        //- Extensions of the file variants
++        static const char* variantExts_[];
++
++
++    // Constructors
++
++        //- Empty constructor
++        fileStat();
++
++        //- Construct from components.
++        //  followLink : in case of link get status of pointed-to file
++        //  maxTime    : time out
++        fileStat
++        (
++            const fileName& fName,
++            const bool checkVariants = true,
++            const bool followLink = true,
++            const unsigned int maxTime = 0
++        );
++
++        //- Construct from Istream
++        fileStat(Istream&);
++
++
++    // Member Functions
++
++        // Access
++
++            //- Raw status
++            const struct stat& status() const
++            {
++                return status_;
++            }
++
++            //- Did constructor fail
++            bool isValid() const
++            {
++                return isValid_;
++            }
++
++
++        // Check
++
++            //- Compare two fileStats for same device
++            bool sameDevice(const fileStat& stat2) const;
++
++            //- Compare two fileStats for same Inode
++            bool sameINode(const fileStat& stat2) const;
++
++            //- Compare state against inode
++            bool sameINode(const label iNode) const;
++
++
++    // IOstream Operators
++
++        friend Istream& operator>>(Istream&, fileStat&);
++        friend Ostream& operator<<(Ostream&, const fileStat&);
++};
++
++
++// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
++
++} // End namespace Foam
++
++// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
++
++#endif
++
++// ************************************************************************* //
+diff --git a/src/OSspecific/MSwindows/memInfo/memInfo.C b/src/OSspecific/MSwindows/memInfo/memInfo.C
+new file mode 100644
+index 0000000000..6ed72afa9b
+--- /dev/null
++++ b/src/OSspecific/MSwindows/memInfo/memInfo.C
+@@ -0,0 +1,85 @@
++#undef DebugInfo
++
++#include "memInfo.H"
++#include "OSspecific.H"
++
++#undef DebugInfo
++
++#define WIN32_LEAN_AND_MEAN
++#ifndef NOMINMAX
++#define NOMINMAX
++#endif
++#define NOGDI
++#define NOUSER
++#define NONLS
++#include <windows.h>
++#include <psapi.h>
++
++#undef min
++#undef max
++#undef ERROR
++#undef CONST
++#undef small
++#undef Yield
++#undef DebugInfo
++#undef GetMessage
++#undef GetUserName
++#undef GetClassName
++#undef DrawText
++#undef DeleteFile
++#undef CreateDirectory
++#undef SetEnvironmentVariable
++#undef GetEnvironmentVariable
++#undef MoveFile
++#undef CopyFile
++
++Foam::memInfo::memInfo()
++:
++    peak_(-1),
++    size_(-1),
++    rss_(-1)
++{
++    update();
++}
++
++Foam::memInfo::~memInfo()
++{}
++
++const Foam::memInfo& Foam::memInfo::update()
++{
++    PROCESS_MEMORY_COUNTERS_EX pmc;
++    if (GetProcessMemoryInfo(GetCurrentProcess(), reinterpret_cast<PROCESS_MEMORY_COUNTERS*>(&pmc), sizeof(pmc)))
++    {
++        peak_ = static_cast<int>(pmc.PeakWorkingSetSize / 1024);
++        size_ = static_cast<int>(pmc.PrivateUsage / 1024);
++        rss_  = static_cast<int>(pmc.WorkingSetSize / 1024);
++    }
++    else
++    {
++        peak_ = size_ = rss_ = -1;
++    }
++    return *this;
++}
++
++bool Foam::memInfo::valid() const
++{
++    return peak_ != -1;
++}
++
++Foam::Istream& Foam::operator>>(Istream& is, memInfo& m)
++{
++    is.readBegin("memInfo");
++    is >> m.peak_ >> m.size_ >> m.rss_;
++    is.readEnd("memInfo");
++    is.check("Foam::Istream& Foam::operator>>(Foam::Istream&, Foam::memInfo&)");
++    return is;
++}
++
++Foam::Ostream& Foam::operator<<(Ostream& os, const memInfo& m)
++{
++    os << token::BEGIN_LIST
++       << m.peak_ << token::SPACE << m.size_ << token::SPACE << m.rss_
++       << token::END_LIST;
++    os.check("Foam::Ostream& Foam::operator<<(Foam::Ostream&, const Foam::memInfo&)");
++    return os;
++}
+diff --git a/src/OSspecific/MSwindows/memInfo/memInfo.H b/src/OSspecific/MSwindows/memInfo/memInfo.H
+new file mode 100644
+index 0000000000..94c58c5901
+--- /dev/null
++++ b/src/OSspecific/MSwindows/memInfo/memInfo.H
+@@ -0,0 +1,39 @@
++#ifndef memInfo_H
++#define memInfo_H
++
++#include "OSspecific.H"
++#include "MSwindows.H"
++#include "IFstream.H"
++
++namespace Foam
++{
++
++class memInfo;
++
++Istream& operator>>(Istream&, memInfo&);
++Ostream& operator<<(Ostream&, const memInfo&);
++
++class memInfo
++{
++    int peak_;
++    int size_;
++    int rss_;
++
++public:
++    memInfo();
++    ~memInfo();
++
++    const memInfo& update();
++    bool valid() const;
++
++    int peak() const { return peak_; }
++    int size() const { return size_; }
++    int rss()  const { return rss_; }
++
++    friend Istream& operator>>(Istream&, memInfo&);
++    friend Ostream& operator<<(Ostream&, const memInfo&);
++};
++
++} // End namespace Foam
++
++#endif
+diff --git a/src/OSspecific/MSwindows/memInfo/memInfoIO.C b/src/OSspecific/MSwindows/memInfo/memInfoIO.C
+new file mode 100644
+index 0000000000..752ceb9bd4
+--- /dev/null
++++ b/src/OSspecific/MSwindows/memInfo/memInfoIO.C
+@@ -0,0 +1,70 @@
++/*---------------------------------------------------------------------------*\
++  =========                 |
++  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
++   \\    /   O peration     | Website:  https://openfoam.org
++    \\  /    A nd           | Copyright (C) 2011-2018 OpenFOAM Foundation
++     \\/     M anipulation  |
++-------------------------------------------------------------------------------
++License
++    This file is part of OpenFOAM.
++
++    OpenFOAM is free software: you can redistribute it and/or modify it
++    under the terms of the GNU General Public License as published by
++    the Free Software Foundation, either version 3 of the License, or
++    (at your option) any later version.
++
++    OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
++    ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++    FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++    for more details.
++
++    You should have received a copy of the GNU General Public License
++    along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
++
++\*---------------------------------------------------------------------------*/
++
++#include "memInfo.H"
++#include "IOstreams.H"
++
++// * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
++
++Foam::memInfo::memInfo(Istream& is)
++:
++    base1(is),
++    base2(is),
++    member1(is),
++    member2(is)
++{
++    // Check state of Istream
++    is.check("Foam::memInfo::memInfo(Foam::Istream&)");
++}
++
++
++// * * * * * * * * * * * * * * * IOstream Operators  * * * * * * * * * * * * //
++
++Foam::Istream& Foam::operator>>(Istream& is, memInfo&)
++{
++    // Check state of Istream
++    is.check
++    (
++        "Foam::Istream& Foam::operator>>(Foam::Istream&, Foam::memInfo&)"
++    );
++
++    return is;
++}
++
++
++Foam::Ostream& Foam::operator<<(Ostream& os, const memInfo&)
++{
++    // Check state of Ostream
++    os.check
++    (
++        "Foam::Ostream& Foam::operator<<(Foam::Ostream&, "
++        "const Foam::memInfo&)"
++    );
++
++    return os;
++}
++
++
++// ************************************************************************* //
+diff --git a/src/OSspecific/MSwindows/printStack.C b/src/OSspecific/MSwindows/printStack.C
+new file mode 100644
+index 0000000000..766f3cde26
+--- /dev/null
++++ b/src/OSspecific/MSwindows/printStack.C
+@@ -0,0 +1,13 @@
++#include "error.H"
++#include <iostream>
++
++namespace Foam
++{
++
++void error::safePrintStack(std::ostream&)
++{}
++
++void error::printStack(Ostream&)
++{}
++
++} // End namespace Foam
+diff --git a/src/OSspecific/MSwindows/regExp.C b/src/OSspecific/MSwindows/regExp.C
+new file mode 100644
+index 0000000000..768d25eb69
+--- /dev/null
++++ b/src/OSspecific/MSwindows/regExp.C
+@@ -0,0 +1,155 @@
++#include "regExp.H"
++#include "string.H"
++#include "List.H"
++#include "error.H"
++
++template<class StringType>
++bool Foam::regExp::matchGrouping
++(
++    const std::string& str,
++    List<StringType>& groups
++) const
++{
++    if (preg_ && str.size())
++    {
++        std::smatch m;
++        if (std::regex_match(str, m, *preg_))
++        {
++            groups.setSize(m.size() > 1 ? m.size() - 1 : 0);
++            for (size_t i = 1; i < m.size(); ++i)
++            {
++                groups[i - 1] = m[i].str();
++            }
++            return true;
++        }
++    }
++
++    groups.clear();
++    return false;
++}
++
++Foam::regExp::regExp()
++:
++    preg_(nullptr),
++    ngroups_(0)
++{}
++
++Foam::regExp::regExp(const char* pattern, const bool ignoreCase)
++:
++    preg_(nullptr),
++    ngroups_(0)
++{
++    set(pattern, ignoreCase);
++}
++
++Foam::regExp::regExp(const std::string& pattern, const bool ignoreCase)
++:
++    preg_(nullptr),
++    ngroups_(0)
++{
++    set(pattern.c_str(), ignoreCase);
++}
++
++void Foam::regExp::set(const char* pattern, const bool ignoreCase) const
++{
++    clear();
++
++    if (pattern && *pattern)
++    {
++        std::regex_constants::syntax_option_type flags = std::regex_constants::extended;
++        if (ignoreCase)
++        {
++            flags |= std::regex_constants::icase;
++        }
++
++        const char* pat = pattern;
++        if (!strncmp(pattern, "(?i)", 4))
++        {
++            flags |= std::regex_constants::icase;
++            pat += 4;
++            if (!*pat)
++            {
++                return;
++            }
++        }
++
++        try
++        {
++            preg_ = std::make_shared<std::regex>(pat, flags);
++            ngroups_ = preg_->mark_count();
++        }
++        catch (const std::regex_error& e)
++        {
++            FatalErrorInFunction
++                << "Failed to compile regular expression '" << pattern << "'"
++                << nl << e.what()
++                << exit(FatalError);
++        }
++    }
++}
++
++void Foam::regExp::set(const std::string& pattern, const bool ignoreCase) const
++{
++    return set(pattern.c_str(), ignoreCase);
++}
++
++bool Foam::regExp::clear() const
++{
++    if (preg_)
++    {
++        preg_.reset();
++        ngroups_ = 0;
++        return true;
++    }
++    return false;
++}
++
++std::string::size_type Foam::regExp::find(const std::string& str) const
++{
++    if (preg_ && str.size())
++    {
++        std::smatch m;
++        if (std::regex_search(str, m, *preg_))
++        {
++            return m.position(0);
++        }
++    }
++    return string::npos;
++}
++
++bool Foam::regExp::match(const std::string& str) const
++{
++    if (preg_ && str.size())
++    {
++        return std::regex_match(str, *preg_);
++    }
++    return false;
++}
++
++bool Foam::regExp::match
++(
++    const std::string& str,
++    List<std::string>& groups
++) const
++{
++    return matchGrouping(str, groups);
++}
++
++bool Foam::regExp::match
++(
++    const std::string& str,
++    List<Foam::string>& groups
++) const
++{
++    return matchGrouping(str, groups);
++}
++
++void Foam::regExp::operator=(const char* pat)
++{
++    set(pat);
++}
++
++void Foam::regExp::operator=(const std::string& pat)
++{
++    set(pat);
++}
+diff --git a/src/OSspecific/MSwindows/regExp.H b/src/OSspecific/MSwindows/regExp.H
+new file mode 100644
+index 0000000000..25be13ce4d
+--- /dev/null
++++ b/src/OSspecific/MSwindows/regExp.H
+@@ -0,0 +1,93 @@
++#ifndef regExp_H
++#define regExp_H
++
++#include <regex>
++#include <string>
++#include <memory>
++
++namespace Foam
++{
++
++class string;
++template<class T> class List;
++
++class regExp
++{
++    // Private Data
++        mutable std::shared_ptr<std::regex> preg_;
++        mutable unsigned int ngroups_;
++
++    // Private Member Functions
++        template<class StringType>
++        bool matchGrouping
++        (
++            const std::string&,
++            List<StringType>& groups
++        ) const;
++
++public:
++
++    // Static Member Functions
++        inline static bool meta(char c)
++        {
++            return
++            (
++                (c == '.')
++             || (c == '*' || c == '+' || c == '?')
++             || (c == '(' || c == ')' || c == '|')
++             || (c == '[' || c == ']')
++            );
++        }
++
++    // Constructors
++        regExp();
++        regExp(const char*, const bool ignoreCase=false);
++        regExp(const std::string&, const bool ignoreCase=false);
++        regExp(const regExp&) = default;
++
++    // Destructor
++        ~regExp() = default;
++
++    // Member Functions
++        inline bool empty() const
++        {
++            return !preg_;
++        }
++
++        inline bool exists() const
++        {
++            return preg_ ? true : false;
++        }
++
++        inline int ngroups() const
++        {
++            return static_cast<int>(ngroups_);
++        }
++
++        void set(const char*, const bool ignoreCase=false) const;
++        void set(const std::string&, const bool ignoreCase=false) const;
++        bool clear() const;
++
++        std::string::size_type find(const std::string& str) const;
++        bool match(const std::string&) const;
++        bool match(const std::string&, List<std::string>& groups) const;
++        bool match(const std::string&, List<string>& groups) const;
++
++        inline bool search(const std::string& str) const
++        {
++            return std::string::npos != find(str);
++        }
++
++    // Member Operators
++        void operator=(const regExp& r)
++        {
++            preg_ = r.preg_;
++            ngroups_ = r.ngroups_;
++        }
++        void operator=(const char*);
++        void operator=(const std::string&);
++};
++
++} // End namespace Foam
++
++#endif
+diff --git a/src/OSspecific/MSwindows/signals/sigFpe.C b/src/OSspecific/MSwindows/signals/sigFpe.C
+new file mode 100644
+index 0000000000..b9686dbf21
+--- /dev/null
++++ b/src/OSspecific/MSwindows/signals/sigFpe.C
+@@ -0,0 +1,27 @@
++#include "sigFpe.H"
++#include "error.H"
++#include <limits>
++
++namespace Foam
++{
++
++bool sigFpe::mallocNanActive_ = false;
++
++void sigFpe::fillNan(UList<scalar>& lst)
++{
++    lst = std::numeric_limits<scalar>::signaling_NaN();
++}
++
++sigFpe::sigFpe()
++{}
++
++sigFpe::~sigFpe()
++{}
++
++void sigFpe::set(const bool)
++{}
++
++void sigFpe::unset(const bool)
++{}
++
++} // End namespace Foam
+diff --git a/src/OSspecific/MSwindows/signals/sigFpe.H b/src/OSspecific/MSwindows/signals/sigFpe.H
+new file mode 100644
+index 0000000000..5b09e97d15
+--- /dev/null
++++ b/src/OSspecific/MSwindows/signals/sigFpe.H
+@@ -0,0 +1,25 @@
++#ifndef sigFpe_H
++#define sigFpe_H
++
++#include "UList.H"
++#include "scalar.H"
++
++namespace Foam
++{
++
++class sigFpe
++{
++public:
++    sigFpe();
++    ~sigFpe();
++
++    void set(const bool verbose = false);
++    void unset(const bool verbose = false);
++
++    static bool mallocNanActive_;
++    static void fillNan(UList<scalar>&);
++};
++
++} // End namespace Foam
++
++#endif
+diff --git a/src/OSspecific/MSwindows/signals/sigInt.C b/src/OSspecific/MSwindows/signals/sigInt.C
+new file mode 100644
+index 0000000000..e15df942ec
+--- /dev/null
++++ b/src/OSspecific/MSwindows/signals/sigInt.C
+@@ -0,0 +1,15 @@
++#include "sigInt.H"
++
++namespace Foam
++{
++
++sigInt::sigInt()
++{}
++
++sigInt::~sigInt()
++{}
++
++void sigInt::set(const bool)
++{}
++
++} // End namespace Foam
+diff --git a/src/OSspecific/MSwindows/signals/sigInt.H b/src/OSspecific/MSwindows/signals/sigInt.H
+new file mode 100644
+index 0000000000..68d911b394
+--- /dev/null
++++ b/src/OSspecific/MSwindows/signals/sigInt.H
+@@ -0,0 +1,17 @@
++#ifndef sigInt_H
++#define sigInt_H
++
++namespace Foam
++{
++
++class sigInt
++{
++public:
++    sigInt();
++    ~sigInt();
++    void set(const bool verbose = false);
++};
++
++} // End namespace Foam
++
++#endif
+diff --git a/src/OSspecific/MSwindows/signals/sigQuit.C b/src/OSspecific/MSwindows/signals/sigQuit.C
+new file mode 100644
+index 0000000000..a6e65da7db
+--- /dev/null
++++ b/src/OSspecific/MSwindows/signals/sigQuit.C
+@@ -0,0 +1,15 @@
++#include "sigQuit.H"
++
++namespace Foam
++{
++
++sigQuit::sigQuit()
++{}
++
++sigQuit::~sigQuit()
++{}
++
++void sigQuit::set(const bool)
++{}
++
++} // End namespace Foam
+diff --git a/src/OSspecific/MSwindows/signals/sigQuit.H b/src/OSspecific/MSwindows/signals/sigQuit.H
+new file mode 100644
+index 0000000000..11641439b5
+--- /dev/null
++++ b/src/OSspecific/MSwindows/signals/sigQuit.H
+@@ -0,0 +1,17 @@
++#ifndef sigQuit_H
++#define sigQuit_H
++
++namespace Foam
++{
++
++class sigQuit
++{
++public:
++    sigQuit();
++    ~sigQuit();
++    void set(const bool verbose = false);
++};
++
++} // End namespace Foam
++
++#endif
+diff --git a/src/OSspecific/MSwindows/signals/sigSegv.C b/src/OSspecific/MSwindows/signals/sigSegv.C
+new file mode 100644
+index 0000000000..5962393790
+--- /dev/null
++++ b/src/OSspecific/MSwindows/signals/sigSegv.C
+@@ -0,0 +1,15 @@
++#include "sigSegv.H"
++
++namespace Foam
++{
++
++sigSegv::sigSegv()
++{}
++
++sigSegv::~sigSegv()
++{}
++
++void sigSegv::set(const bool)
++{}
++
++} // End namespace Foam
+diff --git a/src/OSspecific/MSwindows/signals/sigSegv.H b/src/OSspecific/MSwindows/signals/sigSegv.H
+new file mode 100644
+index 0000000000..b2bd9576fc
+--- /dev/null
++++ b/src/OSspecific/MSwindows/signals/sigSegv.H
+@@ -0,0 +1,17 @@
++#ifndef sigSegv_H
++#define sigSegv_H
++
++namespace Foam
++{
++
++class sigSegv
++{
++public:
++    sigSegv();
++    ~sigSegv();
++    void set(const bool verbose = false);
++};
++
++} // End namespace Foam
++
++#endif
+diff --git a/src/OSspecific/MSwindows/signals/sigStopAtWriteNow.C b/src/OSspecific/MSwindows/signals/sigStopAtWriteNow.C
+new file mode 100644
+index 0000000000..d08500b978
+--- /dev/null
++++ b/src/OSspecific/MSwindows/signals/sigStopAtWriteNow.C
+@@ -0,0 +1,23 @@
++#include "sigStopAtWriteNow.H"
++
++namespace Foam
++{
++
++sigStopAtWriteNow::sigStopAtWriteNow()
++{}
++
++sigStopAtWriteNow::sigStopAtWriteNow(const bool, const Time&)
++{}
++
++sigStopAtWriteNow::~sigStopAtWriteNow()
++{}
++
++void sigStopAtWriteNow::set(const bool)
++{}
++
++bool sigStopAtWriteNow::active() const
++{
++    return false;
++}
++
++} // End namespace Foam
+diff --git a/src/OSspecific/MSwindows/signals/sigStopAtWriteNow.H b/src/OSspecific/MSwindows/signals/sigStopAtWriteNow.H
+new file mode 100644
+index 0000000000..dff6d6a785
+--- /dev/null
++++ b/src/OSspecific/MSwindows/signals/sigStopAtWriteNow.H
+@@ -0,0 +1,22 @@
++#ifndef sigStopAtWriteNow_H
++#define sigStopAtWriteNow_H
++
++namespace Foam
++{
++
++class Time;
++
++class sigStopAtWriteNow
++{
++public:
++    sigStopAtWriteNow();
++    sigStopAtWriteNow(const bool verbose, const Time& runTime);
++    ~sigStopAtWriteNow();
++
++    static void set(const bool verbose = false);
++    bool active() const;
++};
++
++} // End namespace Foam
++
++#endif
+diff --git a/src/OSspecific/MSwindows/signals/sigWriteNow.C b/src/OSspecific/MSwindows/signals/sigWriteNow.C
+new file mode 100644
+index 0000000000..666b7a75e8
+--- /dev/null
++++ b/src/OSspecific/MSwindows/signals/sigWriteNow.C
+@@ -0,0 +1,23 @@
++#include "sigWriteNow.H"
++
++namespace Foam
++{
++
++sigWriteNow::sigWriteNow()
++{}
++
++sigWriteNow::sigWriteNow(const bool, Time&)
++{}
++
++sigWriteNow::~sigWriteNow()
++{}
++
++void sigWriteNow::set(const bool)
++{}
++
++bool sigWriteNow::active() const
++{
++    return false;
++}
++
++} // End namespace Foam
+diff --git a/src/OSspecific/MSwindows/signals/sigWriteNow.H b/src/OSspecific/MSwindows/signals/sigWriteNow.H
+new file mode 100644
+index 0000000000..0448cb260b
+--- /dev/null
++++ b/src/OSspecific/MSwindows/signals/sigWriteNow.H
+@@ -0,0 +1,22 @@
++#ifndef sigWriteNow_H
++#define sigWriteNow_H
++
++namespace Foam
++{
++
++class Time;
++
++class sigWriteNow
++{
++public:
++    sigWriteNow();
++    sigWriteNow(const bool verbose, Time& runTime);
++    ~sigWriteNow();
++
++    static void set(const bool verbose = false);
++    bool active() const;
++};
++
++} // End namespace Foam
++
++#endif
+diff --git a/src/OSspecific/MSwindows/timer.C b/src/OSspecific/MSwindows/timer.C
+new file mode 100644
+index 0000000000..d6c05b09e3
+--- /dev/null
++++ b/src/OSspecific/MSwindows/timer.C
+@@ -0,0 +1,15 @@
++#include "timer.H"
++#include "error.H"
++
++namespace Foam
++{
++defineTypeNameAndDebug(timer, 0);
++}
++
++Foam::timer::timer(const unsigned int newTimeOut)
++:
++    newTimeOut_(newTimeOut)
++{}
++
++Foam::timer::~timer()
++{}
+diff --git a/src/OSspecific/MSwindows/timer.H b/src/OSspecific/MSwindows/timer.H
+new file mode 100644
+index 0000000000..0596295c4e
+--- /dev/null
++++ b/src/OSspecific/MSwindows/timer.H
+@@ -0,0 +1,24 @@
++#ifndef timer_H
++#define timer_H
++
++#include "className.H"
++
++#define timedOut(x) false
++
++namespace Foam
++{
++
++class timer
++{
++    unsigned int newTimeOut_;
++
++public:
++    ClassName("timer");
++
++    timer(const unsigned int newTimeOut = 0);
++    ~timer();
++};
++
++} // End namespace Foam
++
++#endif
+diff --git a/src/OpenFOAM/Make/options b/src/OpenFOAM/Make/options
+index 84591cccba..2c74c5ee63 100644
+--- a/src/OpenFOAM/Make/options
++++ b/src/OpenFOAM/Make/options
+@@ -3,5 +3,5 @@ EXE_INC = \
+ 
+ LIB_LIBS = \
+     $(FOAM_LIBBIN)/libOSspecific.o \
+-    -L$(FOAM_LIBBIN)/dummy -lPstream \
++    $(FOAM_LIBBIN)/dummy/libPstream.o \
+     -lz
+diff --git a/src/OpenFOAM/primitives/Scalar/doubleFloat.H b/src/OpenFOAM/primitives/Scalar/doubleFloat.H
+index 8c783b4cea..2bfa65e029 100644
+--- a/src/OpenFOAM/primitives/Scalar/doubleFloat.H
++++ b/src/OpenFOAM/primitives/Scalar/doubleFloat.H
+@@ -31,6 +31,40 @@ License
+ 
+ #include <cmath>
+ 
++#if defined(_WIN32) || defined(MSWIN)
++extern "C"
++{
++    double _j0(double);
++    double _j1(double);
++    double _jn(int, double);
++    double _y0(double);
++    double _y1(double);
++    double _yn(int, double);
++}
++
++// Global Bessel wrappers for Windows
++inline double j0(double x) { return ::_j0(x); }
++inline double j1(double x) { return ::_j1(x); }
++inline double jn(int n, double x) { return ::_jn(n, x); }
++inline double y0(double x) { return ::_y0(x); }
++inline double y1(double x) { return ::_y1(x); }
++inline double yn(int n, double x) { return ::_yn(n, x); }
++
++inline float j0f(float x) { return static_cast<float>(::_j0(static_cast<double>(x))); }
++inline float j1f(float x) { return static_cast<float>(::_j1(static_cast<double>(x))); }
++inline float jnf(int n, float x) { return static_cast<float>(::_jn(n, static_cast<double>(x))); }
++inline float y0f(float x) { return static_cast<float>(::_y0(static_cast<double>(x))); }
++inline float y1f(float x) { return static_cast<float>(::_y1(static_cast<double>(x))); }
++inline float ynf(int n, float x) { return static_cast<float>(::_yn(n, static_cast<double>(x))); }
++
++inline long double j0l(long double x) { return ::_j0(static_cast<double>(x)); }
++inline long double j1l(long double x) { return ::_j1(static_cast<double>(x)); }
++inline long double jnl(int n, long double x) { return ::_jn(n, static_cast<double>(x)); }
++inline long double y0l(long double x) { return ::_y0(static_cast<double>(x)); }
++inline long double y1l(long double x) { return ::_y1(static_cast<double>(x)); }
++inline long double ynl(int n, long double x) { return ::_yn(n, static_cast<double>(x)); }
++#endif
++
+ // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+ 
+ namespace Foam
+diff --git a/src/OpenFOAM/primitives/hashes/Hash/Hash.H b/src/OpenFOAM/primitives/hashes/Hash/Hash.H
+index e76a7a6690..e317d0bf37 100644
+--- a/src/OpenFOAM/primitives/hashes/Hash/Hash.H
++++ b/src/OpenFOAM/primitives/hashes/Hash/Hash.H
+@@ -203,6 +203,7 @@ public:
+ //- Hash specialisation for hashing pointer addresses.
+ //  Treat a pointer like a long.
+ //  This should work for both 32-bit and 64-bit pointers.
++//- Hash specialisation for hashing pointer addresses.
+ template<>
+ class Hash<void*>
+ {
+@@ -213,12 +214,12 @@ public:
+ 
+     unsigned operator()(const void* const& p, unsigned seed) const
+     {
+-        return Hash<long>()(long(p), seed);
++        return Hasher(&p, sizeof(p), seed);
+     }
+ 
+     unsigned operator()(const void* const& p) const
+     {
+-        return Hash<long>()(long(p));
++        return Hasher(&p, sizeof(p));
+     }
+ };
+ 
+diff --git a/src/OpenFOAM/primitives/ints/int/int.H b/src/OpenFOAM/primitives/ints/int/int.H
+index 6b0d74c25b..be232c5bce 100644
+--- a/src/OpenFOAM/primitives/ints/int/int.H
++++ b/src/OpenFOAM/primitives/ints/int/int.H
+@@ -64,6 +64,23 @@ MAXMIN(int64_t, int64_t, int32_t)
+ MAXMIN(int64_t, int32_t, int64_t)
+ MAXMIN(int64_t, int64_t, int64_t)
+ 
++// IOstream operators for short / int16
++inline Istream& operator>>(Istream& is, short& s)
++{
++    int32_t val;
++    is >> val;
++    s = static_cast<short>(val);
++    return is;
++}
++
++inline Ostream& operator<<(Ostream& os, const short s)
++{
++    return os << static_cast<int32_t>(s);
++}
++
++// * * * * * * * * * * * * * * * IOstream Operators  * * * * * * * * * * * * //
++
++int readInt(Istream&);
+ 
+ // * * * * * * * * * * * * * * * IOstream Operators  * * * * * * * * * * * * //
+ 
+diff --git a/src/OpenFOAM/primitives/ints/int32/int32.H b/src/OpenFOAM/primitives/ints/int32/int32.H
+index 2fa3df6bff..b46f542ff9 100644
+--- a/src/OpenFOAM/primitives/ints/int32/int32.H
++++ b/src/OpenFOAM/primitives/ints/int32/int32.H
+@@ -67,7 +67,7 @@ Ostream& operator<<(Ostream&, const int32_t);
+ // On 32bit OSs long is not unambiguously int32_t (or int64_t) causing problems
+ // for IO operator resolution.
+ // This problem is avoided by explicitly defining the following operators:
+-#if WM_ARCH_OPTION == 32
++#if WM_ARCH_OPTION == 32 || defined(_WIN32) || defined(MSWIN)
+     Istream& operator>>(Istream&, long&);
+     Ostream& operator<<(Ostream&, const long);
+ #endif
+diff --git a/src/OpenFOAM/primitives/ints/int32/int32IO.C b/src/OpenFOAM/primitives/ints/int32/int32IO.C
+index 3abbde9568..9104c75a04 100644
+--- a/src/OpenFOAM/primitives/ints/int32/int32IO.C
++++ b/src/OpenFOAM/primitives/ints/int32/int32IO.C
+@@ -102,7 +102,7 @@ Foam::Ostream& Foam::operator<<(Ostream& os, const int32_t i)
+ }
+ 
+ 
+-#if WM_ARCH_OPTION == 32
++#if WM_ARCH_OPTION == 32 || defined(_WIN32) || defined(MSWIN)
+ Foam::Istream& Foam::operator>>(Istream& is, long& i)
+ {
+     return operator>>(is, reinterpret_cast<int32_t&>(i));
+diff --git a/src/OpenFOAM/primitives/ints/uint/uint.H b/src/OpenFOAM/primitives/ints/uint/uint.H
+index 0698df700c..c9840a188c 100644
+--- a/src/OpenFOAM/primitives/ints/uint/uint.H
++++ b/src/OpenFOAM/primitives/ints/uint/uint.H
+@@ -64,6 +64,18 @@ MAXMIN(uint64_t, uint64_t, uint32_t)
+ MAXMIN(uint64_t, uint32_t, uint64_t)
+ MAXMIN(uint64_t, uint64_t, uint64_t)
+ 
++// IOstream operators for unsigned short / uint16
++inline Istream& operator>>(Istream& is, unsigned short& s)
++{
++    uint32_t val;
++    is >> val;
++    s = static_cast<unsigned short>(val);
++    return is;
++}
++inline Ostream& operator<<(Ostream& os, const unsigned short s)
++{
++    return os << static_cast<uint32_t>(s);
++}
+ 
+ // * * * * * * * * * * * * * * * IOstream Operators  * * * * * * * * * * * * //
+ 
+diff --git a/src/OpenFOAM/primitives/ints/uint32/uint32.H b/src/OpenFOAM/primitives/ints/uint32/uint32.H
+index 871c2e78ec..d92c1ce5ba 100644
+--- a/src/OpenFOAM/primitives/ints/uint32/uint32.H
++++ b/src/OpenFOAM/primitives/ints/uint32/uint32.H
+@@ -64,6 +64,11 @@ bool read(const char*, uint32_t&);
+ Istream& operator>>(Istream&, uint32_t&);
+ Ostream& operator<<(Ostream&, const uint32_t);
+ 
++#if WM_ARCH_OPTION == 32 || defined(_WIN32) || defined(MSWIN)
++    Istream& operator>>(Istream&, unsigned long&);
++    Ostream& operator<<(Ostream&, const unsigned long);
++#endif
++
+ //- Template specialisation for pTraits<uint32_t>
+ template<>
+ class pTraits<uint32_t>
+diff --git a/src/OpenFOAM/primitives/ints/uint32/uint32IO.C b/src/OpenFOAM/primitives/ints/uint32/uint32IO.C
+index 8069ea7c8a..a79ce6e7bc 100644
+--- a/src/OpenFOAM/primitives/ints/uint32/uint32IO.C
++++ b/src/OpenFOAM/primitives/ints/uint32/uint32IO.C
+@@ -30,6 +30,21 @@ License
+ #include <sstream>
+ #include <cerrno>
+ 
++#if WM_ARCH_OPTION == 32 || defined(_WIN32) || defined(MSWIN)
++Foam::Istream& Foam::operator>>(Istream& is, unsigned long& i)
++{
++    return operator>>(is, reinterpret_cast<uint32_t&>(i));
++}
++
++
++Foam::Ostream& Foam::operator<<(Ostream& os, const unsigned long i)
++{
++    os << uint32_t(i);
++    return os;
++}
++#endif
++
++
+ // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+ 
+ Foam::word Foam::name(const uint32_t val)
+diff --git a/src/Pstream/mpi/Make/options b/src/Pstream/mpi/Make/options
+index bac4540572..1e86d65e66 100644
+--- a/src/Pstream/mpi/Make/options
++++ b/src/Pstream/mpi/Make/options
+@@ -1,4 +1,4 @@
+ -include $(GENERAL_RULES)/mplibType
+ 
+ EXE_INC  = $(PFLAGS) $(PINC)
+-LIB_LIBS = $(PLIBS)
++LIB_LIBS = $(PLIBS) -L$(LIB_PLATFORMS) -lOpenFOAM
+diff --git a/src/ThermophysicalTransportModels/fluid/Make/options b/src/ThermophysicalTransportModels/fluid/Make/options
+index 3edb3dbf52..24c53ccaa1 100644
+--- a/src/ThermophysicalTransportModels/fluid/Make/options
++++ b/src/ThermophysicalTransportModels/fluid/Make/options
+@@ -7,13 +7,15 @@ EXE_INC = \
+     -I$(LIB_SRC)/thermophysicalModels/specie/lnInclude \
+     -I$(LIB_SRC)/thermophysicalModels/solidThermo/lnInclude \
+     -I$(LIB_SRC)/finiteVolume/lnInclude \
+-    -I$(LIB_SRC)/meshTools/lnInclude \
++    -I$(LIB_SRC)/meshTools/lnInclude
+ 
+ LIB_LIBS = \
+     -lthermophysicalTransportModel \
++    -lphysicalProperties \
+     -lfluidThermophysicalModels \
+     -lsolidThermo \
+     -lmomentumTransportModels \
++    -lcompressibleMomentumTransportModels \
+     -lspecie \
+     -lfiniteVolume \
+     -lmeshTools
+diff --git a/src/ThermophysicalTransportModels/fluidMulticomponentThermo/Make/options b/src/ThermophysicalTransportModels/fluidMulticomponentThermo/Make/options
+index ffaebbee22..d0b802dada 100644
+--- a/src/ThermophysicalTransportModels/fluidMulticomponentThermo/Make/options
++++ b/src/ThermophysicalTransportModels/fluidMulticomponentThermo/Make/options
+@@ -8,13 +8,17 @@ EXE_INC = \
+     -I$(LIB_SRC)/thermophysicalModels/basic/lnInclude \
+     -I$(LIB_SRC)/thermophysicalModels/multicomponentThermo/lnInclude \
+     -I$(LIB_SRC)/finiteVolume/lnInclude \
+-    -I$(LIB_SRC)/meshTools/lnInclude \
++    -I$(LIB_SRC)/meshTools/lnInclude
+ 
+ LIB_LIBS = \
++    -lthermophysicalTransportModel \
++    -lfluidThermophysicalTransportModel \
+     -lfluidThermoThermophysicalTransportModels \
+     -lfluidThermophysicalModels \
+     -lmulticomponentThermophysicalModels \
+     -lmomentumTransportModels \
++    -lcompressibleMomentumTransportModels \
++    -lphysicalProperties \
+     -lspecie \
+     -lfiniteVolume \
+     -lmeshTools
+diff --git a/src/ThermophysicalTransportModels/fluidThermo/Make/options b/src/ThermophysicalTransportModels/fluidThermo/Make/options
+index 2a3da7768b..70f4b9f5a6 100644
+--- a/src/ThermophysicalTransportModels/fluidThermo/Make/options
++++ b/src/ThermophysicalTransportModels/fluidThermo/Make/options
+@@ -8,13 +8,16 @@ EXE_INC = \
+     -I$(LIB_SRC)/thermophysicalModels/specie/lnInclude \
+     -I$(LIB_SRC)/thermophysicalModels/solidThermo/lnInclude \
+     -I$(LIB_SRC)/finiteVolume/lnInclude \
+-    -I$(LIB_SRC)/meshTools/lnInclude \
++    -I$(LIB_SRC)/meshTools/lnInclude
+ 
+ LIB_LIBS = \
++    -lthermophysicalTransportModel \
+     -lfluidThermophysicalTransportModel \
+     -lfluidThermophysicalModels \
+     -lsolidThermo \
+     -lmomentumTransportModels \
++    -lcompressibleMomentumTransportModels \
++    -lphysicalProperties \
+     -lspecie \
+     -lfiniteVolume \
+     -lmeshTools
+diff --git a/src/ThermophysicalTransportModels/phaseFluidMulticomponentThermo/Make/options b/src/ThermophysicalTransportModels/phaseFluidMulticomponentThermo/Make/options
+index 96879cd3c3..8d57370154 100644
+--- a/src/ThermophysicalTransportModels/phaseFluidMulticomponentThermo/Make/options
++++ b/src/ThermophysicalTransportModels/phaseFluidMulticomponentThermo/Make/options
+@@ -9,13 +9,18 @@ EXE_INC = \
+     -I$(LIB_SRC)/thermophysicalModels/basic/lnInclude \
+     -I$(LIB_SRC)/thermophysicalModels/multicomponentThermo/lnInclude \
+     -I$(LIB_SRC)/finiteVolume/lnInclude \
+-    -I$(LIB_SRC)/meshTools/lnInclude \
++    -I$(LIB_SRC)/meshTools/lnInclude
+ 
+ LIB_LIBS = \
++    -lthermophysicalTransportModel \
++    -lfluidThermophysicalTransportModel \
+     -lfluidThermoThermophysicalTransportModels \
+     -lfluidThermophysicalModels \
+     -lmulticomponentThermophysicalModels \
+     -lmomentumTransportModels \
++    -lcompressibleMomentumTransportModels \
++    -lphaseCompressibleMomentumTransportModels \
++    -lphysicalProperties \
+     -lspecie \
+     -lfiniteVolume \
+     -lmeshTools
+diff --git a/src/ThermophysicalTransportModels/phaseFluidThermo/Make/options b/src/ThermophysicalTransportModels/phaseFluidThermo/Make/options
+index 26111fa9ba..d6cd5c0d5c 100644
+--- a/src/ThermophysicalTransportModels/phaseFluidThermo/Make/options
++++ b/src/ThermophysicalTransportModels/phaseFluidThermo/Make/options
+@@ -8,12 +8,17 @@ EXE_INC = \
+     -I$(LIB_SRC)/thermophysicalModels/specie/lnInclude \
+     -I$(LIB_SRC)/thermophysicalModels/basic/lnInclude \
+     -I$(LIB_SRC)/finiteVolume/lnInclude \
+-    -I$(LIB_SRC)/meshTools/lnInclude \
++    -I$(LIB_SRC)/meshTools/lnInclude
+ 
+ LIB_LIBS = \
++    -lthermophysicalTransportModel \
++    -lfluidThermophysicalTransportModel \
+     -lfluidThermoThermophysicalTransportModels \
+     -lfluidThermophysicalModels \
+     -lmomentumTransportModels \
++    -lcompressibleMomentumTransportModels \
++    -lphaseCompressibleMomentumTransportModels \
++    -lphysicalProperties \
+     -lspecie \
+     -lfiniteVolume \
+     -lmeshTools
+diff --git a/src/ThermophysicalTransportModels/phaseSolid/Make/options b/src/ThermophysicalTransportModels/phaseSolid/Make/options
+index 644c8c086f..4c3a82b2f8 100644
+--- a/src/ThermophysicalTransportModels/phaseSolid/Make/options
++++ b/src/ThermophysicalTransportModels/phaseSolid/Make/options
+@@ -6,11 +6,13 @@ EXE_INC = \
+     -I$(LIB_SRC)/thermophysicalModels/specie/lnInclude \
+     -I$(LIB_SRC)/thermophysicalModels/solidThermo/lnInclude \
+     -I$(LIB_SRC)/finiteVolume/lnInclude \
+-    -I$(LIB_SRC)/meshTools/lnInclude \
++    -I$(LIB_SRC)/meshTools/lnInclude
+ 
+ LIB_LIBS = \
+     -lthermophysicalTransportModel \
++    -lsolidThermophysicalTransportModels \
+     -lsolidThermo \
++    -lphysicalProperties \
+     -lspecie \
+     -lfiniteVolume \
+     -lmeshTools
+diff --git a/src/ThermophysicalTransportModels/solid/Make/options b/src/ThermophysicalTransportModels/solid/Make/options
+index 00399dfbd5..de241246dc 100644
+--- a/src/ThermophysicalTransportModels/solid/Make/options
++++ b/src/ThermophysicalTransportModels/solid/Make/options
+@@ -5,11 +5,12 @@ EXE_INC = \
+     -I$(LIB_SRC)/thermophysicalModels/specie/lnInclude \
+     -I$(LIB_SRC)/thermophysicalModels/solidThermo/lnInclude \
+     -I$(LIB_SRC)/finiteVolume/lnInclude \
+-    -I$(LIB_SRC)/meshTools/lnInclude \
++    -I$(LIB_SRC)/meshTools/lnInclude
+ 
+ LIB_LIBS = \
+     -lthermophysicalTransportModel \
+     -lsolidThermo \
++    -lphysicalProperties \
+     -lspecie \
+     -lfiniteVolume \
+     -lmeshTools
+diff --git a/src/combustionModels/Make/options b/src/combustionModels/Make/options
+index b0514ec4b1..07abb52067 100644
+--- a/src/combustionModels/Make/options
++++ b/src/combustionModels/Make/options
+@@ -11,6 +11,10 @@ EXE_INC = \
+     -I$(LIB_SRC)/meshTools/lnInclude
+ 
+ LIB_LIBS = \
++    -lphysicalProperties \
++    -lspecie \
++    -lfluidThermophysicalModels \
++    -lmulticomponentThermophysicalModels \
+     -lmomentumTransportModels \
+     -lcompressibleMomentumTransportModels \
+     -lchemistryModel \
+diff --git a/src/dummyThirdParty/MGridGen/Make/options b/src/dummyThirdParty/MGridGen/Make/options
+index e69de29bb2..1f49124a5b 100644
+--- a/src/dummyThirdParty/MGridGen/Make/options
++++ b/src/dummyThirdParty/MGridGen/Make/options
+@@ -0,0 +1,2 @@
++EXE_INC = -I.
++LIB_LIBS =
+diff --git a/src/dummyThirdParty/metis/Make/options b/src/dummyThirdParty/metis/Make/options
+index d97e023f7f..67a9a1e613 100644
+--- a/src/dummyThirdParty/metis/Make/options
++++ b/src/dummyThirdParty/metis/Make/options
+@@ -2,4 +2,5 @@ EXE_INC = \
+     -I$(FOAM_SRC)/parallel/decompose/decompositionMethods/lnInclude \
+     -I$(FOAM_SRC)/parallel/decompose/metis/lnInclude
+ 
+-LIB_LIBS =
++LIB_LIBS = \
++    -ldecompositionMethods
+diff --git a/src/dummyThirdParty/ptscotch/Make/options b/src/dummyThirdParty/ptscotch/Make/options
+index 464fc92683..2fd2d1c31c 100644
+--- a/src/dummyThirdParty/ptscotch/Make/options
++++ b/src/dummyThirdParty/ptscotch/Make/options
+@@ -2,4 +2,5 @@ EXE_INC = \
+     -I$(FOAM_SRC)/parallel/decompose/decompositionMethods/lnInclude \
+     -I$(FOAM_SRC)/parallel/decompose/ptscotch/lnInclude
+ 
+-LIB_LIBS =
++LIB_LIBS = \
++    -ldecompositionMethods
+diff --git a/src/dummyThirdParty/scotch/Make/options b/src/dummyThirdParty/scotch/Make/options
+index 795f944f05..83e389c88f 100644
+--- a/src/dummyThirdParty/scotch/Make/options
++++ b/src/dummyThirdParty/scotch/Make/options
+@@ -2,4 +2,5 @@ EXE_INC = \
+     -I$(FOAM_SRC)/parallel/decompose/decompositionMethods/lnInclude \
+     -I$(FOAM_SRC)/parallel/decompose/scotch/lnInclude
+ 
+-LIB_LIBS =
++LIB_LIBS = \
++    -ldecompositionMethods
+diff --git a/src/functionObjects/field/Make/options b/src/functionObjects/field/Make/options
+index 1294f96862..55d014f96b 100644
+--- a/src/functionObjects/field/Make/options
++++ b/src/functionObjects/field/Make/options
+@@ -22,17 +22,19 @@ LIB_LIBS = \
+     -lfiniteVolume \
+     -lfluidThermophysicalModels \
+     -lsolidThermo \
++    -lspecie \
+     -lphysicalProperties \
+     -lmomentumTransportModels \
+     -lincompressibleMomentumTransportModels \
+     -lcompressibleMomentumTransportModels \
++    -lthermophysicalTransportModel \
++    -lfluidThermophysicalTransportModel \
+     -lfluidThermoThermophysicalTransportModels \
+     -lmulticomponentThermophysicalModels \
+-    -lfluidThermophysicalTransportModel \
+     -lsolidThermophysicalTransportModels \
++    -ltracking \
++    -llagrangian \
+     -lmeshTools \
+     -lsurfMesh \
+-    -llagrangian \
+     -lfileFormats \
+-    -lsampling \
+-    -lsurfMesh
++    -lsampling
+diff --git a/src/fvConstraints/Make/options b/src/fvConstraints/Make/options
+index 7f29dea317..248a594c41 100644
+--- a/src/fvConstraints/Make/options
++++ b/src/fvConstraints/Make/options
+@@ -12,9 +12,15 @@ EXE_INC = \
+     -I$(LIB_SRC)/ThermophysicalTransportModels/fluid/lnInclude
+ 
+ LIB_LIBS = \
+-    -lfiniteVolume \
+-    -lsampling \
+-    -lmeshTools \
++    -lphysicalProperties \
++    -lspecie \
++    -lfluidThermophysicalModels \
++    -lsolidThermo \
++    -lthermophysicalTransportModel \
++    -lfluidThermophysicalTransportModel \
++    -lfluidThermoThermophysicalTransportModels \
+     -lmomentumTransportModels \
+     -lcompressibleMomentumTransportModels \
+-    -lfluidThermoThermophysicalTransportModels
++    -lfiniteVolume \
++    -lsampling \
++    -lmeshTools
+diff --git a/src/fvModels/general/Make/options b/src/fvModels/general/Make/options
+index 5d2521c940..9c92d23e5f 100644
+--- a/src/fvModels/general/Make/options
++++ b/src/fvModels/general/Make/options
+@@ -13,9 +13,16 @@ EXE_INC = \
+     -I$(LIB_SRC)/ThermophysicalTransportModels/fluid/lnInclude
+ 
+ LIB_LIBS = \
+-    -lfiniteVolume \
+-    -lsampling \
+-    -lmeshTools \
++    -lphysicalProperties \
++    -lspecie \
++    -lfluidThermophysicalModels \
++    -lmulticomponentThermophysicalModels \
++    -lsolidThermo \
++    -lthermophysicalTransportModel \
++    -lfluidThermophysicalTransportModel \
++    -lfluidThermoThermophysicalTransportModels \
+     -lmomentumTransportModels \
+     -lcompressibleMomentumTransportModels \
+-    -lfluidThermoThermophysicalTransportModels
++    -lfiniteVolume \
++    -lsampling \
++    -lmeshTools
+diff --git a/src/fvModels/interRegion/Make/options b/src/fvModels/interRegion/Make/options
+index 5d2521c940..9c92d23e5f 100644
+--- a/src/fvModels/interRegion/Make/options
++++ b/src/fvModels/interRegion/Make/options
+@@ -13,9 +13,16 @@ EXE_INC = \
+     -I$(LIB_SRC)/ThermophysicalTransportModels/fluid/lnInclude
+ 
+ LIB_LIBS = \
+-    -lfiniteVolume \
+-    -lsampling \
+-    -lmeshTools \
++    -lphysicalProperties \
++    -lspecie \
++    -lfluidThermophysicalModels \
++    -lmulticomponentThermophysicalModels \
++    -lsolidThermo \
++    -lthermophysicalTransportModel \
++    -lfluidThermophysicalTransportModel \
++    -lfluidThermoThermophysicalTransportModels \
+     -lmomentumTransportModels \
+     -lcompressibleMomentumTransportModels \
+-    -lfluidThermoThermophysicalTransportModels
++    -lfiniteVolume \
++    -lsampling \
++    -lmeshTools
+diff --git a/src/fvModels/propellerDisk/Make/options b/src/fvModels/propellerDisk/Make/options
+index 763eff85bc..8fc43ba6e5 100644
+--- a/src/fvModels/propellerDisk/Make/options
++++ b/src/fvModels/propellerDisk/Make/options
+@@ -12,9 +12,16 @@ EXE_INC = \
+     -I$(LIB_SRC)/ThermophysicalTransportModels/lnInclude
+ 
+ LIB_LIBS = \
++    -lphysicalProperties \
++    -lspecie \
++    -lfluidThermophysicalModels \
++    -lsolidThermo \
++    -lthermophysicalTransportModel \
++    -lfluidThermophysicalTransportModel \
++    -lfluidThermoThermophysicalTransportModels \
++    -lmomentumTransportModels \
++    -lcompressibleMomentumTransportModels \
+     -lfiniteVolume \
+     -lsampling \
+     -lmeshTools \
+-    -lmomentumTransportModels \
+-    -lcompressibleMomentumTransportModels \
+     -lforces
+diff --git a/src/fvModels/rigidBodyPropellerDisk/Make/options b/src/fvModels/rigidBodyPropellerDisk/Make/options
+index 1b3da63545..165825c50e 100644
+--- a/src/fvModels/rigidBodyPropellerDisk/Make/options
++++ b/src/fvModels/rigidBodyPropellerDisk/Make/options
+@@ -6,11 +6,27 @@ EXE_INC = \
+     -I$(LIB_SRC)/motionSolvers/lnInclude \
+     -I$(LIB_SRC)/fvMeshMovers/motionSolver/lnInclude \
+     -I$(LIB_SRC)/rigidBodyMotion/rigidBodyDynamics/lnInclude \
+-    -I$(LIB_SRC)/rigidBodyMotion/rigidBodyMeshMotion/lnInclude
++    -I$(LIB_SRC)/rigidBodyMotion/rigidBodyMeshMotion/lnInclude \
++    -I$(LIB_SRC)/physicalProperties/lnInclude \
++    -I$(LIB_SRC)/thermophysicalModels/solidThermo/lnInclude \
++    -I$(LIB_SRC)/thermophysicalModels/basic/lnInclude \
++    -I$(LIB_SRC)/thermophysicalModels/specie/lnInclude \
++    -I$(LIB_SRC)/MomentumTransportModels/momentumTransportModels/lnInclude \
++    -I$(LIB_SRC)/MomentumTransportModels/compressible/lnInclude \
++    -I$(LIB_SRC)/ThermophysicalTransportModels/lnInclude
+ 
+ LIB_LIBS = \
+     -lpropellerDisk \
++    -lfvModels \
+     -lmotionSolvers \
+     -lmotionSolver_fvMeshMover \
+     -lrigidBodyDynamics \
+-    -lrigidBodyMeshMotion
++    -lrigidBodyMeshMotion \
++    -lforces \
++    -lmomentumTransportModels \
++    -lcompressibleMomentumTransportModels \
++    -lphysicalProperties \
++    -lspecie \
++    -lfluidThermophysicalModels \
++    -lfiniteVolume \
++    -lmeshTools
+diff --git a/src/fvModels/rotorDisk/Make/options b/src/fvModels/rotorDisk/Make/options
+index 5d2521c940..9c92d23e5f 100644
+--- a/src/fvModels/rotorDisk/Make/options
++++ b/src/fvModels/rotorDisk/Make/options
+@@ -13,9 +13,16 @@ EXE_INC = \
+     -I$(LIB_SRC)/ThermophysicalTransportModels/fluid/lnInclude
+ 
+ LIB_LIBS = \
+-    -lfiniteVolume \
+-    -lsampling \
+-    -lmeshTools \
++    -lphysicalProperties \
++    -lspecie \
++    -lfluidThermophysicalModels \
++    -lmulticomponentThermophysicalModels \
++    -lsolidThermo \
++    -lthermophysicalTransportModel \
++    -lfluidThermophysicalTransportModel \
++    -lfluidThermoThermophysicalTransportModels \
+     -lmomentumTransportModels \
+     -lcompressibleMomentumTransportModels \
+-    -lfluidThermoThermophysicalTransportModels
++    -lfiniteVolume \
++    -lsampling \
++    -lmeshTools
+diff --git a/src/lagrangian/DSMC/Make/options b/src/lagrangian/DSMC/Make/options
+index e2f760b394..0d35ff56ab 100644
+--- a/src/lagrangian/DSMC/Make/options
++++ b/src/lagrangian/DSMC/Make/options
+@@ -5,6 +5,7 @@ EXE_INC = \
+     -I$(LIB_SRC)/meshTools/lnInclude
+ 
+ LIB_LIBS = \
++    -ltracking \
+     -llagrangian \
+     -lfiniteVolume \
+     -lmeshTools
+diff --git a/src/lagrangian/molecularDynamics/Make/options b/src/lagrangian/molecularDynamics/Make/options
+index d99fd36e5f..951cf53099 100644
+--- a/src/lagrangian/molecularDynamics/Make/options
++++ b/src/lagrangian/molecularDynamics/Make/options
+@@ -5,6 +5,7 @@ EXE_INC = \
+     -I$(LIB_SRC)/lagrangian/basic/lnInclude
+ 
+ LIB_LIBS = \
++    -ltracking \
++    -llagrangian \
+     -lfiniteVolume \
+-    -lmeshTools \
+-    -llagrangian
++    -lmeshTools
+diff --git a/src/lagrangian/parcel/Make/options b/src/lagrangian/parcel/Make/options
+index 0923c33fc9..8c3db0f96f 100644
+--- a/src/lagrangian/parcel/Make/options
++++ b/src/lagrangian/parcel/Make/options
+@@ -15,6 +15,7 @@ EXE_INC = \
+     -I$(LIB_SRC)/meshTools/lnInclude
+ 
+ LIB_LIBS = \
++    -ltracking \
+     -llagrangian \
+     -lphysicalProperties \
+     -lspecie \
+diff --git a/src/lagrangian/solidParticle/Make/options b/src/lagrangian/solidParticle/Make/options
+index 1f323682c0..e4e84ebb8b 100644
+--- a/src/lagrangian/solidParticle/Make/options
++++ b/src/lagrangian/solidParticle/Make/options
+@@ -5,6 +5,7 @@ EXE_INC = \
+     -I$(LIB_SRC)/lagrangian/basic/lnInclude
+ 
+ LIB_LIBS = \
++    -ltracking \
+     -llagrangian \
+     -lmeshTools \
+     -lfiniteVolume
+diff --git a/src/mesh/snappyHexMesh/Make/options b/src/mesh/snappyHexMesh/Make/options
+index 999a2745a6..8a17cac80a 100644
+--- a/src/mesh/snappyHexMesh/Make/options
++++ b/src/mesh/snappyHexMesh/Make/options
+@@ -12,13 +12,15 @@ EXE_INC = \
+     -I$(LIB_SRC)/triSurface/lnInclude
+ 
+ LIB_LIBS = \
++    -ldecompositionMethods \
++    -ldistributed \
++    -ltracking \
++    -llagrangian \
+     -lpolyTopoChange \
+     -lmotionSolvers \
+     -lfiniteVolume \
+-    -llagrangian \
+     -lmeshTools \
+     -lmeshCheck \
+     -lfileFormats \
+     -lsurfMesh \
+-    -ltriSurface \
+-    -ldistributed
++    -ltriSurface
+diff --git a/src/parallel/Allwmake b/src/parallel/Allwmake
+index e5062a5d0d..64e4e51eb6 100755
+--- a/src/parallel/Allwmake
++++ b/src/parallel/Allwmake
+@@ -5,7 +5,8 @@ cd ${0%/*} || exit 1    # Run from this directory
+ . $WM_PROJECT_DIR/wmake/scripts/AllwmakeParseArguments
+ 
+ decompose/Allwmake $targetType $*
++
++$WM_PROJECT_DIR/src/dummyThirdParty/Allwmake $targetType $*
++
+ wmake $targetType parallel
+ wmake $targetType distributed
+-
+-#------------------------------------------------------------------------------
+diff --git a/src/parallel/decompose/Allwmake b/src/parallel/decompose/Allwmake
+index c7985180f5..06087ec0eb 100755
+--- a/src/parallel/decompose/Allwmake
++++ b/src/parallel/decompose/Allwmake
+@@ -6,19 +6,4 @@ cd ${0%/*} || exit 1    # Run from this directory
+ 
+ wmake $targetType decompositionMethods
+ 
+-# Optionally build the scotch method with its Allwmake
+-wmake -a $targetType scotch
+-
+-# Optionally build the ptscotch method with its Allwmake
+-wmake -a $targetType ptscotch
+-
+-# Optionally build the metis method with its Allwmake
+-wmake -a $targetType metis
+-
+-# Optionally build the parMetis method with its Allwmake
+-wmake -a $targetType parMetis
+-
+-# Optionally build the zoltan method with its Allwmake
+-wmake -a $targetType zoltan
+-
+ #------------------------------------------------------------------------------
+diff --git a/src/radiationModels/Make/options b/src/radiationModels/Make/options
+index 73f97b1c88..97369cc65d 100644
+--- a/src/radiationModels/Make/options
++++ b/src/radiationModels/Make/options
+@@ -7,9 +7,10 @@ EXE_INC = \
+     -I$(LIB_SRC)/thermophysicalModels/multicomponentThermo/lnInclude \
+     -I$(LIB_SRC)/finiteVolume/lnInclude \
+     -I$(LIB_SRC)/meshTools/lnInclude
+-
+ LIB_LIBS = \
++    -lphysicalProperties \
+     -lfluidThermophysicalModels \
++    -lmulticomponentThermophysicalModels \
+     -lspecie \
+     -lsolidThermo \
+     -lthermophysicalProperties \
+diff --git a/src/renumber/renumberMethods/Make/options b/src/renumber/renumberMethods/Make/options
+index b0da6175ae..2c16a0dcc0 100644
+--- a/src/renumber/renumberMethods/Make/options
++++ b/src/renumber/renumberMethods/Make/options
+@@ -6,4 +6,6 @@ EXE_INC = \
+ 
+ LIB_LIBS = \
+     -ldecompositionMethods \
+-    -lpolyTopoChange
++    -lpolyTopoChange \
++    -lmeshTools \
++    -lfiniteVolume
+diff --git a/src/rigidBodyMotion/rigidBodyMeshMotion/Make/options b/src/rigidBodyMotion/rigidBodyMeshMotion/Make/options
+index 628e0fc242..1fa52b485e 100644
+--- a/src/rigidBodyMotion/rigidBodyMeshMotion/Make/options
++++ b/src/rigidBodyMotion/rigidBodyMeshMotion/Make/options
+@@ -9,6 +9,8 @@ EXE_INC = \
+ LIB_LIBS = \
+     -lrigidBodyDynamics \
+     -lforces \
++    -lmotionSolvers \
++    -lfiniteVolume \
+     -lmeshTools \
+     -lfileFormats \
+     -lmotionSolver_fvMeshMover
+diff --git a/src/rigidBodyMotion/sixDoFRigidBodyMotion/Make/options b/src/rigidBodyMotion/sixDoFRigidBodyMotion/Make/options
+index 9b234ec75f..3b4f530b3a 100644
+--- a/src/rigidBodyMotion/sixDoFRigidBodyMotion/Make/options
++++ b/src/rigidBodyMotion/sixDoFRigidBodyMotion/Make/options
+@@ -7,6 +7,8 @@ EXE_INC = \
+ 
+ LIB_LIBS = \
+     -lforces \
++    -lmotionSolvers \
++    -lfiniteVolume \
+     -lmeshTools \
+     -lfileFormats \
+     -lmotionSolver_fvMeshMover
+diff --git a/src/sampling/Make/options b/src/sampling/Make/options
+index e403aae509..0ebfc5b8da 100644
+--- a/src/sampling/Make/options
++++ b/src/sampling/Make/options
+@@ -8,6 +8,7 @@ EXE_INC = \
+     -I$(LIB_SRC)/lagrangian/basic/lnInclude
+ 
+ LIB_LIBS = \
++    -ltracking \
+     -lfiniteVolume \
+     -lmeshTools \
+     -lsurfMesh \
+diff --git a/src/specieTransfer/Make/options b/src/specieTransfer/Make/options
+index 6c3c59383a..370eb275a1 100644
+--- a/src/specieTransfer/Make/options
++++ b/src/specieTransfer/Make/options
+@@ -11,11 +11,14 @@ EXE_INC = \
+     -I$(LIB_SRC)/ThermophysicalTransportModels/fluid/lnInclude
+ 
+ LIB_LIBS = \
+-    -lfiniteVolume \
+-    -lmeshTools \
+-    -lfluidThermophysicalModels \
++    -lphysicalProperties \
+     -lspecie \
++    -lfluidThermophysicalModels \
+     -lmulticomponentThermophysicalModels \
++    -lthermophysicalTransportModel \
++    -lfluidThermophysicalTransportModel \
++    -lfluidThermoThermophysicalTransportModels \
+     -lmomentumTransportModels \
+     -lcompressibleMomentumTransportModels \
+-    -lfluidThermoThermophysicalTransportModels
++    -lfiniteVolume \
++    -lmeshTools
+diff --git a/src/thermophysicalModels/chemistryModel/Make/options b/src/thermophysicalModels/chemistryModel/Make/options
+index 703611ea32..04bff137af 100644
+--- a/src/thermophysicalModels/chemistryModel/Make/options
++++ b/src/thermophysicalModels/chemistryModel/Make/options
+@@ -7,8 +7,8 @@ EXE_INC = \
+     -I$(LIB_SRC)/ODE/lnInclude \
+     -I$(LIB_SRC)/finiteVolume/lnInclude \
+     -I$(LIB_SRC)/meshTools/lnInclude
+-
+ LIB_LIBS = \
++    -lphysicalProperties \
+     -lfluidThermophysicalModels \
+     -lmulticomponentThermophysicalModels \
+     -lspecie \
+diff --git a/src/thermophysicalModels/laminarFlameSpeed/Make/options b/src/thermophysicalModels/laminarFlameSpeed/Make/options
+index 35889d256c..e17d4544d2 100644
+--- a/src/thermophysicalModels/laminarFlameSpeed/Make/options
++++ b/src/thermophysicalModels/laminarFlameSpeed/Make/options
+@@ -4,6 +4,9 @@ EXE_INC = \
+     -I$(LIB_SRC)/thermophysicalModels/basic/lnInclude \
+     -I$(LIB_SRC)/thermophysicalModels/multicomponentThermo/lnInclude \
+     -I$(LIB_SRC)/finiteVolume/lnInclude
+-
+ LIB_LIBS = \
++    -lphysicalProperties \
++    -lfluidThermophysicalModels \
++    -lmulticomponentThermophysicalModels \
++    -lspecie \
+     -lfiniteVolume
+diff --git a/src/thermophysicalModels/multicomponentThermo/Make/files b/src/thermophysicalModels/multicomponentThermo/Make/files
+index f636ada488..c49f328c50 100644
+--- a/src/thermophysicalModels/multicomponentThermo/Make/files
++++ b/src/thermophysicalModels/multicomponentThermo/Make/files
+@@ -1,21 +1,15 @@
+ multicomponentThermo/multicomponentThermo.C
+-
+ fluidMulticomponentThermo/fluidMulticomponentThermo.C
+-
+ psiMulticomponentThermo/psiMulticomponentThermo.C
+ psiMulticomponentThermo/psiMulticomponentThermos.C
+-
+ psiuMulticomponentThermo/psiuMulticomponentThermo.C
+ psiuMulticomponentThermo/psiuMulticomponentThermos.C
+-
+ rhoFluidMulticomponentThermo/rhoFluidMulticomponentThermo.C
+-rhoFluidMulticomponentThermo/rhoFluidMulticomponentThermos.C
+-
++rhoFluidMulticomponentThermo/rhoFluidMulticomponentThermosGases.C
++rhoFluidMulticomponentThermo/rhoFluidMulticomponentThermosLiquids.C
+ derivedFvPatchFields/fixedUnburntEnthalpy/fixedUnburntEnthalpyFvPatchScalarField.C
+ derivedFvPatchFields/gradientUnburntEnthalpy/gradientUnburntEnthalpyFvPatchScalarField.C
+ derivedFvPatchFields/mixedUnburntEnthalpy/mixedUnburntEnthalpyFvPatchScalarField.C
+-
+ functionObjects/moleFractions/moleFractions.C
+ functionObjects/massFractions/massFractions.C
+-
+ LIB = $(FOAM_LIBBIN)/libmulticomponentThermophysicalModels
+diff --git a/src/thermophysicalModels/multicomponentThermo/Make/options b/src/thermophysicalModels/multicomponentThermo/Make/options
+index aa1c07ab9a..e9703f3750 100644
+--- a/src/thermophysicalModels/multicomponentThermo/Make/options
++++ b/src/thermophysicalModels/multicomponentThermo/Make/options
+@@ -3,8 +3,8 @@ EXE_INC = \
+     -I$(LIB_SRC)/thermophysicalModels/basic/lnInclude \
+     -I$(LIB_SRC)/thermophysicalModels/specie/lnInclude \
+     -I$(LIB_SRC)/finiteVolume/lnInclude
+-
+ LIB_LIBS = \
++    -lphysicalProperties \
+     -lfluidThermophysicalModels \
+     -lspecie \
+     -lfiniteVolume
+diff --git a/src/thermophysicalModels/multicomponentThermo/rhoFluidMulticomponentThermo/rhoFluidMulticomponentThermosGases.C b/src/thermophysicalModels/multicomponentThermo/rhoFluidMulticomponentThermo/rhoFluidMulticomponentThermosGases.C
+new file mode 100644
+index 0000000000..6a74584b4b
+--- /dev/null
++++ b/src/thermophysicalModels/multicomponentThermo/rhoFluidMulticomponentThermo/rhoFluidMulticomponentThermosGases.C
+@@ -0,0 +1,41 @@
++/*---------------------------------------------------------------------------*\
++  =========                 |
++  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
++  \\    /   O peration     | Website:  https://openfoam.org
++   \\  /    A nd           | Copyright (C) 2012-2023 OpenFOAM Foundation
++    \\/     M anipulation  |
++-------------------------------------------------------------------------------
++License
++    This file is part of OpenFOAM.
++\*---------------------------------------------------------------------------*/
++#include "rhoFluidMulticomponentThermo.H"
++#include "coefficientMulticomponentMixture.H"
++#include "coefficientWilkeMulticomponentMixture.H"
++#include "singleComponentMixture.H"
++#include "forGases.H"
++#include "makeFluidMulticomponentThermo.H"
++// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
++namespace Foam
++{
++    forCoeffGases
++    (
++        makeFluidMulticomponentThermos,
++        rhoFluidThermo,
++        rhoFluidMulticomponentThermo,
++        coefficientMulticomponentMixture
++    );
++    forCoeffGases
++    (
++        makeFluidMulticomponentThermos,
++        rhoFluidThermo,
++        rhoFluidMulticomponentThermo,
++        coefficientWilkeMulticomponentMixture
++    );
++    forGases
++    (
++        makeFluidMulticomponentThermo,
++        rhoFluidMulticomponentThermo,
++        singleComponentMixture
++    );
++}
++// ************************************************************************* //
+diff --git a/src/thermophysicalModels/multicomponentThermo/rhoFluidMulticomponentThermo/rhoFluidMulticomponentThermos.C b/src/thermophysicalModels/multicomponentThermo/rhoFluidMulticomponentThermo/rhoFluidMulticomponentThermosLiquids.C
+similarity index 53%
+rename from src/thermophysicalModels/multicomponentThermo/rhoFluidMulticomponentThermo/rhoFluidMulticomponentThermos.C
+rename to src/thermophysicalModels/multicomponentThermo/rhoFluidMulticomponentThermo/rhoFluidMulticomponentThermosLiquids.C
+index 4337ff58f3..2277033358 100644
+--- a/src/thermophysicalModels/multicomponentThermo/rhoFluidMulticomponentThermo/rhoFluidMulticomponentThermos.C
++++ b/src/thermophysicalModels/multicomponentThermo/rhoFluidMulticomponentThermo/rhoFluidMulticomponentThermosLiquids.C
+@@ -1,66 +1,23 @@
+ /*---------------------------------------------------------------------------*\
+   =========                 |
+   \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+-   \\    /   O peration     | Website:  https://openfoam.org
+-    \\  /    A nd           | Copyright (C) 2012-2023 OpenFOAM Foundation
+-     \\/     M anipulation  |
++  \\    /   O peration     | Website:  https://openfoam.org
++   \\  /    A nd           | Copyright (C) 2012-2023 OpenFOAM Foundation
++    \\/     M anipulation  |
+ -------------------------------------------------------------------------------
+ License
+     This file is part of OpenFOAM.
+-
+-    OpenFOAM is free software: you can redistribute it and/or modify it
+-    under the terms of the GNU General Public License as published by
+-    the Free Software Foundation, either version 3 of the License, or
+-    (at your option) any later version.
+-
+-    OpenFOAM is distributed in the hope that it will be useful, but WITHOUT
+-    ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+-    FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+-    for more details.
+-
+-    You should have received a copy of the GNU General Public License
+-    along with OpenFOAM.  If not, see <http://www.gnu.org/licenses/>.
+-
+ \*---------------------------------------------------------------------------*/
+-
+ #include "rhoFluidMulticomponentThermo.H"
+-
+ #include "coefficientMulticomponentMixture.H"
+-#include "coefficientWilkeMulticomponentMixture.H"
+ #include "valueMulticomponentMixture.H"
+ #include "singleComponentMixture.H"
+-
+-#include "forGases.H"
+ #include "forLiquids.H"
+ #include "forTabulated.H"
+-
+ #include "makeFluidMulticomponentThermo.H"
+-
+ // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+-
+ namespace Foam
+ {
+-    forCoeffGases
+-    (
+-        makeFluidMulticomponentThermos,
+-        rhoFluidThermo,
+-        rhoFluidMulticomponentThermo,
+-        coefficientMulticomponentMixture
+-    );
+-    forCoeffGases
+-    (
+-        makeFluidMulticomponentThermos,
+-        rhoFluidThermo,
+-        rhoFluidMulticomponentThermo,
+-        coefficientWilkeMulticomponentMixture
+-    );
+-    forGases
+-    (
+-        makeFluidMulticomponentThermo,
+-        rhoFluidMulticomponentThermo,
+-        singleComponentMixture
+-    );
+-
+     forCoeffLiquids
+     (
+         makeFluidMulticomponentThermos,
+@@ -81,7 +38,6 @@ namespace Foam
+         rhoFluidMulticomponentThermo,
+         singleComponentMixture
+     );
+-
+     forTabulated
+     (
+         makeFluidMulticomponentThermos,
+@@ -96,5 +52,4 @@ namespace Foam
+         singleComponentMixture
+     );
+ }
+-
+ // ************************************************************************* //
+diff --git a/src/thermophysicalModels/saturationModels/Make/options b/src/thermophysicalModels/saturationModels/Make/options
+index 920565491d..f049321c7e 100644
+--- a/src/thermophysicalModels/saturationModels/Make/options
++++ b/src/thermophysicalModels/saturationModels/Make/options
+@@ -10,8 +10,11 @@ EXE_INC = \
+     -I$(LIB_SRC)/finiteVolume/lnInclude \
+     -I$(LIB_SRC)/meshTools/lnInclude \
+     -I$(LIB_SRC)/sampling/lnInclude
+-
+ LIB_LIBS = \
++    -lphysicalProperties \
+     -lfluidThermophysicalModels \
+     -lmulticomponentThermophysicalModels \
+-    -lspecie
++    -lspecie \
++    -lthermophysicalProperties \
++    -lfiniteVolume \
++    -lmeshTools
+diff --git a/src/thermophysicalModels/solidThermo/Make/options b/src/thermophysicalModels/solidThermo/Make/options
+index 1a65bf933a..3d90f398ee 100644
+--- a/src/thermophysicalModels/solidThermo/Make/options
++++ b/src/thermophysicalModels/solidThermo/Make/options
+@@ -5,8 +5,8 @@ EXE_INC = \
+     -I$(LIB_SRC)/thermophysicalModels/basic/lnInclude \
+     -I$(LIB_SRC)/thermophysicalModels/specie/lnInclude \
+     -I$(LIB_SRC)/thermophysicalModels/multicomponentThermo/lnInclude
+-
+ LIB_LIBS = \
++    -lphysicalProperties \
+     -lmeshTools \
+     -lfiniteVolume \
+     -lspecie \
+diff --git a/src/twoPhaseModels/interfaceCompression/Make/options b/src/twoPhaseModels/interfaceCompression/Make/options
+index 52053cfab2..d8e65e9356 100644
+--- a/src/twoPhaseModels/interfaceCompression/Make/options
++++ b/src/twoPhaseModels/interfaceCompression/Make/options
+@@ -3,4 +3,5 @@ EXE_INC = \
+     -I$(LIB_SRC)/finiteVolume/lnInclude
+ 
+ LIB_LIBS = \
++    -lphysicalProperties \
+     -lfiniteVolume
+diff --git a/src/twoPhaseModels/twoPhaseMixture/Make/options b/src/twoPhaseModels/twoPhaseMixture/Make/options
+index 52053cfab2..d8e65e9356 100644
+--- a/src/twoPhaseModels/twoPhaseMixture/Make/options
++++ b/src/twoPhaseModels/twoPhaseMixture/Make/options
+@@ -3,4 +3,5 @@ EXE_INC = \
+     -I$(LIB_SRC)/finiteVolume/lnInclude
+ 
+ LIB_LIBS = \
++    -lphysicalProperties \
+     -lfiniteVolume
+diff --git a/wmake/rules/General/mplibMSMPI b/wmake/rules/General/mplibMSMPI
+new file mode 100644
+index 0000000000..03305690a9
+--- /dev/null
++++ b/wmake/rules/General/mplibMSMPI
+@@ -0,0 +1,3 @@
++PFLAGS     = -DMSMPI_NO_DEPRECATE_20
++PINC       = -isystem $(MPI_ARCH_PATH)/include
++PLIBS      = -L$(MPI_ARCH_PATH)/lib/x64 -L$(MPI_ARCH_PATH)/lib -lmsmpi
+diff --git a/wmake/rules/linux64Mingw/c b/wmake/rules/linux64Mingw/c
+new file mode 100644
+index 0000000000..6d8dee0809
+--- /dev/null
++++ b/wmake/rules/linux64Mingw/c
+@@ -0,0 +1,15 @@
++SUFFIXES += .c
++
++cWARN       = -Wall -Wextra -Wno-unused-parameter -Wno-attributes
++cLESSWARN   = -Wall -Wextra -Wno-unused-parameter -Wno-attributes
++
++cc          = x86_64-w64-mingw32-gcc -m64
++
++include $(RULES)/c$(WM_COMPILE_OPTION)
++
++cFLAGS      = $(GFLAGS) $(cWARN) $(cOPT) $(cDBUG) $(LIB_HEADER_DIRS) -UDebugInfo -D_GNU_SOURCE -D_WIN64 -DWIN64 -DMSWIN -D_WIN32_WINNT=0x0601 -D__LITTLE_ENDIAN
++
++ctoo        = $(WM_SCHEDULER) $(cc) $(cFLAGS) -c $< -o $@
++
++LINKLIBSO   = $(cc) $(cFLAGS) -shared -Wl,--out-implib,$(LIB).dll.a -Wl,--enable-auto-import -Wl,--enable-auto-image-base -Wl,--allow-multiple-definition
++LINKEXE     = $(cc) $(cFLAGS) -Wl,--enable-auto-import -Wl,--allow-multiple-definition
+diff --git a/wmake/rules/linux64Mingw/c++ b/wmake/rules/linux64Mingw/c++
+new file mode 100644
+index 0000000000..8a070cf48b
+--- /dev/null
++++ b/wmake/rules/linux64Mingw/c++
+@@ -0,0 +1,23 @@
++SUFFIXES += .C .cc .cpp .cxx
++
++c++WARN     = -Wall -Wextra -Wold-style-cast -Wnon-virtual-dtor \
++              -Wno-unused-parameter -Wno-invalid-offsetof -Wno-attributes
++
++c++LESSWARN = -Wall -Wextra -Wno-old-style-cast -Wno-unused-parameter -Wno-invalid-offsetof -Wno-attributes
++
++CC          = x86_64-w64-mingw32-g++ -std=gnu++14 -m64
++
++include $(RULES)/c++$(WM_COMPILE_OPTION)
++
++ptFLAGS     = -DNoRepository -ftemplate-depth-256
++
++c++FLAGS    = $(GFLAGS) $(c++WARN) $(c++OPT) $(c++DBUG) $(ptFLAGS) \
++              $(LIB_HEADER_DIRS) -Wa,-mbig-obj -UDebugInfo -D_GNU_SOURCE -D_WIN64 -DWIN64 -DMSWIN -D_WIN32_WINNT=0x0601 -D__LITTLE_ENDIAN
++
++Ctoo        = $(WM_SCHEDULER) $(CC) $(c++FLAGS) -c $< -o $@
++cxxtoo      = $(Ctoo)
++cctoo       = $(Ctoo)
++cpptoo      = $(Ctoo)
++
++LINKLIBSO   = $(CC) $(c++FLAGS) -shared -Wl,--out-implib,$(LIB).dll.a -Wl,--enable-auto-import -Wl,--enable-auto-image-base -Wl,--allow-multiple-definition
++LINKEXE     = $(CC) $(c++FLAGS) -Wl,--enable-auto-import -Wl,--allow-multiple-definition
+diff --git a/wmake/rules/linux64Mingw/c++Debug b/wmake/rules/linux64Mingw/c++Debug
+new file mode 100644
+index 0000000000..48f0b6643e
+--- /dev/null
++++ b/wmake/rules/linux64Mingw/c++Debug
+@@ -0,0 +1,2 @@
++c++DBUG     = -g -DFULLDEBUG
++c++OPT      = -O0
+diff --git a/wmake/rules/linux64Mingw/c++Opt b/wmake/rules/linux64Mingw/c++Opt
+new file mode 100644
+index 0000000000..37e481369d
+--- /dev/null
++++ b/wmake/rules/linux64Mingw/c++Opt
+@@ -0,0 +1,3 @@
++c++DBUG     =
++c++OPT      = -O3
++ROUNDING_MATH = -frounding-math
+diff --git a/wmake/rules/linux64Mingw/c++Prof b/wmake/rules/linux64Mingw/c++Prof
+new file mode 100644
+index 0000000000..e0e696cd5f
+--- /dev/null
++++ b/wmake/rules/linux64Mingw/c++Prof
+@@ -0,0 +1,2 @@
++c++DBUG     = -pg
++c++OPT      = -O3
+diff --git a/wmake/rules/linux64Mingw/cDebug b/wmake/rules/linux64Mingw/cDebug
+new file mode 100644
+index 0000000000..7b7adf10de
+--- /dev/null
++++ b/wmake/rules/linux64Mingw/cDebug
+@@ -0,0 +1,2 @@
++cDBUG       = -g -DFULLDEBUG
++cOPT        = -O0
+diff --git a/wmake/rules/linux64Mingw/cOpt b/wmake/rules/linux64Mingw/cOpt
+new file mode 100644
+index 0000000000..17318709f1
+--- /dev/null
++++ b/wmake/rules/linux64Mingw/cOpt
+@@ -0,0 +1,2 @@
++cDBUG       =
++cOPT        = -O3
+diff --git a/wmake/rules/linux64Mingw/cProf b/wmake/rules/linux64Mingw/cProf
+new file mode 100644
+index 0000000000..d9db8c86b9
+--- /dev/null
++++ b/wmake/rules/linux64Mingw/cProf
+@@ -0,0 +1,2 @@
++cDBUG       = -pg
++cOPT        = -O3
+diff --git a/wmake/rules/linux64Mingw/flex++ b/wmake/rules/linux64Mingw/flex++
+new file mode 100644
+index 0000000000..dcea7ec72a
+--- /dev/null
++++ b/wmake/rules/linux64Mingw/flex++
+@@ -0,0 +1,5 @@
++SUFFIXES += .L
++
++Ltoo = $E $(call QUIET_MESSAGE,flex++,$(<F)) \
++    $(WM_SCHEDULER) flex -+ -o$(@D)/$(<F).C -f $< $(AND) \
++    $(CC) $(c++FLAGS) $(c++LESSWARN) -c $(@D)/$(<F).C -o $@
+diff --git a/wmake/rules/linux64Mingw/general b/wmake/rules/linux64Mingw/general
+new file mode 100644
+index 0000000000..5913fcbda3
+--- /dev/null
++++ b/wmake/rules/linux64Mingw/general
+@@ -0,0 +1,8 @@
++PROJECT_LIBS = -L$(FOAM_LIBBIN) -L$(LIB_PLATFORMS) -lOpenFOAM -lws2_32 -lpsapi
++GLIB_LIBS    = -L$(FOAM_LIBBIN) -L$(LIB_PLATFORMS) -lOpenFOAM -lws2_32 -lpsapi
++
++include $(GENERAL_RULES)/standard
++
++include $(DEFAULT_RULES)/c
++include $(DEFAULT_RULES)/c++
++-include $(DEFAULT_RULES)/flex++

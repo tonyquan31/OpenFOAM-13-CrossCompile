@@ -1,0 +1,8 @@
+PROJECT_LIBS = -L$(FOAM_LIBBIN) -L$(LIB_PLATFORMS) -lOpenFOAM -lws2_32 -lpsapi
+GLIB_LIBS    = -L$(FOAM_LIBBIN) -L$(LIB_PLATFORMS) -lOpenFOAM -lws2_32 -lpsapi
+
+include $(GENERAL_RULES)/standard
+
+include $(DEFAULT_RULES)/c
+include $(DEFAULT_RULES)/c++
+-include $(DEFAULT_RULES)/flex++

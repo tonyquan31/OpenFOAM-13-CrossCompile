@@ -6,4 +6,6 @@ EXE_INC = \
 
 LIB_LIBS = \
     -ldecompositionMethods \
-    -lpolyTopoChange
+    -lpolyTopoChange \
+    -lmeshTools \
+    -lfiniteVolume

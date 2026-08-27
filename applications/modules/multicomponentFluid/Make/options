@@ -21,16 +21,20 @@ EXE_INC = \
 LIB_LIBS = \
     -lfluidSolver \
     -lisothermalFluid \
-    -lfluidThermophysicalModels \
+    -lphysicalProperties \
     -lspecie \
+    -lfluidThermophysicalModels \
+    -lmulticomponentThermophysicalModels \
     -lchemistryModel \
     -lODE \
     -lcombustionModels \
-    -lmulticomponentThermophysicalModels \
     -lmomentumTransportModels \
     -lcompressibleMomentumTransportModels \
-    -lcoupledThermophysicalTransportModels \
+    -lthermophysicalTransportModel \
+    -lfluidThermophysicalTransportModel \
+    -lfluidThermoThermophysicalTransportModels \
     -lfluidMulticomponentThermophysicalTransportModels \
+    -lcoupledThermophysicalTransportModels \
     -lfiniteVolume \
     -lfvModels \
     -lfvConstraints \

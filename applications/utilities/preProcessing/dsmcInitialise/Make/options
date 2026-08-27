@@ -6,7 +6,8 @@ EXE_INC = \
     -I$(LIB_SRC)/meshTools/lnInclude
 
 EXE_LIBS = \
-    -lmeshTools \
-    -lfiniteVolume \
+    -ltracking \
     -llagrangian \
-    -lDSMC
+    -lDSMC \
+    -lmeshTools \
+    -lfiniteVolume

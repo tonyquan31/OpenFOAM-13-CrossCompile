@@ -13,10 +13,17 @@ EXE_INC = \
 
 LIB_LIBS = \
     -lisothermalFilm \
+    -lfilmCompressibleMomentumTransportModels \
     -lfilmThermophysicalTransportModels \
     -lcoupledThermophysicalTransportModels \
+    -lthermophysicalTransportModel \
+    -lfluidThermophysicalTransportModel \
+    -lfluidThermoThermophysicalTransportModels \
     -lmomentumTransportModels \
     -lcompressibleMomentumTransportModels \
+    -lfluidThermophysicalModels \
+    -lphysicalProperties \
+    -lspecie \
     -lfiniteVolume \
     -lmeshTools \
     -lsampling \

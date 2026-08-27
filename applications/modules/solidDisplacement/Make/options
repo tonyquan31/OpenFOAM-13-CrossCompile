@@ -16,6 +16,9 @@ LIB_LIBS = \
     -lsolidDisplacementThermo \
     -lsolidThermophysicalTransportModels \
     -lcoupledThermophysicalTransportModels \
+    -lphysicalProperties \
+    -lthermophysicalTransportModel \
+    -lfluidThermophysicalModels \
     -lspecie \
     -lfiniteVolume \
     -lmeshTools \

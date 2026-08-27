@@ -15,9 +15,22 @@ EXE_INC = \
 
 LIB_LIBS = \
     -lfluidSolver \
+    -lphaseSystem \
     -lpopulationBalance \
     -lmultiphaseEulerMomentumTransportModels \
     -lmultiphaseEulerThermophysicalTransportModels \
     -lmultiphaseEulerReactions \
+    -lphysicalProperties \
+    -lspecie \
+    -lfluidThermophysicalModels \
+    -lmulticomponentThermophysicalModels \
+    -ltwoPhaseMixture \
+    -lcompressibleTwoPhases \
+    -lmomentumTransportModels \
+    -lcompressibleMomentumTransportModels \
+    -lphaseCompressibleMomentumTransportModels \
+    -lfiniteVolume \
+    -lmeshTools \
+    -lsampling \
     -lfvModels \
     -lfvConstraints

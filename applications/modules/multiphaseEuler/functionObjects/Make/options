@@ -21,5 +21,19 @@ LIB_LIBS = \
     -lphaseSystem \
     -lpopulationBalance \
     -lmultiphaseEulerFvModels \
+    -lmultiphaseEuler \
     -lfileFormats \
-    -lfieldFunctionObjects
+    -lfieldFunctionObjects \
+    -lphysicalProperties \
+    -lspecie \
+    -lfluidThermophysicalModels \
+    -ltwoPhaseMixture \
+    -lcompressibleTwoPhases \
+    -lmomentumTransportModels \
+    -lcompressibleMomentumTransportModels \
+    -lphaseCompressibleMomentumTransportModels \
+    -lfiniteVolume \
+    -lmeshTools \
+    -lsampling \
+    -lfvModels \
+    -lfvConstraints

@@ -64,6 +64,18 @@ MAXMIN(uint64_t, uint64_t, uint32_t)
 MAXMIN(uint64_t, uint32_t, uint64_t)
 MAXMIN(uint64_t, uint64_t, uint64_t)
 
+// IOstream operators for unsigned short / uint16
+inline Istream& operator>>(Istream& is, unsigned short& s)
+{
+    uint32_t val;
+    is >> val;
+    s = static_cast<unsigned short>(val);
+    return is;
+}
+inline Ostream& operator<<(Ostream& os, const unsigned short s)
+{
+    return os << static_cast<uint32_t>(s);
+}
 
 // * * * * * * * * * * * * * * * IOstream Operators  * * * * * * * * * * * * //
 

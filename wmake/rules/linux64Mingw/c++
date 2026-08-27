@@ -1,0 +1,23 @@
+SUFFIXES += .C .cc .cpp .cxx
+
+c++WARN     = -Wall -Wextra -Wold-style-cast -Wnon-virtual-dtor \
+              -Wno-unused-parameter -Wno-invalid-offsetof -Wno-attributes
+
+c++LESSWARN = -Wall -Wextra -Wno-old-style-cast -Wno-unused-parameter -Wno-invalid-offsetof -Wno-attributes
+
+CC          = x86_64-w64-mingw32-g++ -std=gnu++14 -m64
+
+include $(RULES)/c++$(WM_COMPILE_OPTION)
+
+ptFLAGS     = -DNoRepository -ftemplate-depth-256
+
+c++FLAGS    = $(GFLAGS) $(c++WARN) $(c++OPT) $(c++DBUG) $(ptFLAGS) \
+              $(LIB_HEADER_DIRS) -Wa,-mbig-obj -UDebugInfo -D_GNU_SOURCE -D_WIN64 -DWIN64 -DMSWIN -D_WIN32_WINNT=0x0601 -D__LITTLE_ENDIAN
+
+Ctoo        = $(WM_SCHEDULER) $(CC) $(c++FLAGS) -c $< -o $@
+cxxtoo      = $(Ctoo)
+cctoo       = $(Ctoo)
+cpptoo      = $(Ctoo)
+
+LINKLIBSO   = $(CC) $(c++FLAGS) -shared -Wl,--out-implib,$(LIB).dll.a -Wl,--enable-auto-import -Wl,--enable-auto-image-base -Wl,--allow-multiple-definition
+LINKEXE     = $(CC) $(c++FLAGS) -Wl,--enable-auto-import -Wl,--allow-multiple-definition

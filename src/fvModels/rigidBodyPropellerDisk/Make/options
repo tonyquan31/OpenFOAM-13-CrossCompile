@@ -6,11 +6,27 @@ EXE_INC = \
     -I$(LIB_SRC)/motionSolvers/lnInclude \
     -I$(LIB_SRC)/fvMeshMovers/motionSolver/lnInclude \
     -I$(LIB_SRC)/rigidBodyMotion/rigidBodyDynamics/lnInclude \
-    -I$(LIB_SRC)/rigidBodyMotion/rigidBodyMeshMotion/lnInclude
+    -I$(LIB_SRC)/rigidBodyMotion/rigidBodyMeshMotion/lnInclude \
+    -I$(LIB_SRC)/physicalProperties/lnInclude \
+    -I$(LIB_SRC)/thermophysicalModels/solidThermo/lnInclude \
+    -I$(LIB_SRC)/thermophysicalModels/basic/lnInclude \
+    -I$(LIB_SRC)/thermophysicalModels/specie/lnInclude \
+    -I$(LIB_SRC)/MomentumTransportModels/momentumTransportModels/lnInclude \
+    -I$(LIB_SRC)/MomentumTransportModels/compressible/lnInclude \
+    -I$(LIB_SRC)/ThermophysicalTransportModels/lnInclude
 
 LIB_LIBS = \
     -lpropellerDisk \
+    -lfvModels \
     -lmotionSolvers \
     -lmotionSolver_fvMeshMover \
     -lrigidBodyDynamics \
-    -lrigidBodyMeshMotion
+    -lrigidBodyMeshMotion \
+    -lforces \
+    -lmomentumTransportModels \
+    -lcompressibleMomentumTransportModels \
+    -lphysicalProperties \
+    -lspecie \
+    -lfluidThermophysicalModels \
+    -lfiniteVolume \
+    -lmeshTools

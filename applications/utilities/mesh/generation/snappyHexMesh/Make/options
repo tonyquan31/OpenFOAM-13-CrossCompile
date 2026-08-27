@@ -13,6 +13,11 @@ EXE_LIBS = \
     -lfiniteVolume \
     -lgenericFvFields \
     -ldecompositionMethods \
+    -ldistributed \
+    -ltracking \
+    -llagrangian \
+    -ltriSurface \
+    -lmotionSolvers \
     -L$(FOAM_LIBBIN)/dummy -lscotchDecomp -lptscotchDecomp \
     -lmeshTools \
     -lmeshCheck \

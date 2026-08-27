@@ -1,0 +1,7 @@
+EXE_INC = \
+    -DFOAM_USE_STAT \
+    -I$(OBJECTS_DIR)
+
+LIB_LIBS = \
+    -lws2_32 \
+    -lpsapi

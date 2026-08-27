@@ -23,11 +23,29 @@ EXE_INC = \
     -I$(FOAM_MODULES)/fluidSolver/lnInclude
 
 LIB_LIBS = \
+    -lfluidSolver \
     -lfvModels \
+    -lfvConstraints \
     -lphaseSystem \
     -lpopulationBalance \
     -lmultiphaseEuler \
+    -lsaturationModels \
     -lcompressibleCavitationModels \
+    -lthermophysicalTransportModel \
+    -lfluidThermophysicalTransportModel \
+    -lfluidThermoThermophysicalTransportModels \
     -lphaseFluidThermophysicalTransportModels \
     -lphaseFluidMulticomponentThermophysicalTransportModels \
-    -lcoupledThermophysicalTransportModels
+    -lcoupledThermophysicalTransportModels \
+    -lphysicalProperties \
+    -lspecie \
+    -lfluidThermophysicalModels \
+    -lmulticomponentThermophysicalModels \
+    -ltwoPhaseMixture \
+    -lcompressibleTwoPhases \
+    -lmomentumTransportModels \
+    -lcompressibleMomentumTransportModels \
+    -lphaseCompressibleMomentumTransportModels \
+    -lfiniteVolume \
+    -lmeshTools \
+    -lsampling

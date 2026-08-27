@@ -31,10 +31,6 @@ wmake $targetType surfMesh
 wmake $targetType triSurface
 wmake $targetType meshTools
 
-# Decomposition methods needed by dummyThirdParty
-# (dummy metis, scotch etc) needed by e.g. meshTools
-dummyThirdParty/Allwmake $targetType $*
-
 wmake $targetType finiteVolume
 
 wmake $targetType ODE
@@ -60,6 +56,7 @@ wmake $targetType polyTopoChange
 wmake $targetType conversion
 
 parallel/Allwmake $targetType $*
+dummyThirdParty/Allwmake $targetType $*
 
 wmake $targetType fvMeshStitchers
 fvMeshMovers/Allwmake $targetType $*
@@ -94,6 +91,3 @@ wmake $targetType fvModels/rigidBodyPropellerDisk
 wmake $targetType specieTransfer
 wmake $targetType atmosphericModels
 wmake $targetType waves
-
-
-#------------------------------------------------------------------------------

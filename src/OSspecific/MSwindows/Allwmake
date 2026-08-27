@@ -1,0 +1,9 @@
+#!/bin/sh
+cd ${0%/*} || exit 1
+
+targetType=libo
+. $WM_PROJECT_DIR/wmake/scripts/AllwmakeParseArguments $*
+
+export COMP_FLAGS="-DFOAM_USE_STAT"
+
+wmake $targetType

@@ -16,6 +16,7 @@ LIB_LIBS = \
     -lincompressibleMomentumTransportModels \
     -lphaseIncompressibleMomentumTransportModels \
     -lphysicalProperties \
+    -ltracking \
     -llagrangian \
     -llagrangianParcel \
     -lfiniteVolume \

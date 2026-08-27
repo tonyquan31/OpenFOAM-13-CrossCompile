@@ -8,11 +8,12 @@ EXE_INC = \
     -I$(LIB_SRC)/Lagrangian/Lagrangian/lnInclude
 
 EXE_LIBS = \
+    -ltracking \
+    -llagrangian \
+    -lLagrangian \
     -lfiniteVolume \
     -lmeshTools \
     -lparallel \
     -ldecompositionMethods \
-    -llagrangian \
-    -lLagrangian \
     -lgenericFvFields \
     -lgenericLagrangianFields

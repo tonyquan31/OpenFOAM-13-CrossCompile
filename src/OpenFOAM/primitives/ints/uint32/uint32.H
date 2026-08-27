@@ -64,6 +64,11 @@ bool read(const char*, uint32_t&);
 Istream& operator>>(Istream&, uint32_t&);
 Ostream& operator<<(Ostream&, const uint32_t);
 
+#if WM_ARCH_OPTION == 32 || defined(_WIN32) || defined(MSWIN)
+    Istream& operator>>(Istream&, unsigned long&);
+    Ostream& operator<<(Ostream&, const unsigned long);
+#endif
+
 //- Template specialisation for pTraits<uint32_t>
 template<>
 class pTraits<uint32_t>

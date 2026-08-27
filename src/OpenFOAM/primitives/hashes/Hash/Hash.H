@@ -203,6 +203,7 @@ public:
 //- Hash specialisation for hashing pointer addresses.
 //  Treat a pointer like a long.
 //  This should work for both 32-bit and 64-bit pointers.
+//- Hash specialisation for hashing pointer addresses.
 template<>
 class Hash<void*>
 {
@@ -213,12 +214,12 @@ public:
 
     unsigned operator()(const void* const& p, unsigned seed) const
     {
-        return Hash<long>()(long(p), seed);
+        return Hasher(&p, sizeof(p), seed);
     }
 
     unsigned operator()(const void* const& p) const
     {
-        return Hash<long>()(long(p));
+        return Hasher(&p, sizeof(p));
     }
 };
 

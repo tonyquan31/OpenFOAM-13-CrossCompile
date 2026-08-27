@@ -7,7 +7,10 @@ EXE_INC = \
     -I$(LIB_SRC)/lagrangian/basic/lnInclude
 
 EXE_LIBS = \
+    -ltracking \
+    -llagrangian \
+    -lmeshTools \
+    -lfiniteVolume \
     -lpolyTopoChange \
     -lsampling \
-    -lgenericFvFields \
-    -llagrangian
+    -lgenericFvFields

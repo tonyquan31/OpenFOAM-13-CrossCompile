@@ -9,4 +9,5 @@ LIB_LIBS = \
     -lmeshTools \
     -lpolyTopoChange \
     -lsurfMesh \
-    -lfiniteVolume
+    -lfiniteVolume \
+    -lextrudeModel

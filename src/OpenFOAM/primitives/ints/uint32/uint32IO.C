@@ -30,6 +30,21 @@ License
 #include <sstream>
 #include <cerrno>
 
+#if WM_ARCH_OPTION == 32 || defined(_WIN32) || defined(MSWIN)
+Foam::Istream& Foam::operator>>(Istream& is, unsigned long& i)
+{
+    return operator>>(is, reinterpret_cast<uint32_t&>(i));
+}
+
+
+Foam::Ostream& Foam::operator<<(Ostream& os, const unsigned long i)
+{
+    os << uint32_t(i);
+    return os;
+}
+#endif
+
+
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
 Foam::word Foam::name(const uint32_t val)

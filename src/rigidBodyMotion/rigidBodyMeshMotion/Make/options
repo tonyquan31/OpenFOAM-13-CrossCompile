@@ -9,6 +9,8 @@ EXE_INC = \
 LIB_LIBS = \
     -lrigidBodyDynamics \
     -lforces \
+    -lmotionSolvers \
+    -lfiniteVolume \
     -lmeshTools \
     -lfileFormats \
     -lmotionSolver_fvMeshMover

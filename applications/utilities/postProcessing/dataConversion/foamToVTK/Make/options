@@ -9,7 +9,10 @@ EXE_INC = \
 
 EXE_LIBS = \
     -lfoamToVTK \
-    -lpolyTopoChange \
+    -ltracking \
     -llagrangian \
+    -lmeshTools \
+    -lfiniteVolume \
+    -lpolyTopoChange \
     -lgenericFvFields \
     -lfileFormats

@@ -9,7 +9,10 @@ EXE_INC = \
     -I$(LIB_SRC)/sampling/lnInclude
 
 LIB_LIBS = \
+    -lphysicalProperties \
     -lsolidThermo \
+    -lfluidThermophysicalModels \
+    -lthermophysicalTransportModel \
     -lsolidThermophysicalTransportModels \
     -lcoupledThermophysicalTransportModels \
     -lspecie \

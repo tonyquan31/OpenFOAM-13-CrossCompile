@@ -1,0 +1,15 @@
+SUFFIXES += .c
+
+cWARN       = -Wall -Wextra -Wno-unused-parameter -Wno-attributes
+cLESSWARN   = -Wall -Wextra -Wno-unused-parameter -Wno-attributes
+
+cc          = x86_64-w64-mingw32-gcc -m64
+
+include $(RULES)/c$(WM_COMPILE_OPTION)
+
+cFLAGS      = $(GFLAGS) $(cWARN) $(cOPT) $(cDBUG) $(LIB_HEADER_DIRS) -UDebugInfo -D_GNU_SOURCE -D_WIN64 -DWIN64 -DMSWIN -D_WIN32_WINNT=0x0601 -D__LITTLE_ENDIAN
+
+ctoo        = $(WM_SCHEDULER) $(cc) $(cFLAGS) -c $< -o $@
+
+LINKLIBSO   = $(cc) $(cFLAGS) -shared -Wl,--out-implib,$(LIB).dll.a -Wl,--enable-auto-import -Wl,--enable-auto-image-base -Wl,--allow-multiple-definition
+LINKEXE     = $(cc) $(cFLAGS) -Wl,--enable-auto-import -Wl,--allow-multiple-definition

@@ -13,5 +13,17 @@ EXE_INC = \
     -I$(LIB_SRC)/finiteVolume/lnInclude
 
 LIB_LIBS = \
+    -lcompressibleVoF \
     -llagrangian \
-    -llagrangianParcel
+    -llagrangianParcel \
+    -ltracking \
+    -ltwoPhaseVoFSolver \
+    -ltwoPhaseSolver \
+    -lVoFSolver \
+    -ltwoPhaseMixture \
+    -lcompressibleTwoPhases \
+    -lfluidThermophysicalModels \
+    -lphysicalProperties \
+    -lfiniteVolume \
+    -lfvModels \
+    -lfvConstraints

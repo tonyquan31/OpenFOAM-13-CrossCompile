@@ -9,6 +9,11 @@ EXE_INC = \
     -I$(LIB_SRC)/meshTools/lnInclude
 
 EXE_LIBS = \
+    -lphysicalProperties \
+    -lspecie \
+    -lfluidThermophysicalModels \
+    -lmulticomponentThermophysicalModels \
+    -lODE \
     -lchemistryModel \
     -lfiniteVolume \
     -lmeshTools
