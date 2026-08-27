@@ -229,6 +229,7 @@ MPI)
     ;;
 
 MSMPI)
+    export FOAM_MPI=msmpi
     export MPI_ARCH_PATH=$WM_THIRD_PARTY_DIR/opt/msmpi
     _foamAddPath    $MPI_ARCH_PATH/bin
     _foamAddLib     $MPI_ARCH_PATH/lib/x64

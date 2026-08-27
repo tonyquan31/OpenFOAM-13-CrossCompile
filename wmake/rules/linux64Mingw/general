@@ -1,5 +1,8 @@
+LD           = x86_64-w64-mingw32-ld
+ld           = x86_64-w64-mingw32-ld
+
 PROJECT_LIBS = -L$(FOAM_LIBBIN) -L$(LIB_PLATFORMS) -lOpenFOAM -lws2_32 -lpsapi
-GLIB_LIBS    = -L$(FOAM_LIBBIN) -L$(LIB_PLATFORMS) -lOpenFOAM -lws2_32 -lpsapi
+GLIB_LIBS    = -L$(FOAM_LIBBIN) -L$(LIB_PLATFORMS) $(if $(filter %libOpenFOAM,$(LIB)),,-lOpenFOAM) -lws2_32 -lpsapi
 
 include $(GENERAL_RULES)/standard
 

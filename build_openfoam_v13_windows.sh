@@ -21,6 +21,12 @@ if ! command -v x86_64-w64-mingw32-g++ &> /dev/null; then
     exit 1
 fi
 
+if ! command -v flex &> /dev/null; then
+    echo "[-] Error: flex lexer generator not found!"
+    echo "    Please install: flex (openSUSE/Ubuntu/Debian)"
+    exit 1
+fi
+
 # 2. Apply Git Patch if patch file exists
 if [ -f "openfoam_v13_windows_crosscompile.patch" ]; then
     echo "[+] Applying openfoam_v13_windows_crosscompile.patch..."
@@ -33,19 +39,37 @@ fi
 echo "[+] Sourcing OpenFOAM environment..."
 export WM_COMPILER=Mingw
 export WM_ARCH=linux64
+export WM_MPLIB=MSMPI
+export WM_OSTYPE=MSwindows
+export WM_NCOMPPROCS=$(nproc)
 source etc/bashrc
 
 # 4. Build host-native wmake tools
 echo "[+] Building host-native wmake tools (wmkdep, dirToString)..."
+mkdir -p "$WM_PROJECT_DIR/wmake/platforms/linux64Mingw"
 mkdir -p "$WM_PROJECT_DIR/wmake/platforms/linux64Gcc"
-gcc -O3 "$WM_PROJECT_DIR/wmake/src/wmkdep.c" -o "$WM_PROJECT_DIR/wmake/platforms/linux64Gcc/wmkdep"
-gcc -O3 "$WM_PROJECT_DIR/wmake/src/dirToString.c" -o "$WM_PROJECT_DIR/wmake/platforms/linux64Gcc/dirToString"
+gcc -O3 "$WM_PROJECT_DIR/wmake/src/dirToString.c" -o "$WM_PROJECT_DIR/wmake/platforms/linux64Mingw/dirToString"
+flex -o "$WM_PROJECT_DIR/wmake/src/lex.yy.c" "$WM_PROJECT_DIR/wmake/src/wmkdep.l"
+gcc -O3 "$WM_PROJECT_DIR/wmake/src/lex.yy.c" -o "$WM_PROJECT_DIR/wmake/platforms/linux64Mingw/wmkdep"
+rm -f "$WM_PROJECT_DIR/wmake/src/lex.yy.c"
+cp "$WM_PROJECT_DIR/wmake/platforms/linux64Mingw/"* "$WM_PROJECT_DIR/wmake/platforms/linux64Gcc/"
 
-# 5. Build Dummy ThirdParty Libraries
-echo "[+] Building Dummy ThirdParty decomposition stubs (metis, scotch, ptscotch)..."
-(cd src/dummyThirdParty && ./Allwmake)
+# 5. Bootstrap Pstream & OpenFOAM circular dependency
+echo "[+] Bootstrapping OSspecific and Pstream..."
+wmakeLnInclude -u src/OpenFOAM
+wmakeLnInclude -u src/OSspecific/MSwindows
+wmakeLnInclude -u src/Pstream/dummy
 
-# 6. Build Core Source Libraries
+(cd src/OSspecific/MSwindows && ./Allwmake)
+(cd src/Pstream/dummy && wmake libo .)
+
+echo "[+] Building Core libOpenFOAM.so..."
+(cd src/OpenFOAM && wmake -j $(nproc))
+
+echo "[+] Building Pstream shared libraries (dummy & msmpi)..."
+(cd src/Pstream && ./Allwmake)
+
+# 6. Build remaining Core and Advanced Libraries
 echo "[+] Building OpenFOAM src libraries in parallel..."
 (cd src && ./Allwmake -j $(nproc))
 
