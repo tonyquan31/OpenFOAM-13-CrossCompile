@@ -27,6 +27,7 @@ License
 #include "wordList.H"
 #include "DynamicList.H"
 #include "OSspecific.H"
+#include <cctype>
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
 
@@ -72,7 +73,17 @@ bool Foam::fileName::hasPath() const
 
 bool Foam::fileName::isAbsolute() const
 {
-    return !empty() && operator[](0) == '/';
+    if (empty()) return false;
+    if (operator[](0) == '/' || operator[](0) == '\\') return true;
+
+#if defined(_WIN32) || defined(__MINGW32__) || defined(__MINGW64__)
+    if (size() >= 3 && std::isalpha(operator[](0)) && operator[](1) == ':' && (operator[](2) == '/' || operator[](2) == '\\'))
+    {
+        return true;
+    }
+#endif
+
+    return false;
 }
 
 
@@ -92,6 +103,7 @@ Foam::fileName& Foam::fileName::toAbsolute()
 
 bool Foam::fileName::clean()
 {
+    for (auto& c : *this) { if (c == '\\') c = '/'; }
     // The top slash - we are never allowed to go above it
     string::size_type top = this->find('/');
 

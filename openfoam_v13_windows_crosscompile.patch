@@ -1961,10 +1961,10 @@ index 0000000000..c4dad2b142
 +#endif // yyFlexLexer || ! yyFlexLexerOnce
 diff --git a/src/OSspecific/MSwindows/MSwindows.C b/src/OSspecific/MSwindows/MSwindows.C
 new file mode 100644
-index 0000000000..fdeed8dcd0
+index 0000000000..c5e9ac7f10
 --- /dev/null
 +++ b/src/OSspecific/MSwindows/MSwindows.C
-@@ -0,0 +1,370 @@
+@@ -0,0 +1,375 @@
 +#undef DebugInfo
 +
 +#include "OSspecific.H"
@@ -2101,6 +2101,7 @@ index 0000000000..fdeed8dcd0
 +    string userProfile = getEnv("USERPROFILE");
 +    if (!userProfile.empty())
 +    {
++        for (auto& c : userProfile ) { if (c == '\\') c = '/'; }
 +        fileName h(userProfile);
 +        h.clean();
 +        return h;
@@ -2126,6 +2127,10 @@ index 0000000000..fdeed8dcd0
 +    char buffer[MAX_PATH];
 +    if (::_getcwd(buffer, sizeof(buffer)) != nullptr)
 +    {
++        for (char* p = buffer; *p; ++p)
++        {
++            if (*p == '\\') *p = '/';
++        }
 +        fileName dir(buffer);
 +        dir.clean();
 +        return dir;
@@ -4816,6 +4821,45 @@ index 8069ea7c8a..a79ce6e7bc 100644
  // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
  
  Foam::word Foam::name(const uint32_t val)
+diff --git a/src/OpenFOAM/primitives/strings/fileName/fileName.C b/src/OpenFOAM/primitives/strings/fileName/fileName.C
+index f0e19f82ec..ebfdb419fb 100644
+--- a/src/OpenFOAM/primitives/strings/fileName/fileName.C
++++ b/src/OpenFOAM/primitives/strings/fileName/fileName.C
+@@ -27,6 +27,7 @@ License
+ #include "wordList.H"
+ #include "DynamicList.H"
+ #include "OSspecific.H"
++#include <cctype>
+ 
+ // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
+ 
+@@ -72,7 +73,17 @@ bool Foam::fileName::hasPath() const
+ 
+ bool Foam::fileName::isAbsolute() const
+ {
+-    return !empty() && operator[](0) == '/';
++    if (empty()) return false;
++    if (operator[](0) == '/' || operator[](0) == '\\') return true;
++
++#if defined(_WIN32) || defined(__MINGW32__) || defined(__MINGW64__)
++    if (size() >= 3 && std::isalpha(operator[](0)) && operator[](1) == ':' && (operator[](2) == '/' || operator[](2) == '\\'))
++    {
++        return true;
++    }
++#endif
++
++    return false;
+ }
+ 
+ 
+@@ -92,6 +103,7 @@ Foam::fileName& Foam::fileName::toAbsolute()
+ 
+ bool Foam::fileName::clean()
+ {
++    for (auto& c : *this) { if (c == '\\') c = '/'; }
+     // The top slash - we are never allowed to go above it
+     string::size_type top = this->find('/');
+ 
 diff --git a/src/Pstream/dummy/Make/options b/src/Pstream/dummy/Make/options
 index 6392edc3e9..a3df319636 100644
 --- a/src/Pstream/dummy/Make/options

@@ -134,6 +134,7 @@ Foam::fileName Foam::home()
     string userProfile = getEnv("USERPROFILE");
     if (!userProfile.empty())
     {
+        for (auto& c : userProfile ) { if (c == '\\') c = '/'; }
         fileName h(userProfile);
         h.clean();
         return h;
@@ -159,6 +160,10 @@ Foam::fileName Foam::cwd()
     char buffer[MAX_PATH];
     if (::_getcwd(buffer, sizeof(buffer)) != nullptr)
     {
+        for (char* p = buffer; *p; ++p)
+        {
+            if (*p == '\\') *p = '/';
+        }
         fileName dir(buffer);
         dir.clean();
         return dir;
