@@ -5882,3 +5882,35 @@ index 0000000000..444f053224
 +include $(DEFAULT_RULES)/c
 +include $(DEFAULT_RULES)/c++
 +-include $(DEFAULT_RULES)/flex++
+diff --git a/src/Lagrangian/Lagrangian/Make/files b/src/Lagrangian/Lagrangian/Make/files
+index 0b1297dd30..71691c6c76 100644
+--- a/src/Lagrangian/Lagrangian/Make/files
++++ b/src/Lagrangian/Lagrangian/Make/files
+@@ -106,4 +106,14 @@ LagrangianModels/LagrangianInjection/LagrangianInjection.C
+ # Function objects
+ LagrangianMeshFunctionObject/LagrangianMeshFunctionObject.C
+ 
++
++
++# Basic lagrangian classes for Windows PE compatibility
++$(LIB_SRC)/lagrangian/basic/particle/particle.C
++$(LIB_SRC)/lagrangian/basic/particle/particleIO.C
++$(LIB_SRC)/lagrangian/basic/IOPosition/IOPositionName.C
++$(LIB_SRC)/lagrangian/basic/cloud/cloud.C
++$(LIB_SRC)/lagrangian/basic/passiveParticle/passiveParticleCloud.C
++$(LIB_SRC)/lagrangian/basic/InteractionLists/referredWallFace/referredWallFace.C
++
+ LIB = $(FOAM_LIBBIN)/libLagrangian
+diff --git a/src/Lagrangian/Lagrangian/Make/options b/src/Lagrangian/Lagrangian/Make/options
+index 95b9055428..21e4a19c7e 100644
+--- a/src/Lagrangian/Lagrangian/Make/options
++++ b/src/Lagrangian/Lagrangian/Make/options
+@@ -1,6 +1,7 @@
+ EXE_INC = \
+     -I$(LIB_SRC)/meshTools/lnInclude \
+-    -I$(LIB_SRC)/tracking
++    -I$(LIB_SRC)/tracking/lnInclude \
++    -I$(LIB_SRC)/lagrangian/basic/lnInclude
+ 
+ LIB_LIBS = \
+     -lmeshTools \

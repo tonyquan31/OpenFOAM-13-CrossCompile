@@ -106,4 +106,14 @@ LagrangianModels/LagrangianInjection/LagrangianInjection.C
 # Function objects
 LagrangianMeshFunctionObject/LagrangianMeshFunctionObject.C
 
+
+
+# Basic lagrangian classes for Windows PE compatibility
+$(LIB_SRC)/lagrangian/basic/particle/particle.C
+$(LIB_SRC)/lagrangian/basic/particle/particleIO.C
+$(LIB_SRC)/lagrangian/basic/IOPosition/IOPositionName.C
+$(LIB_SRC)/lagrangian/basic/cloud/cloud.C
+$(LIB_SRC)/lagrangian/basic/passiveParticle/passiveParticleCloud.C
+$(LIB_SRC)/lagrangian/basic/InteractionLists/referredWallFace/referredWallFace.C
+
 LIB = $(FOAM_LIBBIN)/libLagrangian

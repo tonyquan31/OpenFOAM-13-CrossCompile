@@ -27,12 +27,35 @@ if ! command -v flex &> /dev/null; then
     exit 1
 fi
 
-# 2. Apply Git Patch if patch file exists
+if ! command -v bison &> /dev/null; then
+    echo "[-] Error: bison parser generator not found!"
+    echo "    Please install: bison (openSUSE/Ubuntu/Debian)"
+    exit 1
+fi
+
+# 2. Apply Git Patches if patch files exist
 if [ -f "openfoam_v13_windows_crosscompile.patch" ]; then
-    echo "[+] Applying openfoam_v13_windows_crosscompile.patch..."
+    echo "[+] Applying openfoam_v13_windows_crosscompile.patch to OpenFOAM-13..."
     git apply --whitespace=nowarn openfoam_v13_windows_crosscompile.patch || {
-        echo "[!] Patch already applied or partially applied, continuing..."
+        echo "[!] OpenFOAM patch already applied or partially applied, continuing..."
     }
+fi
+
+TP_DIR="$(cd "$SCRIPT_DIR/../ThirdParty-13" 2>/dev/null && pwd)"
+if [ -d "$TP_DIR" ]; then
+    TP_PATCH=""
+    if [ -f "$TP_DIR/thirdparty_v13_windows_crosscompile.patch" ]; then
+        TP_PATCH="$TP_DIR/thirdparty_v13_windows_crosscompile.patch"
+    elif [ -f "$SCRIPT_DIR/thirdparty_v13_windows_crosscompile.patch" ]; then
+        TP_PATCH="$SCRIPT_DIR/thirdparty_v13_windows_crosscompile.patch"
+    fi
+
+    if [ -n "$TP_PATCH" ]; then
+        echo "[+] Applying thirdparty_v13_windows_crosscompile.patch to ThirdParty-13..."
+        (cd "$TP_DIR" && git apply --whitespace=nowarn "$TP_PATCH" 2>/dev/null) || {
+            echo "[!] ThirdParty patch already applied or partially applied, continuing..."
+        }
+    fi
 fi
 
 # 3. Source environment
@@ -54,7 +77,15 @@ gcc -O3 "$WM_PROJECT_DIR/wmake/src/lex.yy.c" -o "$WM_PROJECT_DIR/wmake/platforms
 rm -f "$WM_PROJECT_DIR/wmake/src/lex.yy.c"
 cp "$WM_PROJECT_DIR/wmake/platforms/linux64Mingw/"* "$WM_PROJECT_DIR/wmake/platforms/linux64Gcc/"
 
-# 5. Bootstrap Pstream & OpenFOAM circular dependency
+# 5. Build ThirdParty libraries (Scotch & Zoltan)
+echo "[+] Building ThirdParty libraries (Scotch & Zoltan)..."
+if [ -d "$WM_THIRD_PARTY_DIR" ]; then
+    (cd "$WM_THIRD_PARTY_DIR" && ./Allwmake)
+else
+    echo "[!] Warning: WM_THIRD_PARTY_DIR ($WM_THIRD_PARTY_DIR) not found, skipping ThirdParty build."
+fi
+
+# 6. Bootstrap Pstream & OpenFOAM circular dependency
 echo "[+] Bootstrapping OSspecific and Pstream..."
 wmakeLnInclude -u src/OpenFOAM
 wmakeLnInclude -u src/OSspecific/MSwindows
@@ -69,11 +100,11 @@ echo "[+] Building Core libOpenFOAM.so..."
 echo "[+] Building Pstream shared libraries (dummy & msmpi)..."
 (cd src/Pstream && ./Allwmake)
 
-# 6. Build remaining Core and Advanced Libraries
+# 7. Build remaining Core and Advanced Libraries
 echo "[+] Building OpenFOAM src libraries in parallel..."
 (cd src && ./Allwmake -j $(nproc))
 
-# 7. Build Applications (Solvers, Modules, Legacy, Utilities)
+# 8. Build Applications (Solvers, Modules, Legacy, Utilities)
 echo "[+] Building Applications, Solvers, and Utilities..."
 (cd applications && ./Allwmake -j $(nproc))
 
