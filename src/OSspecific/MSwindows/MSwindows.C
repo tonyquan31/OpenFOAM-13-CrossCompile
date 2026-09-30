@@ -34,6 +34,7 @@
 #include <psapi.h>
 #include <winsock2.h>
 #include <sys/stat.h>
+#include <fcntl.h>
 
 #undef min
 #undef max
@@ -56,6 +57,14 @@
 namespace Foam
 {
     defineTypeNameAndDebug(MSwindows, 0);
+
+    struct InitBinaryMode
+    {
+        InitBinaryMode()
+        {
+            _fmode = _O_BINARY;
+        }
+    } initBinaryMode;
 }
 
 pid_t Foam::pid()

@@ -53,7 +53,7 @@ Foam::OFstreamAllocator::OFstreamAllocator
             InfoInFunction << "Cannot open null file " << endl;
         }
     }
-    ofstream::openmode mode(ofstream::out);
+    ofstream::openmode mode(ofstream::out | ofstream::binary);
     if (append)
     {
         mode |= ofstream::app;

@@ -50,7 +50,7 @@ Foam::IFstreamAllocator::IFstreamAllocator(const fileName& filePath)
         }
     }
 
-    ifPtr_ = new ifstream(filePath.c_str());
+    ifPtr_ = new ifstream(filePath.c_str(), std::ios_base::in | std::ios_base::binary);
 
     // If the file is compressed, decompress it before reading.
     if (!ifPtr_->good())
@@ -75,7 +75,7 @@ Foam::IFstreamAllocator::IFstreamAllocator(const fileName& filePath)
         {
             delete ifPtr_;
 
-            ifPtr_ = new ifstream((filePath + ".orig").c_str());
+            ifPtr_ = new ifstream((filePath + ".orig").c_str(), std::ios_base::in | std::ios_base::binary);
         }
     }
 }
