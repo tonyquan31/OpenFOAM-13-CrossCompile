@@ -63,7 +63,10 @@ DEST_DIR="${1:-$DEFAULT_DEST}"
 echo -e "${CYAN}[+] Export destination:${NC} $DEST_DIR"
 
 # Reference path from original Jupiter CFD (if available)
-JUPITER_REF="/mnt/d/Jupiter-CFD_ver2.2/bin/common/OpenFoamEngines"
+JUPITER_REF="/mnt/d/Jupiter-CFD-ver2.2/bin/common/OpenFoamEngines"
+if [ ! -d "$JUPITER_REF" ] && [ -d "/mnt/d/Jupiter-CFD_ver2.2/bin/common/OpenFoamEngines" ]; then
+    JUPITER_REF="/mnt/d/Jupiter-CFD_ver2.2/bin/common/OpenFoamEngines"
+fi
 
 # 3. Initialize directory tree matching Jupiter CFD layout
 ENGINE_OF_DIR="$DEST_DIR/OpenFOAM-13/OpenFOAM-13"
@@ -311,30 +314,73 @@ cat << 'EOF' > "$OF_BIN_DIR/solidEquilibriumDisplacementFoam.bat"
 foamRun.exe -solver solidDisplacement %*
 EOF
 
-echo "    -> Generated 20 solver .bat wrappers for Windows CMD"
+cat << 'EOF' > "$OF_BIN_DIR/paraFoam.bat"
+@echo off
+setlocal
+set "CASE_NAME=%~nx1"
+if "%CASE_NAME%"=="" (
+    for %%I in ("%CD%") do set "CASE_NAME=%%~nxI"
+)
+set "FOAM_FILE=%CD%\%CASE_NAME%.foam"
+if not exist "%FOAM_FILE%" (
+    type nul > "%FOAM_FILE%"
+)
+echo Created ParaView case file: %FOAM_FILE%
+where paraview.exe >nul 2>&1
+if %ERRORLEVEL% equ 0 (
+    start "" paraview.exe "%FOAM_FILE%"
+) else (
+    echo Note: 'paraview.exe' is not found in system PATH.
+    echo You can open '%FOAM_FILE%' directly with ParaView.
+)
+endlocal
+EOF
+
+echo "    -> Generated 21 solver/utility .bat wrappers for Windows CMD"
 
 # 9. Copy bin/ directory (bash scripts + tools) and etc/ directory
 echo -e "${GREEN}[+] 6/7: Copying OpenFOAM-13 bin and etc directories...${NC}"
 cp -r "$OF_DIR/bin"/* "$ENGINE_OF_DIR/bin/" 2>/dev/null || true
 cp -r "$OF_DIR/etc"/* "$ENGINE_OF_DIR/etc/" 2>/dev/null || true
 
-# 10. Configure ThirdParty-13 (MPI Runtime & Scotch)
-echo -e "${GREEN}[+] 7/7: Configuring ThirdParty-13 (MPI & Scotch)...${NC}"
+# 10. Configure ThirdParty-13 (MPI Runtime, Scotch & Zoltan)
+echo -e "${GREEN}[+] 7/7: Configuring ThirdParty-13 (MPI, Scotch & Zoltan)...${NC}"
+
 # MS-MPI runtime binaries
-if [ -d "$JUPITER_REF/OpenFOAM-v2412/ThirdParty-v2412/platforms/linux64Mingw/MPI/bin" ]; then
+if [ -d "$TP_DIR/platforms/linux64Mingw/MPI/bin" ]; then
+    cp -f "$TP_DIR/platforms/linux64Mingw/MPI/bin"/* "$MPI_BIN_DIR/" 2>/dev/null || true
+    echo "    -> Copied MS-MPI binaries from ThirdParty-13"
+elif [ -d "$JUPITER_REF/OpenFOAM-v2412/ThirdParty-v2412/platforms/linux64Mingw/MPI/bin" ]; then
     cp -f "$JUPITER_REF/OpenFOAM-v2412/ThirdParty-v2412/platforms/linux64Mingw/MPI/bin"/* "$MPI_BIN_DIR/" 2>/dev/null || true
+    echo "    -> Copied MS-MPI binaries from Jupiter CFD reference"
 fi
 
 # MPI License
-if [ -f "$TP_DIR/opt/msmpi/License/MPI-SDK-TPN.txt" ]; then
-    cp -f "$TP_DIR/opt/msmpi/License/MPI-SDK-TPN.txt" "$MPI_LIC_DIR/"
+if [ -d "$TP_DIR/opt/msmpi/License" ]; then
+    cp -f "$TP_DIR/opt/msmpi/License"/* "$MPI_LIC_DIR/" 2>/dev/null || true
 elif [ -f "$JUPITER_REF/OpenFOAM-v2412/ThirdParty-v2412/platforms/linux64Mingw/MPI/License/MPI-SDK-TPN.txt" ]; then
     cp -f "$JUPITER_REF/OpenFOAM-v2412/ThirdParty-v2412/platforms/linux64Mingw/MPI/License/MPI-SDK-TPN.txt" "$MPI_LIC_DIR/"
 fi
 
-# Scotch DLL
-if [ -f "$JUPITER_REF/OpenFOAM-v2412/ThirdParty-v2412/platforms/linux64MingwDPInt32/lib/libscotch.dll" ]; then
+# Scotch & Zoltan libraries (built natively in ThirdParty-13)
+if [ -d "$TP_DIR/platforms/linux64MingwDPInt32/lib" ] && [ -f "$TP_DIR/platforms/linux64MingwDPInt32/lib/libscotch.dll" ]; then
+    echo "    -> Exporting ThirdParty-13 cross-compiled libraries (Scotch & Zoltan)..."
+    cp -f "$TP_DIR/platforms/linux64MingwDPInt32/lib"/*.dll "$TP_LIB_DIR/" 2>/dev/null || true
+    cp -f "$TP_DIR/platforms/linux64MingwDPInt32/lib"/*.a "$TP_LIB_DIR/" 2>/dev/null || true
+    # Also place Scotch DLLs into OF_BIN_DIR to ensure seamless runtime loading on Windows
+    cp -f "$TP_DIR/platforms/linux64MingwDPInt32/lib"/*.dll "$OF_BIN_DIR/" 2>/dev/null || true
+elif [ -f "$JUPITER_REF/OpenFOAM-v2412/ThirdParty-v2412/platforms/linux64MingwDPInt32/lib/libscotch.dll" ]; then
+    echo "    -> Fallback: Copying libscotch.dll from Jupiter CFD reference..."
     cp -f "$JUPITER_REF/OpenFOAM-v2412/ThirdParty-v2412/platforms/linux64MingwDPInt32/lib/libscotch.dll" "$TP_LIB_DIR/"
+    cp -f "$JUPITER_REF/OpenFOAM-v2412/ThirdParty-v2412/platforms/linux64MingwDPInt32/lib/libscotch.dll" "$OF_BIN_DIR/"
+fi
+
+# ThirdParty-13 include headers (scotch.h, zoltan.h, etc.)
+TP_INC_DIR="$ENGINE_TP_DIR/platforms/linux64MingwDPInt32/include"
+mkdir -p "$TP_INC_DIR"
+if [ -d "$TP_DIR/platforms/linux64MingwDPInt32/include" ]; then
+    cp -r "$TP_DIR/platforms/linux64MingwDPInt32/include"/* "$TP_INC_DIR/" 2>/dev/null || true
+    echo "    -> Exported ThirdParty-13 include headers to $TP_INC_DIR"
 fi
 
 echo -e "${BLUE}======================================================================${NC}"
