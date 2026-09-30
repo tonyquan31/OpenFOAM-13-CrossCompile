@@ -187,6 +187,7 @@ Foam::fvModels::fvModels
             if
             (
                 readFromFvModels
+             || !fvConstraint::dictionaryConstructorTablePtr_
              || !fvConstraint::dictionaryConstructorTablePtr_->found
                 (
                     modelType

@@ -110,17 +110,30 @@ Foam::autoPtr<Foam::fvModel> Foam::fvModel::New
         == dictionaryConstructorTablePtr_->end()
     )
     {
+        if (!dictionaryConstructorTablePtr_)
+        {
+            libs.open("libfvModels.so", false);
+        }
+
         if
         (
-           !libs.open
-            (
-                dict,
-                "libs",
-                dictionaryConstructorTablePtr_
-            )
+            !dictionaryConstructorTablePtr_
+         || dictionaryConstructorTablePtr_->find(modelType)
+            == dictionaryConstructorTablePtr_->end()
         )
         {
-            libs.open("lib" + modelType.remove(':') + ".so", false);
+            if
+            (
+               !libs.open
+                (
+                    dict,
+                    "libs",
+                    dictionaryConstructorTablePtr_
+                )
+            )
+            {
+                libs.open("lib" + modelType.remove(':') + ".so", false);
+            }
         }
 
         if (!dictionaryConstructorTablePtr_)

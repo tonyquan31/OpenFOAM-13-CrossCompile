@@ -75,11 +75,21 @@ pid_t Foam::pgid()
 
 bool Foam::env(const word& envName)
 {
+    if (::GetEnvironmentVariableA(envName.c_str(), nullptr, 0) > 0)
+    {
+        return true;
+    }
     return ::getenv(envName.c_str()) != nullptr;
 }
 
 Foam::string Foam::getEnv(const word& envName)
 {
+    char buffer[32767];
+    DWORD len = ::GetEnvironmentVariableA(envName.c_str(), buffer, sizeof(buffer));
+    if (len > 0 && len < sizeof(buffer))
+    {
+        return string(buffer);
+    }
     char* env = ::getenv(envName.c_str());
     if (env)
     {
@@ -94,6 +104,8 @@ bool Foam::setEnv(const word& name, const std::string& value, const bool overwri
     {
         return false;
     }
+    std::string entry = name + "=" + value;
+    ::_putenv(entry.c_str());
     return ::SetEnvironmentVariableA(name.c_str(), value.c_str()) != 0;
 }
 

@@ -1657,6 +1657,38 @@ index 0000000000..a20772a745
 @@ -0,0 +1 @@
 +/home/kodama/OpenFOAM-v13/OpenFOAM-13/src/OSspecific/MSwindows/FlexLexer.h
 \ No newline at end of file
+diff --git a/src/Lagrangian/Lagrangian/Make/files b/src/Lagrangian/Lagrangian/Make/files
+index 0b1297dd30..71691c6c76 100644
+--- a/src/Lagrangian/Lagrangian/Make/files
++++ b/src/Lagrangian/Lagrangian/Make/files
+@@ -106,4 +106,14 @@ LagrangianModels/LagrangianInjection/LagrangianInjection.C
+ # Function objects
+ LagrangianMeshFunctionObject/LagrangianMeshFunctionObject.C
+ 
++
++
++# Basic lagrangian classes for Windows PE compatibility
++$(LIB_SRC)/lagrangian/basic/particle/particle.C
++$(LIB_SRC)/lagrangian/basic/particle/particleIO.C
++$(LIB_SRC)/lagrangian/basic/IOPosition/IOPositionName.C
++$(LIB_SRC)/lagrangian/basic/cloud/cloud.C
++$(LIB_SRC)/lagrangian/basic/passiveParticle/passiveParticleCloud.C
++$(LIB_SRC)/lagrangian/basic/InteractionLists/referredWallFace/referredWallFace.C
++
+ LIB = $(FOAM_LIBBIN)/libLagrangian
+diff --git a/src/Lagrangian/Lagrangian/Make/options b/src/Lagrangian/Lagrangian/Make/options
+index 95b9055428..21e4a19c7e 100644
+--- a/src/Lagrangian/Lagrangian/Make/options
++++ b/src/Lagrangian/Lagrangian/Make/options
+@@ -1,6 +1,7 @@
+ EXE_INC = \
+     -I$(LIB_SRC)/meshTools/lnInclude \
+-    -I$(LIB_SRC)/tracking
++    -I$(LIB_SRC)/tracking/lnInclude \
++    -I$(LIB_SRC)/lagrangian/basic/lnInclude
+ 
+ LIB_LIBS = \
+     -lmeshTools \
 diff --git a/src/MomentumTransportModels/compressible/Make/options b/src/MomentumTransportModels/compressible/Make/options
 index 3ce78468e5..7bf31e6939 100644
 --- a/src/MomentumTransportModels/compressible/Make/options
@@ -1961,10 +1993,10 @@ index 0000000000..c4dad2b142
 +#endif // yyFlexLexer || ! yyFlexLexerOnce
 diff --git a/src/OSspecific/MSwindows/MSwindows.C b/src/OSspecific/MSwindows/MSwindows.C
 new file mode 100644
-index 0000000000..c5e9ac7f10
+index 0000000000..428e340355
 --- /dev/null
 +++ b/src/OSspecific/MSwindows/MSwindows.C
-@@ -0,0 +1,375 @@
+@@ -0,0 +1,387 @@
 +#undef DebugInfo
 +
 +#include "OSspecific.H"
@@ -2042,11 +2074,21 @@ index 0000000000..c5e9ac7f10
 +
 +bool Foam::env(const word& envName)
 +{
++    if (::GetEnvironmentVariableA(envName.c_str(), nullptr, 0) > 0)
++    {
++        return true;
++    }
 +    return ::getenv(envName.c_str()) != nullptr;
 +}
 +
 +Foam::string Foam::getEnv(const word& envName)
 +{
++    char buffer[32767];
++    DWORD len = ::GetEnvironmentVariableA(envName.c_str(), buffer, sizeof(buffer));
++    if (len > 0 && len < sizeof(buffer))
++    {
++        return string(buffer);
++    }
 +    char* env = ::getenv(envName.c_str());
 +    if (env)
 +    {
@@ -2061,6 +2103,8 @@ index 0000000000..c5e9ac7f10
 +    {
 +        return false;
 +    }
++    std::string entry = name + "=" + value;
++    ::_putenv(entry.c_str());
 +    return ::SetEnvironmentVariableA(name.c_str(), value.c_str()) != 0;
 +}
 +
@@ -5088,6 +5132,127 @@ index 795f944f05..83e389c88f 100644
 -LIB_LIBS =
 +LIB_LIBS = \
 +    -ldecompositionMethods
+diff --git a/src/finiteVolume/cfdTools/general/fvConstraints/fvConstraint.C b/src/finiteVolume/cfdTools/general/fvConstraints/fvConstraint.C
+index d7c755e5b1..774af364ea 100644
+--- a/src/finiteVolume/cfdTools/general/fvConstraints/fvConstraint.C
++++ b/src/finiteVolume/cfdTools/general/fvConstraints/fvConstraint.C
+@@ -95,17 +95,30 @@ Foam::autoPtr<Foam::fvConstraint> Foam::fvConstraint::New
+         == dictionaryConstructorTablePtr_->end()
+     )
+     {
++        if (!dictionaryConstructorTablePtr_)
++        {
++            libs.open("libfvConstraints.so", false);
++        }
++
+         if
+         (
+-           !libs.open
+-            (
+-                dict,
+-                "libs",
+-                dictionaryConstructorTablePtr_
+-            )
++            !dictionaryConstructorTablePtr_
++         || dictionaryConstructorTablePtr_->find(constraintType)
++            == dictionaryConstructorTablePtr_->end()
+         )
+         {
+-            libs.open("lib" + constraintType.remove(':') + ".so", false);
++            if
++            (
++               !libs.open
++                (
++                    dict,
++                    "libs",
++                    dictionaryConstructorTablePtr_
++                )
++            )
++            {
++                libs.open("lib" + constraintType.remove(':') + ".so", false);
++            }
+         }
+ 
+         if (!dictionaryConstructorTablePtr_)
+diff --git a/src/finiteVolume/cfdTools/general/fvConstraints/fvConstraints.C b/src/finiteVolume/cfdTools/general/fvConstraints/fvConstraints.C
+index 9d01d5087d..d653ea0130 100644
+--- a/src/finiteVolume/cfdTools/general/fvConstraints/fvConstraints.C
++++ b/src/finiteVolume/cfdTools/general/fvConstraints/fvConstraints.C
+@@ -182,6 +182,7 @@ Foam::fvConstraints::fvConstraints
+             if
+             (
+                 readFromFvConstraints
++             || !fvModel::dictionaryConstructorTablePtr_
+              || !fvModel::dictionaryConstructorTablePtr_->found
+                 (
+                     constraintType
+diff --git a/src/finiteVolume/cfdTools/general/fvModels/fvModel.C b/src/finiteVolume/cfdTools/general/fvModels/fvModel.C
+index d9a1a7feee..f35faa0e7a 100644
+--- a/src/finiteVolume/cfdTools/general/fvModels/fvModel.C
++++ b/src/finiteVolume/cfdTools/general/fvModels/fvModel.C
+@@ -110,17 +110,30 @@ Foam::autoPtr<Foam::fvModel> Foam::fvModel::New
+         == dictionaryConstructorTablePtr_->end()
+     )
+     {
++        if (!dictionaryConstructorTablePtr_)
++        {
++            libs.open("libfvModels.so", false);
++        }
++
+         if
+         (
+-           !libs.open
+-            (
+-                dict,
+-                "libs",
+-                dictionaryConstructorTablePtr_
+-            )
++            !dictionaryConstructorTablePtr_
++         || dictionaryConstructorTablePtr_->find(modelType)
++            == dictionaryConstructorTablePtr_->end()
+         )
+         {
+-            libs.open("lib" + modelType.remove(':') + ".so", false);
++            if
++            (
++               !libs.open
++                (
++                    dict,
++                    "libs",
++                    dictionaryConstructorTablePtr_
++                )
++            )
++            {
++                libs.open("lib" + modelType.remove(':') + ".so", false);
++            }
+         }
+ 
+         if (!dictionaryConstructorTablePtr_)
+diff --git a/src/finiteVolume/cfdTools/general/fvModels/fvModels.C b/src/finiteVolume/cfdTools/general/fvModels/fvModels.C
+index 7c6f1c7f5f..842101595f 100644
+--- a/src/finiteVolume/cfdTools/general/fvModels/fvModels.C
++++ b/src/finiteVolume/cfdTools/general/fvModels/fvModels.C
+@@ -187,6 +187,7 @@ Foam::fvModels::fvModels
+             if
+             (
+                 readFromFvModels
++             || !fvConstraint::dictionaryConstructorTablePtr_
+              || !fvConstraint::dictionaryConstructorTablePtr_->found
+                 (
+                     modelType
+diff --git a/src/finiteVolume/solver/solverNew.C b/src/finiteVolume/solver/solverNew.C
+index 1eef90f2ee..cde80c7034 100644
+--- a/src/finiteVolume/solver/solverNew.C
++++ b/src/finiteVolume/solver/solverNew.C
+@@ -30,6 +30,8 @@ License
+ void Foam::solver::load(const word& solverName)
+ {
+     libs.open("lib" + solverName + ".so");
++    libs.open("libfvModels.so", false);
++    libs.open("libfvConstraints.so", false);
+ }
+ 
+ 
 diff --git a/src/functionObjects/field/Make/options b/src/functionObjects/field/Make/options
 index 1294f96862..55d014f96b 100644
 --- a/src/functionObjects/field/Make/options
@@ -5882,35 +6047,3 @@ index 0000000000..444f053224
 +include $(DEFAULT_RULES)/c
 +include $(DEFAULT_RULES)/c++
 +-include $(DEFAULT_RULES)/flex++
-diff --git a/src/Lagrangian/Lagrangian/Make/files b/src/Lagrangian/Lagrangian/Make/files
-index 0b1297dd30..71691c6c76 100644
---- a/src/Lagrangian/Lagrangian/Make/files
-+++ b/src/Lagrangian/Lagrangian/Make/files
-@@ -106,4 +106,14 @@ LagrangianModels/LagrangianInjection/LagrangianInjection.C
- # Function objects
- LagrangianMeshFunctionObject/LagrangianMeshFunctionObject.C
- 
-+
-+
-+# Basic lagrangian classes for Windows PE compatibility
-+$(LIB_SRC)/lagrangian/basic/particle/particle.C
-+$(LIB_SRC)/lagrangian/basic/particle/particleIO.C
-+$(LIB_SRC)/lagrangian/basic/IOPosition/IOPositionName.C
-+$(LIB_SRC)/lagrangian/basic/cloud/cloud.C
-+$(LIB_SRC)/lagrangian/basic/passiveParticle/passiveParticleCloud.C
-+$(LIB_SRC)/lagrangian/basic/InteractionLists/referredWallFace/referredWallFace.C
-+
- LIB = $(FOAM_LIBBIN)/libLagrangian
-diff --git a/src/Lagrangian/Lagrangian/Make/options b/src/Lagrangian/Lagrangian/Make/options
-index 95b9055428..21e4a19c7e 100644
---- a/src/Lagrangian/Lagrangian/Make/options
-+++ b/src/Lagrangian/Lagrangian/Make/options
-@@ -1,6 +1,7 @@
- EXE_INC = \
-     -I$(LIB_SRC)/meshTools/lnInclude \
--    -I$(LIB_SRC)/tracking
-+    -I$(LIB_SRC)/tracking/lnInclude \
-+    -I$(LIB_SRC)/lagrangian/basic/lnInclude
- 
- LIB_LIBS = \
-     -lmeshTools \

@@ -182,6 +182,7 @@ Foam::fvConstraints::fvConstraints
             if
             (
                 readFromFvConstraints
+             || !fvModel::dictionaryConstructorTablePtr_
              || !fvModel::dictionaryConstructorTablePtr_->found
                 (
                     constraintType

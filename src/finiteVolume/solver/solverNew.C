@@ -30,6 +30,8 @@ License
 void Foam::solver::load(const word& solverName)
 {
     libs.open("lib" + solverName + ".so");
+    libs.open("libfvModels.so", false);
+    libs.open("libfvConstraints.so", false);
 }
 
 

@@ -95,17 +95,30 @@ Foam::autoPtr<Foam::fvConstraint> Foam::fvConstraint::New
         == dictionaryConstructorTablePtr_->end()
     )
     {
+        if (!dictionaryConstructorTablePtr_)
+        {
+            libs.open("libfvConstraints.so", false);
+        }
+
         if
         (
-           !libs.open
-            (
-                dict,
-                "libs",
-                dictionaryConstructorTablePtr_
-            )
+            !dictionaryConstructorTablePtr_
+         || dictionaryConstructorTablePtr_->find(constraintType)
+            == dictionaryConstructorTablePtr_->end()
         )
         {
-            libs.open("lib" + constraintType.remove(':') + ".so", false);
+            if
+            (
+               !libs.open
+                (
+                    dict,
+                    "libs",
+                    dictionaryConstructorTablePtr_
+                )
+            )
+            {
+                libs.open("lib" + constraintType.remove(':') + ".so", false);
+            }
         }
 
         if (!dictionaryConstructorTablePtr_)
