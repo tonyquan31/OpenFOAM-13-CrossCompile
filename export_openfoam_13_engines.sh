@@ -146,6 +146,7 @@ set "WM_PROJECT_DIR=%HOME%\%WM_PROJECT%-%WM_PROJECT_VERSION%"
 set "WM_PROJECT_DIR=%WM_PROJECT_DIR:\=/%"
 set WM_THIRD_PARTY_DIR=%HOME%\ThirdParty-%WM_PROJECT_VERSION%
 set FOAM_SIGFPE=1
+set MPI_BUFFER_SIZE=20000000
 set PATH=%HOME%\%WM_PROJECT%-%WM_PROJECT_VERSION%\platforms\%TYPE%\bin\;%WM_THIRD_PARTY_DIR%\platforms\%TYPE_THIRDPARTY%\lib\;%WM_THIRD_PARTY_DIR%\platforms\%TYPE_THIRDPARTY_BOOST_AND_MPI%\MPI\bin\;%PATH%
 
 EOF
@@ -162,8 +163,8 @@ echo -e "${GREEN}[+] 4/7: Copying libraries (.dll and .so) with case collision r
 for so_file in "$PLATFORM_SRC/lib"/*.so; do
     if [ -f "$so_file" ]; then
         base_name="$(basename "$so_file" .so)"
-        # Skip uppercase files that collide on case-insensitive Windows NTFS to prevent overwriting core libraries
-        if [ "$base_name" = "libLagrangian" ] || [ "$base_name" = "libLagrangianFunctionObjects" ]; then
+        # On case-insensitive Windows NTFS, skip lowercase stubs to keep complete uppercase libLagrangian (7.8MB)
+        if [ "$base_name" = "liblagrangian" ] || [ "$base_name" = "liblagrangianFunctionObjects" ]; then
             continue
         fi
         cp -f "$so_file" "$OF_BIN_DIR/${base_name}.dll"
@@ -171,12 +172,14 @@ for so_file in "$PLATFORM_SRC/lib"/*.so; do
     fi
 done
 
-# Ensure the lowercase liblagrangian library (containing Foam::lagrangian::cloud::debug) is preserved
-cp -f "$PLATFORM_SRC/lib/liblagrangian.so" "$OF_BIN_DIR/liblagrangian.so"
-cp -f "$PLATFORM_SRC/lib/liblagrangian.so" "$OF_BIN_DIR/liblagrangian.dll"
-if [ -f "$PLATFORM_SRC/lib/liblagrangianFunctionObjects.so" ]; then
-    cp -f "$PLATFORM_SRC/lib/liblagrangianFunctionObjects.so" "$OF_BIN_DIR/liblagrangianFunctionObjects.so"
-    cp -f "$PLATFORM_SRC/lib/liblagrangianFunctionObjects.so" "$OF_BIN_DIR/liblagrangianFunctionObjects.dll"
+# Ensure uppercase libLagrangian (containing merged LagrangianMesh and lagrangian classes) is active
+if [ -f "$PLATFORM_SRC/lib/libLagrangian.so" ]; then
+    cp -f "$PLATFORM_SRC/lib/libLagrangian.so" "$OF_BIN_DIR/libLagrangian.dll"
+    cp -f "$PLATFORM_SRC/lib/libLagrangian.so" "$OF_BIN_DIR/libLagrangian.so"
+fi
+if [ -f "$PLATFORM_SRC/lib/libLagrangianFunctionObjects.so" ]; then
+    cp -f "$PLATFORM_SRC/lib/libLagrangianFunctionObjects.so" "$OF_BIN_DIR/libLagrangianFunctionObjects.dll"
+    cp -f "$PLATFORM_SRC/lib/libLagrangianFunctionObjects.so" "$OF_BIN_DIR/libLagrangianFunctionObjects.so"
 fi
 
 # Process Pstream variants: dummy and msmpi
@@ -192,6 +195,17 @@ elif [ -f "$PLATFORM_SRC/lib/dummy/libPstream.so" ]; then
     cp -f "$PLATFORM_SRC/lib/dummy/libPstream.so" "$OF_BIN_DIR/libPstream.dll"
     cp -f "$PLATFORM_SRC/lib/dummy/libPstream.so" "$OF_BIN_DIR/libPstream.so"
 fi
+
+# Ensure decomposition libraries (Scotch & Ptscotch) are exported
+for decomp in libscotchDecomp libptscotchDecomp; do
+    if [ -f "$PLATFORM_SRC/lib/${decomp}.so" ]; then
+        cp -f "$PLATFORM_SRC/lib/${decomp}.so" "$OF_BIN_DIR/${decomp}.dll"
+        cp -f "$PLATFORM_SRC/lib/${decomp}.so" "$OF_BIN_DIR/${decomp}.so"
+    elif [ -f "$PLATFORM_SRC/lib/dummy/${decomp}.so" ]; then
+        cp -f "$PLATFORM_SRC/lib/dummy/${decomp}.so" "$OF_BIN_DIR/${decomp}.dll"
+        cp -f "$PLATFORM_SRC/lib/dummy/${decomp}.so" "$OF_BIN_DIR/${decomp}.so"
+    fi
+done
 
 # Copy MinGW runtime dependency DLLs
 MINGW_SYS_BIN="/usr/x86_64-w64-mingw32/sys-root/mingw/bin"
@@ -336,7 +350,52 @@ if %ERRORLEVEL% equ 0 (
 endlocal
 EOF
 
-echo "    -> Generated 21 solver/utility .bat wrappers for Windows CMD"
+cat << 'EOF' > "$OF_BIN_DIR/surfaceFeatureExtract.bat"
+@echo off
+setlocal
+rem OpenFOAM-13 compatibility wrapper: surfaceFeatureExtract -> surfaceFeatures
+rem If native surfaceFeaturesDict does not exist but surfaceFeatureExtractDict exists, advise user
+if exist "system\surfaceFeaturesDict" (
+    "%~dp0surfaceFeatures.exe" %*
+    exit /b %ERRORLEVEL%
+)
+
+echo [!] Notice: surfaceFeatureExtract has been replaced by surfaceFeatures in OpenFOAM-13.
+echo [!] Delegating command to surfaceFeatures.exe...
+"%~dp0surfaceFeatures.exe" %*
+exit /b %ERRORLEVEL%
+EOF
+
+cat << 'EOF' > "$OF_BIN_DIR/reconstructParMesh.bat"
+@echo off
+setlocal enabledelayedexpansion
+rem OpenFOAM-13 compatibility wrapper: reconstructParMesh -> reconstructPar
+rem Strip out -mergeTol <val> which is not supported in Foundation OpenFOAM
+
+set "ARGS="
+set "SKIP_NEXT=0"
+
+for %%A in (%*) do (
+    if "!SKIP_NEXT!"=="1" (
+        set "SKIP_NEXT=0"
+    ) else if "%%~A"=="-mergeTol" (
+        set "SKIP_NEXT=1"
+    ) else (
+        if defined ARGS (
+            set "ARGS=!ARGS! %%A"
+        ) else (
+            set "ARGS=%%A"
+        )
+    )
+)
+
+echo [!] Notice: reconstructParMesh has been merged into reconstructPar in OpenFOAM-13.
+echo [!] Delegating command to reconstructPar.exe...
+"%~dp0reconstructPar.exe" !ARGS!
+exit /b %ERRORLEVEL%
+EOF
+
+echo "    -> Generated 23 solver/utility .bat wrappers for Windows CMD"
 
 # 9. Copy bin/ directory (bash scripts + tools) and etc/ directory
 echo -e "${GREEN}[+] 6/7: Copying OpenFOAM-13 bin and etc directories...${NC}"
