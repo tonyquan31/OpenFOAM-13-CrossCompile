@@ -15,6 +15,7 @@ FoamFile
 // NB: the #functions do not work here
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
+
 Documentation
 {
     docBrowser      "firefox";
@@ -84,7 +85,7 @@ OptimisationSwitches
 DebugSwitches
 {
     dimensionSet        1;
-    fileName            2;
+    fileName            0;
     GAMGAgglomeration   1;
     level               2;
     lduMatrix           1;
