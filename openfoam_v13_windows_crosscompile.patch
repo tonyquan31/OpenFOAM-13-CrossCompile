@@ -1236,7 +1236,7 @@ index 8178fac902..628dbbd4fc 100644
 +    -lfiniteVolume \
 +    -lmeshTools
 diff --git a/etc/bashrc b/etc/bashrc
-index e77c0a8626..6ce38462bd 100644
+index e77c0a8626..f3b7f55121 100644
 --- a/etc/bashrc
 +++ b/etc/bashrc
 @@ -70,8 +70,8 @@ unset bashrcFile
@@ -1265,6 +1265,14 @@ index e77c0a8626..6ce38462bd 100644
  
  #- Decomposition libraries:
  #    <library>_TYPE = none | system | ThirdParty (OpenFOAM)
+@@ -216,6 +216,7 @@ _foamSource `$WM_PROJECT_DIR/bin/foamEtcFile config.sh/mpi`
+ _foamSource `$WM_PROJECT_DIR/bin/foamEtcFile config.sh/paraview`
+ _foamSource `$WM_PROJECT_DIR/bin/foamEtcFile config.sh/ensight`
+ _foamSource `$WM_PROJECT_DIR/bin/foamEtcFile config.sh/gperftools`
++_foamSource `$WM_PROJECT_DIR/bin/foamEtcFile config.sh/scotch`
+ 
+ 
+ # Clean environment paths again. Only remove duplicates
 diff --git a/etc/config.sh/metis b/etc/config.sh/metis
 index a40707ac55..ded64bc7a5 100644
 --- a/etc/config.sh/metis
@@ -1438,10 +1446,10 @@ index a32dcf2b5c..a8b48c0fa9 100644
 -#------------------------------------------------------------------------------
 +export PARMETIS_TYPE=none
 diff --git a/etc/config.sh/scotch b/etc/config.sh/scotch
-index 7693417ed4..368169ef66 100644
+index 7693417ed4..dc544ce048 100644
 --- a/etc/config.sh/scotch
 +++ b/etc/config.sh/scotch
-@@ -1,70 +1 @@
+@@ -1,70 +1,4 @@
 -#----------------------------------*-sh-*--------------------------------------
 -# =========                 |
 -# \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
@@ -1512,7 +1520,10 @@ index 7693417ed4..368169ef66 100644
 -. $WM_PROJECT_DIR/etc/config.sh/functions
 -
 -#------------------------------------------------------------------------------
-+export SCOTCH_TYPE=none
++export SCOTCH_TYPE=ThirdParty
++if [ -z "$SCOTCH_ARCH_PATH" ]; then
++    export SCOTCH_ARCH_PATH="${WM_THIRD_PARTY_DIR:-/home/kodama/OpenFOAM-v13/ThirdParty-13}/platforms/linux64MingwDPInt32"
++fi
 diff --git a/etc/config.sh/settings b/etc/config.sh/settings
 index 0a69a70190..7c28856d13 100644
 --- a/etc/config.sh/settings
@@ -1619,6 +1630,27 @@ index 6103cb5762..75501a584a 100644
 -
 -#------------------------------------------------------------------------------
 +export ZOLTAN_TYPE=none
+diff --git a/etc/controlDict b/etc/controlDict
+index 1a7a494c9c..5c3d2597df 100644
+--- a/etc/controlDict
++++ b/etc/controlDict
+@@ -15,6 +15,7 @@ FoamFile
+ // NB: the #functions do not work here
+ // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+ 
++
+ Documentation
+ {
+     docBrowser      "firefox";
+@@ -84,7 +85,7 @@ OptimisationSwitches
+ DebugSwitches
+ {
+     dimensionSet        1;
+-    fileName            2;
++    fileName            0;
+     GAMGAgglomeration   1;
+     level               2;
+     lduMatrix           1;
 diff --git a/src/Allwmake b/src/Allwmake
 index 8b260afc42..8a021a99ec 100755
 --- a/src/Allwmake
@@ -4673,15 +4705,16 @@ index 0000000000..0596295c4e
 +
 +#endif
 diff --git a/src/OpenFOAM/Make/options b/src/OpenFOAM/Make/options
-index 84591cccba..2c74c5ee63 100644
+index 84591cccba..016f188f22 100644
 --- a/src/OpenFOAM/Make/options
 +++ b/src/OpenFOAM/Make/options
-@@ -3,5 +3,5 @@ EXE_INC = \
+@@ -3,5 +3,6 @@ EXE_INC = \
  
  LIB_LIBS = \
      $(FOAM_LIBBIN)/libOSspecific.o \
 -    -L$(FOAM_LIBBIN)/dummy -lPstream \
-+    $(FOAM_LIBBIN)/dummy/libPstream.o \
++    $(FOAM_LIBBIN)/msmpi/libPstream.o \
++    -L$(MPI_ARCH_PATH)/lib/x64 -lmsmpi \
      -lz
 diff --git a/src/OpenFOAM/db/IOstreams/Fstreams/IFstream.C b/src/OpenFOAM/db/IOstreams/Fstreams/IFstream.C
 index 0629ad2d32..cb7aa05f23 100644
@@ -4971,6 +5004,37 @@ index bac4540572..1e86d65e66 100644
  EXE_INC  = $(PFLAGS) $(PINC)
 -LIB_LIBS = $(PLIBS)
 +LIB_LIBS = $(PLIBS) -L$(LIB_PLATFORMS) -lOpenFOAM
+diff --git a/src/Pstream/mpi/UPstream.C b/src/Pstream/mpi/UPstream.C
+index 88c34ea845..811b0aa09e 100644
+--- a/src/Pstream/mpi/UPstream.C
++++ b/src/Pstream/mpi/UPstream.C
+@@ -118,21 +118,15 @@ bool Foam::UPstream::init(int& argc, char**& argv, const bool needsThread)
+     #ifndef SGIMPI
+     string bufferSizeName = getEnv("MPI_BUFFER_SIZE");
+ 
++    int bufferSize = 20000000;
+     if (bufferSizeName.size())
+     {
+-        int bufferSize = atoi(bufferSizeName.c_str());
+-
+-        if (bufferSize)
+-        {
+-            MPI_Buffer_attach(new char[bufferSize], bufferSize);
+-        }
++        bufferSize = atoi(bufferSizeName.c_str());
+     }
+-    else
++
++    if (bufferSize > 0)
+     {
+-        FatalErrorInFunction
+-            << "UPstream::init(int& argc, char**& argv) : "
+-            << "environment variable MPI_BUFFER_SIZE not defined"
+-            << Foam::abort(FatalError);
++        MPI_Buffer_attach(new char[bufferSize], bufferSize);
+     }
+     #endif
+ 
 diff --git a/src/ThermophysicalTransportModels/fluid/Make/options b/src/ThermophysicalTransportModels/fluid/Make/options
 index 3edb3dbf52..24c53ccaa1 100644
 --- a/src/ThermophysicalTransportModels/fluid/Make/options
@@ -5593,6 +5657,47 @@ index c7985180f5..06087ec0eb 100755
 -wmake -a $targetType zoltan
 -
  #------------------------------------------------------------------------------
+diff --git a/src/parallel/decompose/decompositionMethods/Make/files b/src/parallel/decompose/decompositionMethods/Make/files
+index 7a27dec521..c5f47717d1 100644
+--- a/src/parallel/decompose/decompositionMethods/Make/files
++++ b/src/parallel/decompose/decompositionMethods/Make/files
+@@ -7,6 +7,7 @@ multiLevel/multiLevel.C
+ structured/structured.C
+ random/random.C
+ none/none.C
++../scotch/scotch.C
+ 
+ decompositionConstraints = decompositionConstraints
+ 
+diff --git a/src/parallel/decompose/decompositionMethods/Make/options b/src/parallel/decompose/decompositionMethods/Make/options
+index ad0788b997..abd2920af1 100644
+--- a/src/parallel/decompose/decompositionMethods/Make/options
++++ b/src/parallel/decompose/decompositionMethods/Make/options
+@@ -1,9 +1,11 @@
+ EXE_INC = \
+     -I$(LIB_SRC)/meshTools/lnInclude \
+     -I$(LIB_SRC)/polyTopoChange/lnInclude \
+-    -I$(LIB_SRC)/finiteVolume/lnInclude
++    -I$(LIB_SRC)/finiteVolume/lnInclude \
++    -I$(SCOTCH_ARCH_PATH)/include
+ 
+ LIB_LIBS = \
+     -lmeshTools \
+     -lpolyTopoChange \
+-    -lfiniteVolume
++    -lfiniteVolume \
++    -L$(SCOTCH_ARCH_PATH)/lib -lscotch -lscotcherrexit
+diff --git a/src/parallel/decompose/scotch/Make/options b/src/parallel/decompose/scotch/Make/options
+index 79b724e4e7..f2752d01b0 100644
+--- a/src/parallel/decompose/scotch/Make/options
++++ b/src/parallel/decompose/scotch/Make/options
+@@ -15,4 +15,5 @@ LIB_LIBS = \
+     -L$(FOAM_EXT_LIBBIN) \
+     -lscotch \
+     -lscotcherrexit \
+-    -lrt
++    -L$(FOAM_LIBBIN) -ldecompositionMethods -L$(FOAM_LIBBIN)/dummy -lPstream
++    
 diff --git a/src/radiationModels/Make/options b/src/radiationModels/Make/options
 index 73f97b1c88..97369cc65d 100644
 --- a/src/radiationModels/Make/options
