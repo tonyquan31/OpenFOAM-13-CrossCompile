@@ -118,21 +118,15 @@ bool Foam::UPstream::init(int& argc, char**& argv, const bool needsThread)
     #ifndef SGIMPI
     string bufferSizeName = getEnv("MPI_BUFFER_SIZE");
 
+    int bufferSize = 20000000;
     if (bufferSizeName.size())
     {
-        int bufferSize = atoi(bufferSizeName.c_str());
-
-        if (bufferSize)
-        {
-            MPI_Buffer_attach(new char[bufferSize], bufferSize);
-        }
+        bufferSize = atoi(bufferSizeName.c_str());
     }
-    else
+
+    if (bufferSize > 0)
     {
-        FatalErrorInFunction
-            << "UPstream::init(int& argc, char**& argv) : "
-            << "environment variable MPI_BUFFER_SIZE not defined"
-            << Foam::abort(FatalError);
+        MPI_Buffer_attach(new char[bufferSize], bufferSize);
     }
     #endif
 

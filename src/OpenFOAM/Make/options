@@ -3,5 +3,6 @@ EXE_INC = \
 
 LIB_LIBS = \
     $(FOAM_LIBBIN)/libOSspecific.o \
-    $(FOAM_LIBBIN)/dummy/libPstream.o \
+    $(FOAM_LIBBIN)/msmpi/libPstream.o \
+    -L$(MPI_ARCH_PATH)/lib/x64 -lmsmpi \
     -lz

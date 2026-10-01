@@ -85,16 +85,18 @@ else
     echo "[!] Warning: WM_THIRD_PARTY_DIR ($WM_THIRD_PARTY_DIR) not found, skipping ThirdParty build."
 fi
 
-# 6. Bootstrap Pstream & OpenFOAM circular dependency
-echo "[+] Bootstrapping OSspecific and Pstream..."
+# 6. Bootstrap OSspecific, Pstream & Core libOpenFOAM.so
+echo "[+] Bootstrapping OSspecific and MS-MPI Pstream..."
 wmakeLnInclude -u src/OpenFOAM
 wmakeLnInclude -u src/OSspecific/MSwindows
 wmakeLnInclude -u src/Pstream/dummy
+wmakeLnInclude -u src/Pstream/mpi
 
 (cd src/OSspecific/MSwindows && ./Allwmake)
-(cd src/Pstream/dummy && wmake libo .)
+# Build MS-MPI object files first so they can be embedded directly into libOpenFOAM.so
+(cd src/Pstream/mpi && wmake libo .)
 
-echo "[+] Building Core libOpenFOAM.so..."
+echo "[+] Building Core libOpenFOAM.so with embedded MS-MPI support..."
 (cd src/OpenFOAM && wmake -j $(nproc))
 
 echo "[+] Building Pstream shared libraries (dummy & msmpi)..."
