@@ -1,1 +1,4 @@
-export SCOTCH_TYPE=none
+export SCOTCH_TYPE=ThirdParty
+if [ -z "$SCOTCH_ARCH_PATH" ]; then
+    export SCOTCH_ARCH_PATH="${WM_THIRD_PARTY_DIR:-/home/kodama/OpenFOAM-v13/ThirdParty-13}/platforms/linux64MingwDPInt32"
+fi

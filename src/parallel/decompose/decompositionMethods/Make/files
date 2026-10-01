@@ -7,6 +7,7 @@ multiLevel/multiLevel.C
 structured/structured.C
 random/random.C
 none/none.C
+../scotch/scotch.C
 
 decompositionConstraints = decompositionConstraints
 

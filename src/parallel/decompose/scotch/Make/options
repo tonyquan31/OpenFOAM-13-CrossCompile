@@ -15,4 +15,5 @@ LIB_LIBS = \
     -L$(FOAM_EXT_LIBBIN) \
     -lscotch \
     -lscotcherrexit \
-    -lrt
+    -L$(FOAM_LIBBIN) -ldecompositionMethods -L$(FOAM_LIBBIN)/dummy -lPstream
+    
